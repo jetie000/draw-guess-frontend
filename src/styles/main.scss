@@ -5,12 +5,8 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background: $yellow-secondary;
-}
-
 #app {
   font-family: 'Inter', 'sans-serif', monospace;
-  background: $white;
   color: $black;
+  background: $yellow-secondary;
 }

@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import HeaderMain from './components/Header/HeaderMain.vue'
+import HeaderMain from './components/Layout/HeaderMain.vue'
+import FooterMain from './components/Layout/FooterMain.vue'
 </script>
 
 <template>
   <div>
     <HeaderMain />
-    <RouterView />
+    <div class="min-h-[calc(100vh-3rem)] bg-yellow-secondary text-blue">
+      <main class="container flex flex-col mx-auto h-[calc(100vh-5rem)]">
+        <RouterView />
+      </main>
+      <FooterMain />
+    </div>
   </div>
 </template>
