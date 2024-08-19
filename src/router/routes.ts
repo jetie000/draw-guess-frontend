@@ -1,4 +1,4 @@
-import type { RouteRecordRaw } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router';
 
 export const routes: RouteRecordRaw[] = [
   {
@@ -12,7 +12,17 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('@/views/Auth/LoginPage.vue')
   },
   {
+    path: '/sign-up',
+    name: 'SignUp',
+    component: () => import('@/views/Auth/SignUpPage.vue')
+  },
+  {
+    path: '/reset-password',
+    name: 'ResetPassword',
+    component: () => import('@/views/Auth/ResetPasswordPage.vue')
+  },
+  {
     path: '/:pathMatch(.*)*',
     redirect: '/'
   }
-]
+];
