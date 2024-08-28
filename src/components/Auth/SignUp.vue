@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useUserStore } from '@/stores/userStore';
 import { ref } from 'vue';
 
 const formData = ref({
@@ -8,18 +9,28 @@ const formData = ref({
   confirmPassword: ''
 });
 
-const onSubmit = () => {
-  console.log(
+const userStore = useUserStore();
+
+const handleSignUp = async () => {
+  const isSignedUp = await userStore.signUp(
     formData.value.email,
     formData.value.username,
     formData.value.password,
     formData.value.confirmPassword
   );
+  if (isSignedUp) {
+    formData.value = {
+      email: '',
+      username: '',
+      password: '',
+      confirmPassword: ''
+    };
+  }
 };
 </script>
 
 <template>
-  <form class="space-y-4" @submit.prevent="onSubmit">
+  <form class="space-y-4" @submit.prevent="handleSignUp">
     <div>
       <label for="email" class="block text-sm font-medium">Email address</label>
       <div class="mt-2">

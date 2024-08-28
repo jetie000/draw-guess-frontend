@@ -1,5 +1,8 @@
 const env = {
-  GOOGLE_CLIENT_ID: import.meta.env.VITE_APP_GOOGLE_CLIENT_ID
+  GOOGLE_CLIENT_ID: import.meta.env.VITE_APP_GOOGLE_CLIENT_ID,
+  ACCOUNT_URL: import.meta.env.VITE_APP_ACCOUNT_URL,
+  DRAWING_URL: import.meta.env.VITE_APP_DRAWING_URL,
+  GAME_URL: import.meta.env.VITE_APP_GAME_URL
 };
 
 const checkConfig = (config: typeof env) => {

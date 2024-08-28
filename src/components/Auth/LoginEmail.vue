@@ -1,18 +1,26 @@
 <script setup lang="ts">
+import { useUserStore } from '@/stores/userStore';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const formData = ref({
   email: '',
   password: ''
 });
 
-const onSubmit = () => {
-  console.log(formData.value.email, formData.value.password);
+const router = useRouter();
+const userStore = useUserStore();
+
+const handleLogin = async () => {
+  const isAuth = await userStore.loginByEmail(formData.value.email, formData.value.password);
+  if (isAuth) {
+    router.push('/');
+  }
 };
 </script>
 
 <template>
-  <form class="space-y-6" @submit.prevent="onSubmit">
+  <form class="space-y-6" @submit.prevent="handleLogin">
     <div>
       <label for="email" class="block text-sm font-medium">Email address</label>
       <div class="mt-2">
