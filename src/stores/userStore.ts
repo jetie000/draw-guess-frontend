@@ -5,6 +5,7 @@ import { useAlertStore } from './alertStore';
 import { handleNetworkError } from '@/helpers/errors';
 import { UserApi } from '@/api/user.api';
 import { removeAuthHeaderFromInstances, setAuthHeaderToInstances } from '@/api';
+import { AlertTypes } from '@/typings/enums/alert';
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -46,10 +47,29 @@ export const useUserStore = defineStore('user', {
     },
     async signUp(email: string, username: string, password: string, confirmPassword: string) {
       if (password !== confirmPassword) {
-        useAlertStore().showAlert('Passwords do not match');
+        useAlertStore().showAlert('Passwords do not match', AlertTypes.Warning);
+        return false;
       }
       try {
         await UserApi.signUp(email, username, password);
+        return true;
+      } catch (error) {
+        handleNetworkError(error);
+        return false;
+      }
+    },
+    async requestCode(email: string) {
+      try {
+        await UserApi.requestCode(email);
+        return true;
+      } catch (error) {
+        handleNetworkError(error);
+        return false;
+      }
+    },
+    async resetPassword(email: string, code: string, password: string) {
+      try {
+        await UserApi.resetPassword(email, code, password);
         return true;
       } catch (error) {
         handleNetworkError(error);

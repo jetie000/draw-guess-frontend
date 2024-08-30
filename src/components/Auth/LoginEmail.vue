@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useAlertStore } from '@/stores/alertStore';
 import { useUserStore } from '@/stores/userStore';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -10,11 +11,13 @@ const formData = ref({
 
 const router = useRouter();
 const userStore = useUserStore();
+const alertStore = useAlertStore();
 
 const handleLogin = async () => {
   const isAuth = await userStore.loginByEmail(formData.value.email, formData.value.password);
   if (isAuth) {
     router.push('/');
+    alertStore.showAlert('Successfully logged in');
   }
 };
 </script>
@@ -53,7 +56,7 @@ const handleLogin = async () => {
     </div>
     <button
       type="submit"
-      class="flex w-full justify-center rounded-md bg-blue px-3 py-2.5 text-sm font-semibold text-white hover:bg-blue-light transition-all"
+      class="flex w-full justify-center rounded-md bg-blue-dark px-3 py-2.5 text-sm font-semibold text-white hover:bg-blue-light transition-all"
     >
       Sign in
     </button>

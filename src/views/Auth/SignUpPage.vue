@@ -10,7 +10,7 @@ import SignUp from '@/components/Auth/SignUp.vue';
     </div>
     <div class="mt-6 sm:mx-auto sm:w-full sm:max-w-sm">
       <SignUp />
-      <p class="mt-4 text-center text-sm text-gray-500">
+      <p class="mt-4 text-center text-sm">
         Already a member?
         <RouterLink to="/login" class="font-bold ml-2">Sign in</RouterLink>
       </p>

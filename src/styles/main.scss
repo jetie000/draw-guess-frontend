@@ -11,6 +11,10 @@
   background: $yellow-secondary;
 }
 
+button, hr {
+  border-color: $blue-dark;
+}
+
 input {
   background-color: $white;
 

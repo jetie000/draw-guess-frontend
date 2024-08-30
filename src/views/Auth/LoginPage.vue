@@ -11,7 +11,7 @@ import LoginGoogle from '@/components/Auth/LoginGoogle.vue';
     </div>
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-sm">
       <LoginEmail />
-      <p class="mt-4 text-center text-sm text-gray-500">
+      <p class="mt-4 text-center text-sm">
         Not a member?
         <RouterLink to="/sign-up" class="font-bold ml-2">Sign up now</RouterLink>
       </p>

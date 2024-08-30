@@ -2,12 +2,14 @@
 import { RouterView } from 'vue-router';
 import HeaderMain from './components/Layout/HeaderMain.vue';
 import FooterMain from './components/Layout/FooterMain.vue';
+import Alert from './components/Alert/Alert.vue';
 </script>
 
 <template>
   <div>
     <HeaderMain />
-    <div class="min-h-[calc(100vh-3rem)] bg-yellow-secondary text-blue">
+    <Alert />
+    <div class="min-h-[calc(100vh-3rem)] bg-yellow-secondary text-blue-dark">
       <main class="container flex flex-col mx-auto min-h-[calc(100vh-5rem)]">
         <RouterView />
       </main>

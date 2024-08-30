@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useAlertStore } from '@/stores/alertStore';
+import { useUserStore } from '@/stores/userStore';
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import VOtpInput from 'vue3-otp-input';
 
 const email = ref('');
@@ -7,27 +10,26 @@ const code = ref('');
 const password = ref('');
 
 const isCodeSent = ref(false);
-const isCodeAccepted = ref(false);
 
-const buttonTitle = computed(() => {
-  if (!isCodeSent.value && !isCodeAccepted.value) {
-    return 'Reset password';
-  } else if (isCodeSent.value && !isCodeAccepted.value) {
-    return 'Verify code';
-  } else {
-    return 'Change password';
-  }
-});
+const router = useRouter();
+const userStore = useUserStore();
+const alertStore = useAlertStore();
 
-const onSubmit = () => {
-  if (!isCodeSent.value && !isCodeAccepted.value) {
-    console.log(email.value);
-    isCodeSent.value = true;
-  } else if (isCodeSent.value) {
-    console.log(code.value);
-    isCodeAccepted.value = true;
+const buttonTitle = computed(() => (isCodeSent.value ? 'Change password' : 'Reset password'));
+
+const onSubmit = async () => {
+  if (!isCodeSent.value) {
+    const isSent = await userStore.requestCode(email.value);
+    if (isSent) {
+      isCodeSent.value = true;
+      alertStore.showAlert('Code sent to your email');
+    }
   } else {
-    console.log(password.value);
+    const isChanged = await userStore.resetPassword(email.value, code.value, password.value);
+    if (isChanged) {
+      alertStore.showAlert('Password changed successfully');
+      router.push('/login');
+    }
   }
 };
 </script>
@@ -54,12 +56,13 @@ const onSubmit = () => {
         <v-otp-input
           :num-inputs="6"
           v-model:value="code"
-          :input-classes="`${isCodeAccepted && 'disabled'} otp-input rounded-md`"
+          input-classes="otp-input rounded-md"
           inputType="letter-numeric"
+          inputmode="text"
         />
       </div>
     </div>
-    <div v-if="isCodeAccepted">
+    <div v-if="isCodeSent">
       <label for="password" class="block text-sm font-medium">New password</label>
       <div class="mt-1">
         <input
@@ -73,7 +76,7 @@ const onSubmit = () => {
     </div>
     <button
       type="submit"
-      class="mt-10 flex w-full justify-center rounded-md bg-blue px-3 py-2.5 text-sm font-semibold text-white hover:bg-blue-light transition-all"
+      class="mt-10 flex w-full justify-center rounded-md bg-blue-dark px-3 py-2.5 text-sm font-semibold text-white hover:bg-blue-light transition-all"
     >
       {{ buttonTitle }}
     </button>
