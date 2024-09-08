@@ -13,6 +13,11 @@ export const useUserStore = defineStore('user', {
       localStorage.setItem(storageKeys.token, accessToken);
       setAuthHeaderToInstances(accessToken);
     },
+    assignToken() {
+      if (this.token) {
+        setAuthHeaderToInstances(this.token);
+      }
+    },
     logout() {
       localStorage.removeItem(storageKeys.token);
       this.token = null;

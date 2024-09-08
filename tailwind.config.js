@@ -17,6 +17,9 @@ export default {
         'yellow-main': '#fbda03',
         'yellow-secondary': '#fee569',
         white: '#fcfcfc'
+      },
+      screens: {
+        xsm: '480px'
       }
     }
   },

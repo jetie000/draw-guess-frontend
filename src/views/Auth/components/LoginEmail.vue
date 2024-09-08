@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router';
 import { useLoginByEmail } from '../api/useLoginByEmail';
 import { useUserStore } from '@/stores/user/userStore';
 import Spinner from '@/components/Spinner/Spinner.vue';
+import ButtonMain from '@/components/Button/ButtonMain.vue';
 
 const formData = ref({
   email: '',
@@ -45,7 +46,7 @@ const handleLogin = async () => {
           type="email"
           autocomplete="email"
           required
-          class="block w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
+          class="w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
         />
       </div>
     </div>
@@ -72,16 +73,16 @@ const handleLogin = async () => {
           name="password"
           type="password"
           required
-          class="block w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
+          class="w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
         />
       </div>
     </div>
-    <button
+    <ButtonMain
       type="submit"
-      class="flex w-full justify-center rounded-md bg-blue-dark px-3 py-2.5 text-sm font-semibold text-white hover:bg-blue-light transition-all"
+      class="w-full"
     >
       <Spinner v-if="isLoading" />
       <span v-else>Sign in</span>
-    </button>
+    </ButtonMain>
   </form>
 </template>

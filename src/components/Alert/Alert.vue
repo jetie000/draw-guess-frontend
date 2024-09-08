@@ -11,7 +11,7 @@ const { isAlertOpen, message, type } = storeToRefs(alertStore);
 
 <template>
   <div
-    :class="`${isAlertOpen ? 'opacity-100' : 'opacity-0'} flex flex-col fixed bottom-4 right-4 max-w-xs min-w-48 bg-white border border-blue-dark rounded-xl shadow-lg transition-all duration-500`"
+    :class="`${isAlertOpen ? 'opacity-100' : 'opacity-0'} z-10 flex flex-col fixed bottom-4 right-4 max-w-xs min-w-48 bg-white border border-blue-dark rounded-xl shadow-lg transition-all duration-500`"
     role="alert"
     tabindex="-1"
   >
@@ -27,7 +27,7 @@ const { isAlertOpen, message, type } = storeToRefs(alertStore);
         </p>
       </div>
       <button
-        class="w-5 h-5 ms-auto"
+        class="w-5 h-5 ms-auto shrink-0 hover:bg-blue-dark hover:bg-opacity-20 transition-colors rounded-full"
         @click="alertStore.hideAlert"
       >
         <XMarkIcon />

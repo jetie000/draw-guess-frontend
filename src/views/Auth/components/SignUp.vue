@@ -3,6 +3,7 @@ import { useAlertStore } from '@/stores/alert/alertStore';
 import { ref } from 'vue';
 import { useSignUp } from '../api/useSignUp';
 import Spinner from '@/components/Spinner/Spinner.vue';
+import ButtonMain from '@/components/Button/ButtonMain.vue';
 
 const formData = ref({
   email: '',
@@ -53,7 +54,7 @@ const handleSignUp = async () => {
           type="email"
           autocomplete="email"
           required
-          class="block w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
+          class="w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
         />
       </div>
     </div>
@@ -71,7 +72,7 @@ const handleSignUp = async () => {
           name="username"
           type="username"
           required
-          class="block w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
+          class="w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
         />
       </div>
     </div>
@@ -89,7 +90,7 @@ const handleSignUp = async () => {
           name="password"
           type="password"
           required
-          class="block w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
+          class="w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
         />
       </div>
     </div>
@@ -111,12 +112,12 @@ const handleSignUp = async () => {
         />
       </div>
     </div>
-    <button
+    <ButtonMain
       type="submit"
-      class="flex w-full justify-center rounded-md bg-blue-dark px-3 py-2.5 text-sm font-semibold text-white hover:bg-blue-light transition-all"
+      class="w-full"
     >
       <Spinner v-if="isLoading" />
       <span v-else>Sign up</span>
-    </button>
+    </ButtonMain>
   </form>
 </template>

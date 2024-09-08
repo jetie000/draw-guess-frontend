@@ -22,6 +22,11 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('@/views/Auth/ResetPasswordPage.vue')
   },
   {
+    path: '/game/:id',
+    name: 'Game',
+    component: () => import('@/views/Game/GamePage.vue')
+  },
+  {
     path: '/:pathMatch(.*)*',
     redirect: '/'
   }

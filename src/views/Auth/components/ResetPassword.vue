@@ -6,6 +6,7 @@ import VOtpInput from 'vue3-otp-input';
 import { useRequestCode } from '../api/useRequestCode';
 import { useResetPassword } from '../api/useResetPassword';
 import Spinner from '@/components/Spinner/Spinner.vue';
+import ButtonMain from '@/components/Button/ButtonMain.vue';
 
 const email = ref('');
 const code = ref('');
@@ -95,13 +96,13 @@ const onSubmit = async () => {
         </div>
       </div>
     </template>
-    <button
+    <ButtonMain
       type="submit"
-      class="mt-10 flex w-full justify-center rounded-md bg-blue-dark px-3 py-2.5 text-sm font-semibold text-white hover:bg-blue-light transition-all"
+      class="w-full"
     >
       <Spinner v-if="isLoadingRequest || isLoadingReset" />
       <span v-else>{{ buttonTitle }}</span>
-    </button>
+    </ButtonMain>
   </form>
 </template>
 
