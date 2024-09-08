@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getAlertColorClass } from '@/helpers/alert';
-import { useAlertStore } from '@/stores/alertStore';
+import { useAlertStore } from '@/stores/alert/alertStore';
 import { storeToRefs } from 'pinia';
 import { getAlertIcon } from '@/helpers/alert';
 import { XMarkIcon } from '@heroicons/vue/20/solid';
@@ -11,7 +11,7 @@ const { isAlertOpen, message, type } = storeToRefs(alertStore);
 
 <template>
   <div
-    :class="`${isAlertOpen ? 'opacity-100' : 'opacity-0'} flex flex-col fixed bottom-4 right-4 max-w-xs min-w-48 bg-white border border-gray-200 rounded-xl shadow-lg transition-all duration-500`"
+    :class="`${isAlertOpen ? 'opacity-100' : 'opacity-0'} flex flex-col fixed bottom-4 right-4 max-w-xs min-w-48 bg-white border border-blue-dark rounded-xl shadow-lg transition-all duration-500`"
     role="alert"
     tabindex="-1"
   >
@@ -26,7 +26,10 @@ const { isAlertOpen, message, type } = storeToRefs(alertStore);
           {{ type }}
         </p>
       </div>
-      <button class="w-5 h-5 ms-auto" @click="alertStore.hideAlert">
+      <button
+        class="w-5 h-5 ms-auto"
+        @click="alertStore.hideAlert"
+      >
         <XMarkIcon />
       </button>
     </div>

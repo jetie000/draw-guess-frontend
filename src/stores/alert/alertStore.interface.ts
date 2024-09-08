@@ -1,4 +1,4 @@
-import type { AlertTypes } from '../enums/alert';
+import type { AlertTypes } from '../../typings/enums/alert';
 
 export interface AlertStore {
   message: string;

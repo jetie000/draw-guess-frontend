@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
-import HeaderMain from './components/Layout/HeaderMain.vue';
-import FooterMain from './components/Layout/FooterMain.vue';
-import Alert from './components/Alert/Alert.vue';
+import HeaderMain from '@/layout/HeaderMain.vue';
+import FooterMain from '@/layout/FooterMain.vue';
+import Alert from '@/components/Alert/Alert.vue';
 </script>
 
 <template>

@@ -1,4 +1,4 @@
-import { useAlertStore } from '@/stores/alertStore';
+import { useAlertStore } from '@/stores/alert/alertStore';
 import { AlertTypes } from '@/typings/enums/alert';
 import { AxiosError, isAxiosError } from 'axios';
 

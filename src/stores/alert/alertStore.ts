@@ -1,6 +1,6 @@
-import { AlertDurationSeconds, AlertTypes } from '@/typings/enums/alert';
-import type { AlertStore } from '@/typings/interfaces/alert';
 import { defineStore } from 'pinia';
+import type { AlertStore } from './alertStore.interface';
+import { AlertDurationSeconds, AlertTypes } from '@/typings/enums/alert';
 
 export const useAlertStore = defineStore('alert', {
   state: (): AlertStore => ({

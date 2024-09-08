@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { useAlertStore } from '@/stores/alertStore';
-import { useUserStore } from '@/stores/userStore';
+import { useAlertStore } from '@/stores/alert/alertStore';
 import { ref } from 'vue';
+import { useSignUp } from '../api/useSignUp';
+import Spinner from '@/components/Spinner/Spinner.vue';
 
 const formData = ref({
   email: '',
@@ -10,17 +11,17 @@ const formData = ref({
   confirmPassword: ''
 });
 
-const userStore = useUserStore();
 const alertStore = useAlertStore();
+const { signUp, isLoading, isSuccess } = useSignUp();
 
 const handleSignUp = async () => {
-  const isSignedUp = await userStore.signUp(
+  await signUp(
     formData.value.email,
     formData.value.username,
     formData.value.password,
     formData.value.confirmPassword
   );
-  if (isSignedUp) {
+  if (isSuccess) {
     formData.value = {
       email: '',
       username: '',
@@ -33,9 +34,17 @@ const handleSignUp = async () => {
 </script>
 
 <template>
-  <form class="space-y-4" @submit.prevent="handleSignUp">
+  <form
+    class="space-y-4"
+    @submit.prevent="handleSignUp"
+  >
     <div>
-      <label for="email" class="block text-sm font-medium">Email address</label>
+      <label
+        for="email"
+        class="block text-sm font-medium"
+      >
+        Email address
+      </label>
       <div class="mt-2">
         <input
           v-model="formData.email"
@@ -49,7 +58,12 @@ const handleSignUp = async () => {
       </div>
     </div>
     <div>
-      <label for="username" class="block text-sm font-medium">Username</label>
+      <label
+        for="username"
+        class="block text-sm font-medium"
+      >
+        Username
+      </label>
       <div class="mt-2">
         <input
           v-model="formData.username"
@@ -62,7 +76,12 @@ const handleSignUp = async () => {
       </div>
     </div>
     <div>
-      <label for="password" class="block text-sm font-medium">Password</label>
+      <label
+        for="password"
+        class="block text-sm font-medium"
+      >
+        Password
+      </label>
       <div class="mt-2">
         <input
           v-model="formData.password"
@@ -75,7 +94,12 @@ const handleSignUp = async () => {
       </div>
     </div>
     <div>
-      <label for="confirmPassword" class="block text-sm font-medium">Confirm password</label>
+      <label
+        for="confirmPassword"
+        class="block text-sm font-medium"
+      >
+        Confirm password
+      </label>
       <div class="mt-2">
         <input
           v-model="formData.confirmPassword"
@@ -91,7 +115,8 @@ const handleSignUp = async () => {
       type="submit"
       class="flex w-full justify-center rounded-md bg-blue-dark px-3 py-2.5 text-sm font-semibold text-white hover:bg-blue-light transition-all"
     >
-      Sign up
+      <Spinner v-if="isLoading" />
+      <span v-else>Sign up</span>
     </button>
   </form>
 </template>

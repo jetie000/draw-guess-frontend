@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import duckIcon from '@/assets/duck-icon.svg';
-import { useUserStore } from '@/stores/userStore';
+import { useUserStore } from '@/stores/user/userStore';
 import { ArrowRightIcon } from '@heroicons/vue/16/solid';
 import { ArrowLeftStartOnRectangleIcon } from '@heroicons/vue/16/solid';
 import { storeToRefs } from 'pinia';
@@ -22,8 +22,17 @@ const handleLogout = () => {
     class="text-blue-dark bg-white p-2 h-12 flex justify-center sticky top-0 border-b border-blue-dark"
   >
     <div class="container flex justify-center items-center flex-grow px-4">
-      <h1 class="cursor-pointer" @click="$router.push('/')">
-        Draw <img class="w-6 h-6 inline" :src="duckIcon" alt="Logo" /> Guess
+      <h1
+        class="cursor-pointer"
+        @click="$router.push('/')"
+      >
+        Draw
+        <img
+          class="w-6 h-6 inline"
+          :src="duckIcon"
+          alt="Logo"
+        />
+        Guess
       </h1>
       <button
         v-if="token"

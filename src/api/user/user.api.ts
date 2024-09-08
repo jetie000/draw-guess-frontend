@@ -1,5 +1,5 @@
-import type { LoginResponse } from '@/typings/interfaces/auth';
-import { userApiInstance } from '.';
+import { userApiInstance } from '..';
+import type { LoginResponse } from './user.api.interface';
 
 export const UserApi = {
   login: (email: string, password: string) =>
