@@ -12,7 +12,7 @@ const { token } = storeToRefs(userStore);
 
 // TODO: move logout when profile page will be added
 const handleLogout = () => {
-  userStore.logout();
+  userStore.removeToken();
   router.push('/login');
 };
 </script>

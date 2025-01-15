@@ -13,7 +13,7 @@ const { loginByGoogle, isSuccess } = useLoginByGoogle();
 const handleLogin = async () => {
   const accessToken = await loginByGoogle();
   if (isSuccess.value && accessToken) {
-    userStore.login(accessToken);
+    userStore.setToken(accessToken);
     router.push('/');
     alertStore.showAlert('Successfully logged in');
   }

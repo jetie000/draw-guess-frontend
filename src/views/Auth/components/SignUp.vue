@@ -48,7 +48,7 @@ const handleSignUp = async () => {
       </label>
       <div class="mt-2">
         <input
-          v-model="formData.email"
+          v-model.trim="formData.email"
           id="email"
           name="email"
           type="email"
@@ -67,7 +67,7 @@ const handleSignUp = async () => {
       </label>
       <div class="mt-2">
         <input
-          v-model="formData.username"
+          v-model.trim="formData.username"
           id="username"
           name="username"
           type="username"
@@ -85,7 +85,7 @@ const handleSignUp = async () => {
       </label>
       <div class="mt-2">
         <input
-          v-model="formData.password"
+          v-model.trim="formData.password"
           id="password"
           name="password"
           type="password"
@@ -103,7 +103,7 @@ const handleSignUp = async () => {
       </label>
       <div class="mt-2">
         <input
-          v-model="formData.confirmPassword"
+          v-model.trim="formData.confirmPassword"
           id="confirmPassword"
           name="confirmPassword"
           type="password"

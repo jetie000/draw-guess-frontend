@@ -32,21 +32,23 @@ const handleJoinGame = async () => {
     @close="$emit('toggle')"
   >
     <h1>Enter game code</h1>
-    <div class="mt-2">
-      <input
-        v-model="gameCode"
-        name="code"
-        type="text"
-        required
-        class="block w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
-      />
-    </div>
-    <ButtonMain
-      class="mt-3 w-full"
-      @click="handleJoinGame"
-    >
-      <Spinner v-if="isLoading" />
-      <span v-else>Join</span>
-    </ButtonMain>
+    <form @submit="handleJoinGame">
+      <div class="mt-2">
+        <input
+          v-model.trim="gameCode"
+          name="code"
+          type="text"
+          required
+          class="block w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
+        />
+      </div>
+      <ButtonMain
+        type="submit"
+        class="mt-3 w-full"
+      >
+        <Spinner v-if="isLoading" />
+        <span v-else>Join</span>
+      </ButtonMain>
+    </form>
   </Modal>
 </template>

@@ -20,7 +20,7 @@ const { loginByEmail, isSuccess, isLoading } = useLoginByEmail();
 const handleLogin = async () => {
   const accessToken = await loginByEmail(formData.value.email, formData.value.password);
   if (isSuccess.value && accessToken) {
-    userStore.login(accessToken);
+    userStore.setToken(accessToken);
     router.push('/');
     alertStore.showAlert('Successfully logged in');
   }
@@ -41,7 +41,7 @@ const handleLogin = async () => {
       </label>
       <div class="mt-2">
         <input
-          v-model="formData.email"
+          v-model.trim="formData.email"
           name="email"
           type="email"
           autocomplete="email"
@@ -69,7 +69,7 @@ const handleLogin = async () => {
       </div>
       <div class="mt-2">
         <input
-          v-model="formData.password"
+          v-model.trim="formData.password"
           name="password"
           type="password"
           required

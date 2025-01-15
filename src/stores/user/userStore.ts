@@ -8,9 +8,9 @@ export const useUserStore = defineStore('user', {
     token: localStorage.getItem(storageKeys.token)
   }),
   actions: {
-    login(accessToken: string) {
-      this.token = accessToken;
+    setToken(accessToken: string) {
       localStorage.setItem(storageKeys.token, accessToken);
+      this.token = accessToken;
       setAuthHeaderToInstances(accessToken);
     },
     assignToken() {
@@ -18,7 +18,7 @@ export const useUserStore = defineStore('user', {
         setAuthHeaderToInstances(this.token);
       }
     },
-    logout() {
+    removeToken() {
       localStorage.removeItem(storageKeys.token);
       this.token = null;
       removeAuthHeaderFromInstances();

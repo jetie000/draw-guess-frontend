@@ -50,7 +50,7 @@ const onSubmit = async () => {
       </label>
       <div class="mt-1">
         <input
-          v-model="email"
+          v-model.trim="email"
           name="email"
           type="email"
           autocomplete="email"
@@ -87,7 +87,7 @@ const onSubmit = async () => {
         </label>
         <div class="mt-1">
           <input
-            v-model="password"
+            v-model.trim="password"
             name="password"
             type="password"
             required
