@@ -3,27 +3,35 @@ import googleIcon from '@/assets/google.svg';
 import { useAlertStore } from '@/stores/alert/alertStore';
 import { useUserStore } from '@/stores/user/userStore';
 import { useRouter } from 'vue-router';
-import { useLoginByGoogle } from '../api/useLoginByGoogle';
+import { useMutation } from '@tanstack/vue-query';
+import { UserApi } from '@/api/user/user.api';
+import { googleTokenLogin } from 'vue3-google-login';
+import { handleNetworkError } from '@/helpers/errors';
 
 const router = useRouter();
 const userStore = useUserStore();
 const alertStore = useAlertStore();
-const { loginByGoogle, isSuccess } = useLoginByGoogle();
 
-const handleLogin = async () => {
-  const accessToken = await loginByGoogle();
-  if (isSuccess.value && accessToken) {
+const { mutate } = useMutation({
+  mutationFn: async () => {
+    const { access_token } = await googleTokenLogin();
+    return await UserApi.loginGoogle(access_token);
+  },
+  onSuccess: ({ accessToken }) => {
     userStore.setToken(accessToken);
     router.push('/');
     alertStore.showAlert('Successfully logged in');
+  },
+  onError: (error) => {
+    handleNetworkError(error);
   }
-};
+});
 </script>
 
 <template>
   <button
     class="mt-8 self-center flex justify-center w-full items-center gap-2 border p-1.5 rounded-md bg-white"
-    @click="handleLogin"
+    @click="mutate()"
   >
     <img
       class="inline w-5 h-5"

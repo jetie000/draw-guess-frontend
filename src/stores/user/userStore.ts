@@ -1,7 +1,10 @@
 import { storageKeys } from '@/helpers/constants';
 import { defineStore } from 'pinia';
 import { removeAuthHeaderFromInstances, setAuthHeaderToInstances } from '@/api';
-import type { UserStore } from './userStore.interface';
+
+export interface UserStore {
+  token: string | null;
+}
 
 export const useUserStore = defineStore('user', {
   state: (): UserStore => ({

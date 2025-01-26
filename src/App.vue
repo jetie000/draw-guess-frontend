@@ -5,6 +5,7 @@ import FooterMain from '@/layout/FooterMain.vue';
 import Alert from '@/components/Alert/Alert.vue';
 import { onMounted } from 'vue';
 import { useUserStore } from './stores/user/userStore';
+import ErrorModal from './components/ErrorModal.vue';
 
 const userStore = useUserStore();
 
@@ -17,6 +18,7 @@ onMounted(() => {
   <div>
     <HeaderMain />
     <Alert />
+    <ErrorModal />
     <div class="min-h-[calc(100vh-3rem)] bg-yellow-secondary text-blue-dark">
       <main class="container flex flex-col mx-auto min-h-[calc(100vh-5rem)]">
         <RouterView />

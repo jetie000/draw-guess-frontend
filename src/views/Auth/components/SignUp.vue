@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { useAlertStore } from '@/stores/alert/alertStore';
 import { ref } from 'vue';
-import { useSignUp } from '../api/useSignUp';
 import Spinner from '@/components/Spinner/Spinner.vue';
 import ButtonMain from '@/components/Button/ButtonMain.vue';
+import { useMutation } from '@tanstack/vue-query';
+import { UserApi } from '@/api/user/user.api';
+import { handleNetworkError } from '@/helpers/errors';
+import { AlertTypes } from '@/typings/enums/alert';
 
 const formData = ref({
   email: '',
@@ -13,16 +16,11 @@ const formData = ref({
 });
 
 const alertStore = useAlertStore();
-const { signUp, isLoading, isSuccess } = useSignUp();
 
-const handleSignUp = async () => {
-  await signUp(
-    formData.value.email,
-    formData.value.username,
-    formData.value.password,
-    formData.value.confirmPassword
-  );
-  if (isSuccess) {
+const { mutate, isPending } = useMutation({
+  mutationFn: () =>
+    UserApi.signUp(formData.value.email, formData.value.username, formData.value.password),
+  onSuccess: () => {
     formData.value = {
       email: '',
       username: '',
@@ -30,7 +28,18 @@ const handleSignUp = async () => {
       confirmPassword: ''
     };
     alertStore.showAlert('Signed up successfully');
+  },
+  onError: (error) => {
+    handleNetworkError(error);
   }
+});
+
+const handleSignUp = async () => {
+  if (formData.value.password !== formData.value.confirmPassword) {
+    useAlertStore().showAlert('Passwords do not match', AlertTypes.Warning);
+    return;
+  }
+  mutate();
 };
 </script>
 
@@ -116,7 +125,7 @@ const handleSignUp = async () => {
       type="submit"
       class="w-full"
     >
-      <Spinner v-if="isLoading" />
+      <Spinner v-if="isPending" />
       <span v-else>Sign up</span>
     </ButtonMain>
   </form>

@@ -2,10 +2,12 @@
 import { useAlertStore } from '@/stores/alert/alertStore';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useLoginByEmail } from '../api/useLoginByEmail';
 import { useUserStore } from '@/stores/user/userStore';
 import Spinner from '@/components/Spinner/Spinner.vue';
 import ButtonMain from '@/components/Button/ButtonMain.vue';
+import { useMutation } from '@tanstack/vue-query';
+import { UserApi } from '@/api/user/user.api';
+import { handleNetworkError } from '@/helpers/errors';
 
 const formData = ref({
   email: '',
@@ -15,22 +17,24 @@ const formData = ref({
 const router = useRouter();
 const userStore = useUserStore();
 const alertStore = useAlertStore();
-const { loginByEmail, isSuccess, isLoading } = useLoginByEmail();
 
-const handleLogin = async () => {
-  const accessToken = await loginByEmail(formData.value.email, formData.value.password);
-  if (isSuccess.value && accessToken) {
+const { isPending, mutate } = useMutation({
+  mutationFn: () => UserApi.login(formData.value.email, formData.value.password),
+  onSuccess: ({ accessToken }) => {
     userStore.setToken(accessToken);
     router.push('/');
     alertStore.showAlert('Successfully logged in');
+  },
+  onError: (error) => {
+    handleNetworkError(error);
   }
-};
+});
 </script>
 
 <template>
   <form
     class="space-y-6"
-    @submit.prevent="handleLogin"
+    @submit.prevent="mutate()"
   >
     <div>
       <label
@@ -81,7 +85,7 @@ const handleLogin = async () => {
       type="submit"
       class="w-full"
     >
-      <Spinner v-if="isLoading" />
+      <Spinner v-if="isPending" />
       <span v-else>Sign in</span>
     </ButtonMain>
   </form>

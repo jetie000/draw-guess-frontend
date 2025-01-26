@@ -2,26 +2,30 @@
 import ButtonMain from '@/components/Button/ButtonMain.vue';
 import Modal from '@/components/Modal/Modal.vue';
 import { ref } from 'vue';
-import { useJoinGame } from '../api/useJoinGame';
 import { useRouter } from 'vue-router';
 import Spinner from '@/components/Spinner/Spinner.vue';
+import { useMutation } from '@tanstack/vue-query';
+import { GameApi } from '@/api/game/game.api';
+import { handleNetworkError } from '@/helpers/errors';
 
 defineProps<{
   isJoinModalOpen: boolean;
 }>();
 defineEmits(['toggle']);
 
-const { isLoading, isSuccess, joinGame } = useJoinGame();
 const router = useRouter();
 
 const gameCode = ref('');
 
-const handleJoinGame = async () => {
-  const gameId = await joinGame(gameCode.value);
-  if (isSuccess && gameId) {
-    router.push({ name: 'Game', params: { id: gameId } });
+const { isPending, mutate } = useMutation({
+  mutationFn: () => GameApi.joinGame(gameCode.value),
+  onSuccess: (data) => {
+    router.push({ name: 'Game', params: { id: data } });
+  },
+  onError: (error) => {
+    handleNetworkError(error);
   }
-};
+});
 </script>
 
 <template>
@@ -32,7 +36,7 @@ const handleJoinGame = async () => {
     @close="$emit('toggle')"
   >
     <h1>Enter game code</h1>
-    <form @submit="handleJoinGame">
+    <form @submit="mutate()">
       <div class="mt-2">
         <input
           v-model.trim="gameCode"
@@ -46,7 +50,7 @@ const handleJoinGame = async () => {
         type="submit"
         class="mt-3 w-full"
       >
-        <Spinner v-if="isLoading" />
+        <Spinner v-if="isPending" />
         <span v-else>Join</span>
       </ButtonMain>
     </form>

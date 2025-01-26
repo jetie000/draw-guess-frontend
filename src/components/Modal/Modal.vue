@@ -6,10 +6,12 @@ withDefaults(
     title: string;
     isOpen: boolean;
     backdropDismiss?: boolean;
+    noDismissButton?: boolean;
     size?: 'sm' | 'md' | 'lg';
   }>(),
   {
     backdropDismiss: true,
+    noDismissButton: false,
     size: 'md'
   }
 );
@@ -33,6 +35,7 @@ defineEmits(['close']);
           <div class="flex p-2 ps-4">
             <h1 class="text-2xl me-4">{{ title }}</h1>
             <button
+              v-if="!noDismissButton"
               class="w-8 h-8 ms-auto shrink-0 hover:bg-blue-dark hover:bg-opacity-20 transition-colors rounded-full"
               @click="$emit('close')"
             >

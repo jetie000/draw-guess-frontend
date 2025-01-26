@@ -1,6 +1,12 @@
 import { defineStore } from 'pinia';
-import type { AlertStore } from './alertStore.interface';
 import { AlertDurationSeconds, AlertTypes } from '@/typings/enums/alert';
+
+export interface AlertStore {
+  message: string;
+  isAlertOpen: boolean;
+  type: AlertTypes;
+  timeOut: NodeJS.Timeout | null;
+}
 
 export const useAlertStore = defineStore('alert', {
   state: (): AlertStore => ({

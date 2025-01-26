@@ -3,9 +3,10 @@ import { useAlertStore } from '@/stores/alert/alertStore';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import VOtpInput from 'vue3-otp-input';
-import { useRequestCode } from '../api/useRequestCode';
-import { useResetPassword } from '../api/useResetPassword';
 import Spinner from '@/components/Spinner/Spinner.vue';
+import { useMutation } from '@tanstack/vue-query';
+import { UserApi } from '@/api/user/user.api';
+import { handleNetworkError } from '@/helpers/errors';
 import ButtonMain from '@/components/Button/ButtonMain.vue';
 
 const email = ref('');
@@ -15,23 +16,38 @@ const password = ref('');
 const router = useRouter();
 const alertStore = useAlertStore();
 
-const { requestCode, isLoading: isLoadingRequest, isSuccess: isSuccessRequest } = useRequestCode();
-const { resetPassword, isLoading: isLoadingReset, isSuccess: isSuccessReset } = useResetPassword();
-
 const buttonTitle = computed(() => (isSuccessRequest.value ? 'Change password' : 'Reset password'));
+
+const {
+  isPending: isLoadingRequest,
+  mutate: requestCode,
+  isSuccess: isSuccessRequest
+} = useMutation({
+  mutationFn: () => UserApi.requestCode(email.value),
+  onSuccess: () => {
+    alertStore.showAlert('Code sent to your email');
+  },
+  onError: (error) => {
+    handleNetworkError(error);
+  }
+});
+
+const { isPending: isLoadingReset, mutate: resetPassword } = useMutation({
+  mutationFn: () => UserApi.resetPassword(email.value, code.value, password.value),
+  onSuccess: () => {
+    alertStore.showAlert('Password changed successfully');
+    router.push('/login');
+  },
+  onError: (error) => {
+    handleNetworkError(error);
+  }
+});
 
 const onSubmit = async () => {
   if (!isSuccessRequest.value) {
-    await requestCode(email.value);
-    if (isSuccessRequest.value) {
-      alertStore.showAlert('Code sent to your email');
-    }
+    requestCode();
   } else {
-    await resetPassword(email.value, code.value, password.value);
-    if (isSuccessReset.value) {
-      alertStore.showAlert('Password changed successfully');
-      router.push('/login');
-    }
+    resetPassword();
   }
 };
 </script>

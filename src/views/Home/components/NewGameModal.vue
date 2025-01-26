@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import Modal from '@/components/Modal/Modal.vue';
-import { useCreateGame } from '../api/useCreateGame';
 import { ref, watch } from 'vue';
 import ButtonMain from '@/components/Button/ButtonMain.vue';
 import { useAlertStore } from '@/stores/alert/alertStore';
 import { AlertTypes } from '@/typings/enums/alert';
 import { useRouter } from 'vue-router';
 import Spinner from '@/components/Spinner/Spinner.vue';
+import { useMutation } from '@tanstack/vue-query';
+import { GameApi } from '@/api/game/game.api';
+import { handleNetworkError } from '@/helpers/errors';
 
 defineProps<{
   isNewModalOpen: boolean;
@@ -20,7 +22,15 @@ const players = ref(2);
 const roundDuration = ref(30);
 const drawingsPerPlayer = ref(1);
 
-const { createGame, isLoading, isSuccess } = useCreateGame();
+const { isPending, mutate } = useMutation({
+  mutationFn: () => GameApi.createGame(players.value, roundDuration.value, drawingsPerPlayer.value),
+  onSuccess: (data) => {
+    router.push({ name: 'Game', params: { id: data } });
+  },
+  onError: (error) => {
+    handleNetworkError(error);
+  }
+});
 
 watch([players, drawingsPerPlayer], () => {
   if (players.value * drawingsPerPlayer.value > 12) {
@@ -28,13 +38,6 @@ watch([players, drawingsPerPlayer], () => {
     drawingsPerPlayer.value = Math.floor(12 / players.value);
   }
 });
-
-const handleCreateGame = async () => {
-  const gameId = await createGame(players.value, roundDuration.value, drawingsPerPlayer.value);
-  if (isSuccess && gameId) {
-    router.push({ name: 'Game', params: { id: gameId } });
-  }
-};
 </script>
 
 <template>
@@ -90,9 +93,9 @@ const handleCreateGame = async () => {
     </div>
     <ButtonMain
       class="w-full mt-5"
-      @click="handleCreateGame"
+      @click="mutate()"
     >
-      <Spinner v-if="isLoading" />
+      <Spinner v-if="isPending" />
       <span v-else>Create game</span>
     </ButtonMain>
   </Modal>

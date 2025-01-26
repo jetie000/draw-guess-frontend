@@ -1,4 +1,5 @@
 import { gameApiInstance } from '..';
+import type { Game } from './game.api.interface';
 
 export const GameApi = {
   createGame: (maxPlayers: number, roundDuration: number, drawingsPerPlayer: number) =>
@@ -10,5 +11,6 @@ export const GameApi = {
       })
       .then((res) => res.data),
   joinGame: (code: string) =>
-    gameApiInstance.post<number>('/join', { code }).then((res) => res.data)
+    gameApiInstance.post<number>('/join', { code }).then((res) => res.data),
+  getGame: (gameId: number) => gameApiInstance.get<Game>(`/${gameId}`).then((res) => res.data)
 };

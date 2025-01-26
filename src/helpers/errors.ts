@@ -1,10 +1,13 @@
 import { useAlertStore } from '@/stores/alert/alertStore';
 import { AlertTypes } from '@/typings/enums/alert';
-import { AxiosError, isAxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 
 const BadRequestErrorStatus = 400;
 
-const getErrorMessage = (error: AxiosError) => {
+export const getErrorMessage = (error: unknown) => {
+  if (!isAxiosError(error)) {
+    return 'Something went wrong';
+  }
   if (error.response && error.response.data instanceof Object && 'message' in error.response.data) {
     const message = Array.isArray(error.response?.data?.message)
       ? error.response.data.message[0]
@@ -14,7 +17,10 @@ const getErrorMessage = (error: AxiosError) => {
   return error.message;
 };
 
-const getErrorType = (error: AxiosError) => {
+const getErrorType = (error: unknown) => {
+  if (!isAxiosError(error)) {
+    return AlertTypes.Error;
+  }
   if (
     error.response &&
     error.response.data instanceof Object &&
@@ -27,10 +33,7 @@ const getErrorType = (error: AxiosError) => {
   return AlertTypes.Error;
 };
 
-export const handleNetworkError = (error: any) => {
+export const handleNetworkError = (error: unknown) => {
   const alertStore = useAlertStore();
-  alertStore.showAlert(
-    isAxiosError(error) ? getErrorMessage(error) : 'Something went wrong',
-    getErrorType(error)
-  );
+  alertStore.showAlert(getErrorMessage(error), getErrorType(error));
 };
