@@ -1,5 +1,5 @@
 import { userApiInstance } from '..';
-import type { LoginResponse } from './user.api.interface';
+import type { LoginResponse, Profile } from './user.api.interface';
 
 export const UserApi = {
   refreshToken: () => userApiInstance.get('/refresh-token').then((res) => res.data),
@@ -11,5 +11,6 @@ export const UserApi = {
     userApiInstance.post<LoginResponse>('/login-google', { accessToken }).then((res) => res.data),
   requestCode: (email: string) => userApiInstance.get(`/request-code/${email}`),
   resetPassword: (email: string, code: string, password: string) =>
-    userApiInstance.put('/reset-password', { email, code, password })
+    userApiInstance.put('/reset-password', { email, code, password }),
+  profile: () => userApiInstance.get<Profile>('/profile').then((res) => res.data)
 };

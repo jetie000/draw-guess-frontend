@@ -31,12 +31,12 @@ const { isPending, mutate } = useMutation({
 <template>
   <Modal
     title="Join a game"
-    :size="'sm'"
+    size="sm"
     :is-open="isJoinModalOpen"
     @close="$emit('toggle')"
   >
     <h1>Enter game code</h1>
-    <form @submit="mutate()">
+    <form @submit.prevent="mutate()">
       <div class="mt-2">
         <input
           v-model.trim="gameCode"

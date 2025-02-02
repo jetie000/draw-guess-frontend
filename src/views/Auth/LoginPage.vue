@@ -25,9 +25,9 @@ import LoginGoogle from './components/LoginGoogle.vue';
         </RouterLink>
       </p>
       <div class="mt-8 text-center relative">
-        <span class="bg-yellow-secondary absolute -translate-y-1/2 -translate-x-1/2 px-2"
-          >or sign in with</span
-        >
+        <span class="bg-yellow-secondary absolute -translate-y-1/2 -translate-x-1/2 px-2">
+          or sign in with
+        </span>
         <hr class="w-full" />
       </div>
       <LoginGoogle />
