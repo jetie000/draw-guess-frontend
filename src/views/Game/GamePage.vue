@@ -16,15 +16,23 @@ const {
   isSuccess: isSuccessProfile,
   isError: isErrorProfile,
   data: user,
-  error: errorProfile
+  error: errorProfile,
+  refetch: refetchProfile
 } = useQuery({
   queryKey: ['profile'],
-  queryFn: () => UserApi.profile()
+  queryFn: UserApi.profile,
+  enabled: false
 });
 
 watch(isFetchingProfile, () => {
   if (isErrorProfile.value) {
     useErrorModalStore().showModal(errorProfile.value);
+  }
+  if (data.value && user.value) {
+    socket.emit('joinGame', {
+      room: data.value.id,
+      player: data.value.players.find((p) => p.user.id === user.value.id)
+    });
   }
 });
 
@@ -37,22 +45,16 @@ watch(isFetching, () => {
   if (isError.value) {
     useErrorModalStore().showModal(error.value);
   }
-});
-
-watch([isSuccess, isSuccessProfile], () => {
-  if (data.value && user.value) {
-    socket.emit('joinGame', {
-      room: data.value.id,
-      player: data.value.players.find((p) => p.user.id === user.value.id)
-    });
+  if (isSuccess.value) {
+    refetchProfile();
   }
 });
 </script>
 
 <template>
   <div class="p-5">
-    <SpinnerCenter v-if="isFetching" />
-    <div v-else-if="isSuccess && data">
+    <SpinnerCenter v-if="isFetching || isFetchingProfile" />
+    <div v-else-if="isSuccess && data && isSuccessProfile && user">
       <GameLobby
         v-if="!data?.startDate"
         :game="data"

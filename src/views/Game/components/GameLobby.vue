@@ -6,13 +6,19 @@ import { useAlertStore } from '@/stores/alert/alertStore';
 import { AlertTypes } from '@/typings/enums/alert';
 import ButtonMain from '@/components/Button/ButtonMain.vue';
 import type { Profile } from '@/api/user/user.api.interface';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import type { Player } from '@/typings/interfaces/player.interface';
 import { useQueryClient } from '@tanstack/vue-query';
 import { socket } from '@/helpers/socket';
+import { TrashIcon, ArrowLeftStartOnRectangleIcon } from '@heroicons/vue/24/outline';
+import DeleteGameModal from './DeleteGameModal.vue';
+import { useRouter } from 'vue-router';
 
-const props = defineProps<{ game: Game; user: Profile | undefined }>();
+const props = defineProps<{ game: Game; user: Profile }>();
 
+const isDeleteModalOpen = ref(false);
+
+const router = useRouter();
 const queryClient = useQueryClient();
 
 const handleCopyCode = async () => {
@@ -37,6 +43,11 @@ onMounted(() => {
         players: props.game.players.filter((p) => p.user.id !== userId)
       });
     }
+  });
+
+  socket.on('deletedGame', () => {
+    router.push({ name: 'Home' });
+    useAlertStore().showAlert('Game has been deleted', AlertTypes.Warning);
   });
 });
 </script>
@@ -93,6 +104,28 @@ onMounted(() => {
           />
         </template>
       </Panel>
+      <ButtonMain
+        class="p-1"
+        theme="danger"
+        size="lg"
+        @click.stop="isDeleteModalOpen = true"
+      >
+        <template v-if="game.creatorId === user.id">
+          <TrashIcon class="w-5 h-5 me-2" />
+          Delete Game
+        </template>
+        <template v-else>
+          <ArrowLeftStartOnRectangleIcon class="w-5 h-5 me-2" />
+          Leave Game
+        </template>
+      </ButtonMain>
     </div>
+    <DeleteGameModal
+      :game-id="game.id"
+      :is-creator="game.creatorId === user.id"
+      :user-id="user.id"
+      :is-delete-modal-open="isDeleteModalOpen"
+      @close="isDeleteModalOpen = false"
+    />
   </div>
 </template>

@@ -12,5 +12,8 @@ export const GameApi = {
       .then((res) => res.data),
   joinGame: (code: string) =>
     gameApiInstance.post<number>('/join', { code }).then((res) => res.data),
-  getGame: (gameId: number) => gameApiInstance.get<Game>(`/${gameId}`).then((res) => res.data)
+  getGame: (gameId: number) => gameApiInstance.get<Game>(`/${gameId}`).then((res) => res.data),
+  getParticipatingGames: (isEnded: boolean = false) =>
+    gameApiInstance.get<Game[]>(`/participating?isEnded=${isEnded}`).then((res) => res.data),
+  deleteGame: (gameId: number) => gameApiInstance.delete(`/${gameId}`)
 };

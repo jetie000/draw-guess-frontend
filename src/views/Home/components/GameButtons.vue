@@ -4,9 +4,23 @@ import { ArrowRightEndOnRectangleIcon } from '@heroicons/vue/24/outline';
 import { ref } from 'vue';
 import NewGameModal from './NewGameModal.vue';
 import JoinGameModal from './JoinGameModal.vue';
+import { useAlertStore } from '@/stores/alert/alertStore';
+import { AlertTypes } from '@/typings/enums/alert';
+
+const props = defineProps<{
+  isParticipating: boolean;
+}>();
 
 const isNewModalOpen = ref(false);
 const isJoinModalOpen = ref(false);
+
+const toggleModal = (callback: Function) => {
+  if (props.isParticipating) {
+    useAlertStore().showAlert('You are already in a game', AlertTypes.Warning);
+    return;
+  }
+  callback();
+};
 
 const toggleNewModal = () => {
   isNewModalOpen.value = !isNewModalOpen.value;
@@ -19,12 +33,12 @@ const toggleJoinModal = () => {
 const buttons = [
   {
     title: 'Create Game',
-    onClick: toggleNewModal,
+    onClick: () => toggleModal(toggleNewModal),
     icon: PlusIcon
   },
   {
     title: 'Join Game',
-    onClick: toggleJoinModal,
+    onClick: () => toggleModal(toggleJoinModal),
     icon: ArrowRightEndOnRectangleIcon
   }
 ];
@@ -37,6 +51,7 @@ const buttons = [
         v-for="{ title, onClick, icon } in buttons"
         :key="title"
         class="aspect-square w-48 border rounded-2xl bg-yellow-200 hover:bg-yellow-100 transition-colors"
+        :class="{ 'opacity-70': isParticipating }"
         @click="onClick"
       >
         <component

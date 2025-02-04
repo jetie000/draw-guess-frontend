@@ -6,11 +6,13 @@ import Alert from '@/components/Alert/Alert.vue';
 import { onMounted } from 'vue';
 import { useUserStore } from './stores/user/userStore';
 import ErrorModal from './components/ErrorModal.vue';
+import { initSocket } from './helpers/socket';
 
 const userStore = useUserStore();
 
 onMounted(() => {
   userStore.assignToken();
+  initSocket();
 });
 </script>
 
