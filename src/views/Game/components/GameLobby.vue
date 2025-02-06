@@ -57,7 +57,7 @@ onMounted(() => {
     <div class="flex flex-col gap-4 max-xsm:gap-3">
       <div class="flex justify-center flex-wrap gap-4 max-xsm:gap-3">
         <Panel
-          class="flex flex-col text-center cursor-pointer max-xsm:w-full"
+          class="flex flex-col text-center cursor-pointer max-xsm:w-full justify-center min-w-48"
           @click="handleCopyCode"
         >
           <span class="text-xl">Game code</span>
@@ -74,11 +74,13 @@ onMounted(() => {
           </span>
           <div class="flex justify-between gap-4 text-sm text-gray-secondary">
             <div class="flex flex-col gap-2">
+              <span>Access</span>
               <span>Round Duration</span>
               <span>Players</span>
               <span>Drawings per player</span>
             </div>
             <div class="flex flex-col gap-2 font-bold text-blue-dark items-center">
+              <span>{{ game.isPrivate ? 'Private' : 'Public' }}</span>
               <span>{{ game.roundDuration }}s</span>
               <span>{{ game.players.length }}/{{ game.maxPlayers }}</span>
               <span>{{ game.drawingsPerPlayer }}</span>

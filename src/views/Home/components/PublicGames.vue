@@ -3,10 +3,14 @@ import { GameApi } from '@/api/game/game.api';
 import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
 import { useQuery } from '@tanstack/vue-query';
 import { watch } from 'vue';
-import Spinner from '@/components/Spinner/Spinner.vue';
 import GameCard from './GameCard.vue';
 
 const { isFetching, isSuccess, isError, data, error } = useQuery({
+  queryKey: ['public-games'],
+  queryFn: () => GameApi.getPublicGames()
+});
+
+const { data: participatingGames } = useQuery({
   queryKey: ['participating-games'],
   queryFn: () => GameApi.getParticipatingGames()
 });
@@ -19,25 +23,17 @@ watch(isFetching, () => {
 </script>
 
 <template>
-  <div class="flex w-full">
-    <Spinner
-      class="mx-auto"
-      :size="8"
-      color="blue-dark"
-      v-if="isFetching"
+  <div
+    v-if="isSuccess && data?.length"
+    class="flex flex-col w-full gap-3"
+  >
+    <h2 class="text-2xl font-bold text-center mt-3">Public</h2>
+    <GameCard
+      v-for="game in data"
+      :key="game.id"
+      :game="game"
+      :is-joined-this="false"
+      :is-joined="!!participatingGames && participatingGames?.length > 0"
     />
-    <div
-      v-else-if="isSuccess && data?.length"
-      class="flex flex-col w-full gap-3"
-    >
-      <hr class="my-3" />
-      <h2 class="text-2xl font-bold text-center">Participating</h2>
-      <GameCard
-        :game="data[0]"
-        :is-joined-this="true"
-        :is-joined="true"
-      />
-      <hr class="my-3" />
-    </div>
   </div>
 </template>

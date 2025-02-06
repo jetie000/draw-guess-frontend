@@ -21,9 +21,16 @@ const router = useRouter();
 const players = ref(2);
 const roundDuration = ref(30);
 const drawingsPerPlayer = ref(1);
+const isPrivate = ref(true);
 
 const { isPending, mutate } = useMutation({
-  mutationFn: () => GameApi.createGame(players.value, roundDuration.value, drawingsPerPlayer.value),
+  mutationFn: () =>
+    GameApi.createGame(
+      players.value,
+      roundDuration.value,
+      drawingsPerPlayer.value,
+      isPrivate.value
+    ),
   onSuccess: (data) => {
     router.push({ name: 'Game', params: { id: data } });
   },
@@ -47,6 +54,43 @@ watch([players, drawingsPerPlayer], () => {
     @close="$emit('toggle')"
   >
     <div class="grid grid-cols-2 items-center gap-2">
+      <div class="flex justify-center items-center col-end-3 col-start-1 mb-1">
+        <div class="bg-gray-200 rounded-lg w-full">
+          <div class="inline-flex rounded-lg w-1/2">
+            <input
+              type="radio"
+              v-model="isPrivate"
+              :value="true"
+              name="room_type"
+              id="roomPrivate"
+              checked
+              hidden
+            />
+            <label
+              for="roomPrivate"
+              class="radio grow text-center self-center py-2 px-4 rounded-lg cursor-pointer hover:opacity-75"
+            >
+              Private
+            </label>
+          </div>
+          <div class="inline-flex rounded-lg w-1/2">
+            <input
+              type="radio"
+              v-model="isPrivate"
+              :value="false"
+              name="room_type"
+              id="roomPublic"
+              hidden
+            />
+            <label
+              for="roomPublic"
+              class="radio grow text-center self-center py-2 px-4 rounded-lg cursor-pointer hover:opacity-75"
+            >
+              Public
+            </label>
+          </div>
+        </div>
+      </div>
       <label
         for="players-range"
         class="text-md flex justify-between items-center gap-3"
@@ -100,3 +144,10 @@ watch([players, drawingsPerPlayer], () => {
     </ButtonMain>
   </Modal>
 </template>
+
+<style scoped lang="scss">
+input:checked ~ .radio {
+  color: white;
+  background-color: $blue-light;
+}
+</style>

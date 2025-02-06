@@ -1,28 +1,56 @@
 <script setup lang="ts">
+import { GameApi } from '@/api/game/game.api';
 import type { Game } from '@/api/game/game.api.interface';
 import ButtonMain from '@/components/Button/ButtonMain.vue';
-import { ClockIcon, UserCircleIcon } from '@heroicons/vue/24/outline';
-import { format } from 'date-fns';
+import { handleNetworkError } from '@/helpers/errors';
+import { useAlertStore } from '@/stores/alert/alertStore';
+import { AlertTypes } from '@/typings/enums/alert';
+import { ClockIcon, PencilSquareIcon, UserCircleIcon } from '@heroicons/vue/24/outline';
+import { useMutation } from '@tanstack/vue-query';
+import { useRouter } from 'vue-router';
 
-defineProps<{ game: Game; isCreator: boolean }>();
+const props = defineProps<{ game: Game; isJoinedThis: boolean; isJoined: boolean }>();
+
+const router = useRouter();
+
+const { isPending, mutate } = useMutation({
+  mutationFn: () => GameApi.joinGame(props.game.code),
+  onSuccess: (data) => {
+    router.push({ name: 'Game', params: { id: data } });
+  },
+  onError: (error) => {
+    handleNetworkError(error);
+  }
+});
+
+const handleClick = () => {
+  if (props.isJoinedThis) {
+    router.push({ name: 'Game', params: { id: props.game.id } });
+    return;
+  } else if (props.isJoined) {
+    useAlertStore().showAlert('You are already in another game', AlertTypes.Warning);
+    return;
+  }
+  mutate();
+};
 </script>
 
 <template>
   <ButtonMain
     theme="secondary"
     class="flex gap-3 justify-between items-center ps-2.5 font-normal"
-    @click="$router.push({ name: 'Game', params: { id: game.id } })"
+    @click="handleClick"
+    :disabled="isPending"
   >
     <div :class="`font-bold p-2 rounded-md ${game.startDate ? 'bg-green-500' : 'bg-yellow-400'}`">
       {{ game.startDate ? 'In process' : 'Waiting for start' }}
     </div>
-    <UserCircleIcon class="w-6 h-6 -mr-1 ml-auto" />
+    <span class="text-xl">#{{ game.id }}</span>
+    <UserCircleIcon class="w-6 h-6 -mr-2 ml-auto" />
     <span>{{ game.players.length }}/{{ game.maxPlayers }}</span>
-    <template v-if="game.startDate">
-      <ClockIcon class="w-6 h-6 -mr-1" />
-      <span>
-        {{ format(game.startDate, 'HH:mm dd.MM') }}
-      </span>
-    </template>
+    <ClockIcon class="w-6 h-6 -mr-2" />
+    <span> {{ game.roundDuration }}s </span>
+    <PencilSquareIcon class="w-6 h-6 -mr-2" />
+    <span>{{ game.drawingsPerPlayer }}</span>
   </ButtonMain>
 </template>
