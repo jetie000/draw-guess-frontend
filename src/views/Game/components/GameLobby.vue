@@ -6,7 +6,7 @@ import { useAlertStore } from '@/stores/alert/alertStore';
 import { AlertTypes } from '@/typings/enums/alert';
 import ButtonMain from '@/components/Button/ButtonMain.vue';
 import type { Profile } from '@/api/user/user.api.interface';
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import type { Player } from '@/typings/interfaces/player.interface';
 import { useQueryClient } from '@tanstack/vue-query';
 import { socket } from '@/helpers/socket';
@@ -49,6 +49,12 @@ onMounted(() => {
     router.push({ name: 'Home' });
     useAlertStore().showAlert('Game has been deleted', AlertTypes.Warning);
   });
+});
+
+onUnmounted(() => {
+  socket.off('joinedGame');
+  socket.off('leftGame');
+  socket.off('deletedGame');
 });
 </script>
 
@@ -127,6 +133,7 @@ onMounted(() => {
       :is-creator="game.creatorId === user.id"
       :user-id="user.id"
       :is-delete-modal-open="isDeleteModalOpen"
+      :is-private="game.isPrivate"
       @close="isDeleteModalOpen = false"
     />
   </div>

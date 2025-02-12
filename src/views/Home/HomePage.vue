@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import { useQuery } from '@tanstack/vue-query';
+import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import GameButtons from './components/GameButtons.vue';
 import ParticipatingGames from './components/ParticipatingGame.vue';
 import { GameApi } from '@/api/game/game.api';
 import PublicGames from './components/PublicGames.vue';
-import { onMounted, watch } from 'vue';
+import { onMounted, onUnmounted, watch } from 'vue';
 import { socket } from '@/helpers/socket';
 import { UserApi } from '@/api/user/user.api';
 import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
+import type { Player } from '@/typings/interfaces/player.interface';
+import { useAlertStore } from '@/stores/alert/alertStore';
+import { AlertTypes } from '@/typings/enums/alert';
 
-const { isFetching, data, refetch, isError, error, isSuccess } = useQuery({
+const queryClient = useQueryClient();
+
+const { isFetching, data, isError, error, isSuccess } = useQuery({
   queryKey: ['participating-games'],
   queryFn: () => GameApi.getParticipatingGames()
 });
@@ -27,9 +32,47 @@ const {
 });
 
 onMounted(() => {
-  ['joinedGame', 'leftGame', 'deletedGame'].forEach((event) => {
-    socket.on(event, refetch);
+  socket.on('joinedGame', (player: Player) => {
+    if (data.value?.length && !data.value[0].players.find((p) => p.user.id === player.user.id)) {
+      queryClient.setQueryData(
+        ['participating-games'],
+        [
+          {
+            ...data.value[0],
+            players: [...data.value[0].players, player]
+          }
+        ]
+      );
+    }
   });
+
+  socket.on('leftGame', (userId) => {
+    if (data.value?.length) {
+      queryClient.setQueryData(
+        ['participating-games'],
+        [
+          {
+            ...data.value[0],
+            players: data.value[0].players.filter((p) => p.user.id !== userId)
+          }
+        ]
+      );
+    }
+  });
+
+  socket.on('deletedGame', () => {
+    queryClient.setQueryData(['participating-games'], []);
+    useAlertStore().showAlert('Game has been deleted', AlertTypes.Warning);
+  });
+
+  socket.emit('joinPublic');
+});
+
+onUnmounted(() => {
+  socket.emit('leavePublic');
+  socket.off('joinedGame');
+  socket.off('leftGame');
+  socket.off('deletedGame');
 });
 
 watch(isFetching, () => {

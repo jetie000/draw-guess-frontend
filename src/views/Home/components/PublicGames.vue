@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { GameApi } from '@/api/game/game.api';
 import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
-import { useQuery } from '@tanstack/vue-query';
-import { watch } from 'vue';
+import { useQuery, useQueryClient } from '@tanstack/vue-query';
+import { onMounted, watch } from 'vue';
 import GameCard from './GameCard.vue';
+import { socket } from '@/helpers/socket';
+import type { Game } from '@/api/game/game.api.interface';
+
+const queryClient = useQueryClient();
 
 const { isFetching, isSuccess, isError, data, error } = useQuery({
   queryKey: ['public-games'],
@@ -19,6 +23,53 @@ watch(isFetching, () => {
   if (isError.value) {
     useErrorModalStore().showModal(error.value);
   }
+});
+
+onMounted(() => {
+  socket.on('joinedGamePublic', (game: Game) => {
+    if (!data.value) {
+      return;
+    }
+    const index = data.value.findIndex((pGame) => pGame.id === game.id);
+    if (index === -1) {
+      queryClient.setQueryData(['public-games'], [game, ...data.value]);
+      return;
+    }
+    queryClient.setQueryData(
+      ['public-games'],
+      [...data.value.slice(0, index), game, ...data.value.slice(index + 1)]
+    );
+  });
+
+  socket.on('leftGamePublic', ({ room, userId }) => {
+    if (!data.value) {
+      return;
+    }
+    const index = data.value.findIndex((pGame) => pGame.id === room);
+    if (index === -1) {
+      queryClient.setQueryData(
+        ['public-games'],
+        [
+          ...data.value.slice(0, index),
+          {
+            ...data.value[index],
+            players: data.value[index].players.filter((p) => p.user.id !== userId)
+          },
+          ...data.value.slice(index + 1)
+        ]
+      );
+    }
+  });
+
+  socket.on('deletedGamePublic', (room) => {
+    if (!data.value) {
+      return;
+    }
+    queryClient.setQueryData(
+      ['public-games'],
+      data.value.filter((pGame) => pGame.id !== room)
+    );
+  });
 });
 </script>
 

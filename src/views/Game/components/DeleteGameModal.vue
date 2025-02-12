@@ -14,6 +14,7 @@ const props = defineProps<{
   gameId: number;
   isCreator: boolean;
   userId: number;
+  isPrivate: boolean;
 }>();
 defineEmits(['close']);
 
@@ -24,8 +25,14 @@ const { isPending, mutate } = useMutation({
   onSuccess: () => {
     if (props.isCreator) {
       socket.emit('deleteGame', { room: props.gameId });
+      if (!props.isPrivate) {
+        socket.emit('deleteGamePublic', { room: props.gameId });
+      }
     } else {
       socket.emit('leaveGame', { room: props.gameId, userId: props.userId });
+      if (!props.isPrivate) {
+        socket.emit('leaveGamePublic', { room: props.gameId, userId: props.userId });
+      }
     }
     router.push({ name: 'Home' });
   },

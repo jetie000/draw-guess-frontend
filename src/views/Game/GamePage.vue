@@ -29,6 +29,9 @@ watch(isFetchingProfile, () => {
     useErrorModalStore().showModal(errorProfile.value);
   }
   if (data.value && user.value) {
+    if (!data.value.isPrivate) {
+      socket.emit('joinGamePublic', { game: data.value });
+    }
     socket.emit('joinGame', {
       room: data.value.id,
       player: data.value.players.find((p) => p.user.id === user.value.id)
