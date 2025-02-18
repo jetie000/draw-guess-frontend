@@ -8,11 +8,14 @@ import ButtonMain from '@/components/Button/ButtonMain.vue';
 import type { Profile } from '@/api/user/user.api.interface';
 import { onMounted, onUnmounted, ref } from 'vue';
 import type { Player } from '@/typings/interfaces/player.interface';
-import { useQueryClient } from '@tanstack/vue-query';
+import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { socket } from '@/helpers/socket';
 import { TrashIcon, ArrowLeftStartOnRectangleIcon } from '@heroicons/vue/24/outline';
 import DeleteGameModal from './DeleteGameModal.vue';
 import { useRouter } from 'vue-router';
+import { GameApi } from '@/api/game/game.api';
+import { handleNetworkError } from '@/helpers/errors';
+import Spinner from '@/components/Spinner/Spinner.vue';
 
 const props = defineProps<{ game: Game; user: Profile }>();
 
@@ -20,6 +23,13 @@ const isDeleteModalOpen = ref(false);
 
 const router = useRouter();
 const queryClient = useQueryClient();
+
+const { mutate, isPending } = useMutation({
+  mutationFn: () => GameApi.startGame(props.game.id),
+  onError: (error) => {
+    handleNetworkError(error);
+  }
+});
 
 const handleCopyCode = async () => {
   await window.navigator.clipboard.writeText(props.game.code.toUpperCase());
@@ -49,12 +59,20 @@ onMounted(() => {
     router.push({ name: 'Home' });
     useAlertStore().showAlert('Game has been deleted', AlertTypes.Warning);
   });
+
+  socket.on('gameStarted', (startDate: string) => {
+    queryClient.setQueryData(['game', String(props.game.id)], {
+      ...props.game,
+      startDate
+    });
+  });
 });
 
 onUnmounted(() => {
   socket.off('joinedGame');
   socket.off('leftGame');
   socket.off('deletedGame');
+  socket.off('gameStarted');
 });
 </script>
 
@@ -97,8 +115,11 @@ onUnmounted(() => {
       <ButtonMain
         v-if="user && game.creatorId === user.id && game.players.length > 1"
         size="lg"
+        :disabled="isPending"
+        @click="mutate"
       >
-        Start game
+        <Spinner v-if="isPending" />
+        <span v-else> Start game </span>
       </ButtonMain>
       <Panel class="max-xsm:w-full">
         <div class="font-bold mb-2 text-center">Creator</div>

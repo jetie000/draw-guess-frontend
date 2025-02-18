@@ -5,7 +5,7 @@ export interface AlertStore {
   message: string;
   isAlertOpen: boolean;
   type: AlertTypes;
-  timeOut: NodeJS.Timeout | null;
+  timeOut: ReturnType<typeof setTimeout> | null;
 }
 
 export const useAlertStore = defineStore('alert', {

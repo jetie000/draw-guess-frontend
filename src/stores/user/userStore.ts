@@ -26,6 +26,5 @@ export const useUserStore = defineStore('user', {
       this.token = null;
       removeAuthHeaderFromInstances();
     }
-  },
-  getters: {}
+  }
 });

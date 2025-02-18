@@ -22,5 +22,6 @@ export const GameApi = {
   getParticipatingGames: (isEnded: boolean = false) =>
     gameApiInstance.get<Game[]>(`/participating?isEnded=${isEnded}`).then((res) => res.data),
   getPublicGames: () => gameApiInstance.get<Game[]>('/public').then((res) => res.data),
-  deleteGame: (gameId: number) => gameApiInstance.delete(`/${gameId}`)
+  deleteGame: (gameId: number) => gameApiInstance.delete(`/${gameId}`),
+  startGame: (gameId: number) => gameApiInstance.post(`/${gameId}/start`)
 };

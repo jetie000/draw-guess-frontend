@@ -2,7 +2,9 @@
 import type { Player } from '@/typings/interfaces/player.interface';
 import userIcon from '@/assets/user.svg';
 
-defineProps<{ player: Player }>();
+withDefaults(defineProps<{ player: Player; displayPoints?: boolean }>(), {
+  displayPoints: false
+});
 
 const replaceByDefault = (event: Event) => {
   (event.target as HTMLImageElement).src = userIcon;
@@ -16,6 +18,12 @@ const replaceByDefault = (event: Event) => {
       alt="User"
       @error="replaceByDefault"
     />
-    <span class="max-w-20 truncate">{{ player.user.username }}</span>
+    <span class="max-w-20 truncate mr-auto grow">{{ player.user.username }}</span>
+    <span
+      v-if="displayPoints"
+      class="font-bold text-blue-dark"
+    >
+      {{ player.points }}
+    </span>
   </div>
 </template>

@@ -8,6 +8,7 @@ import { watch } from 'vue';
 import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
 import { socket } from '@/helpers/socket';
 import { UserApi } from '@/api/user/user.api';
+import GamePlay from './components/GamePlay.vue';
 
 const route = useRoute();
 
@@ -57,12 +58,17 @@ watch(isFetching, () => {
 <template>
   <div class="p-5">
     <SpinnerCenter v-if="isFetching || isFetchingProfile" />
-    <div v-else-if="isSuccess && data && isSuccessProfile && user">
+    <template v-else-if="isSuccess && data && isSuccessProfile && user">
       <GameLobby
-        v-if="!data?.startDate"
+        v-if="!data.startDate"
         :game="data"
         :user="user"
       />
-    </div>
+      <GamePlay
+        v-else-if="!data.endDate"
+        :game="data"
+        :user="user"
+      />
+    </template>
   </div>
 </template>
