@@ -7,6 +7,7 @@ export interface Game {
   roundDuration: number;
   drawingsPerPlayer: number;
   isPrivate: boolean;
+  currentRound: number;
   creatorId: number;
   startDate: string | null;
   endDate: string | null;

@@ -13,8 +13,6 @@ const vueQueryPluginOptions: VueQueryPluginOptions = {
   queryClientConfig: {
     defaultOptions: {
       queries: {
-        retryDelay: (attemptIndex) => 1000 * 2 ** attemptIndex,
-        retry: 3,
         refetchOnWindowFocus: false
       }
     }

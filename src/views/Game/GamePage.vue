@@ -56,7 +56,7 @@ watch(isFetching, () => {
 </script>
 
 <template>
-  <div class="p-5">
+  <div class="p-5 h-full">
     <SpinnerCenter v-if="isFetching || isFetchingProfile" />
     <template v-else-if="isSuccess && data && isSuccessProfile && user">
       <GameLobby

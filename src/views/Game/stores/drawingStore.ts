@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { colors, strokeWidths } from '@/helpers/constants';
 
 interface DrawingStore {
   color: string;
@@ -7,7 +8,7 @@ interface DrawingStore {
 
 export const useDrawingStore = defineStore('drawing', {
   state: (): DrawingStore => ({
-    color: '#000000',
-    strokeWidth: 2
+    color: colors[0],
+    strokeWidth: strokeWidths[1]
   })
 });
