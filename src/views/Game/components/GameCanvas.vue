@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import paper from 'paper';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { useDrawingStore } from '../stores/drawingStore';
 import { storeToRefs } from 'pinia';
 import { useMutation, useQuery } from '@tanstack/vue-query';
@@ -9,6 +9,8 @@ import { DrawingApi } from '@/api/drawing/drawing.api';
 import type { AddDrawingRequest } from '@/api/drawing/drawing.api.interface';
 import type { Profile } from '@/api/user/user.api.interface';
 import type { Game } from '@/api/game/game.api.interface';
+import Panel from '@/components/Panel/Panel.vue';
+import debounce from 'lodash.debounce';
 import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
 import { defaultStrokeCapStyle, defaultStrokeJoinStyle } from '@/helpers/constants';
 
@@ -16,8 +18,11 @@ const path = defineModel<paper.Path>('path');
 const props = defineProps<{ game: Game; user: Profile }>();
 
 const canvasId = 'game-canvas';
+const canvasRef = ref<HTMLCanvasElement>();
+
 const scope = ref<paper.PaperScope>();
 const tool = ref<paper.Tool>();
+const canvasScale = ref(1);
 
 const { color, strokeWidth } = storeToRefs(useDrawingStore());
 
@@ -33,9 +38,27 @@ const { mutate } = useMutation({
   }
 });
 
+const setCanvasSize = () => {
+  if (!canvasRef.value) {
+    return;
+  }
+  canvasScale.value = Number(canvasRef.value.width) / window.devicePixelRatio / 800;
+  canvasRef.value.width = 800;
+  canvasRef.value.height = 800;
+};
+
+const debouncedSetCanvasSize = debounce(setCanvasSize, 500);
+
 onMounted(() => {
   scope.value = new paper.PaperScope();
   scope.value.setup(canvasId);
+  setCanvasSize();
+
+  window.addEventListener('resize', debouncedSetCanvasSize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', debouncedSetCanvasSize);
 });
 
 watch(isFetching, () => {
@@ -51,7 +74,6 @@ watch(isFetching, () => {
         strokeWidth: part.lineWidth
       });
       newPath.add(...part.posX.map((x, i) => ({ x, y: part.posY[i] }) as paper.PointLike));
-      console.log(newPath.segments);
     });
   }
 });
@@ -71,19 +93,19 @@ const handleMouseDown = () => {
       strokeWidth: strokeWidth.value
     });
     path.value = newPath;
-    newPath.add(event.point);
+    newPath.add({ x: event.point.x / canvasScale.value, y: event.point.y / canvasScale.value });
   };
   tool.value.onMouseDrag = (event: paper.MouseEvent) => {
     if (!path.value) {
       return;
     }
-    path.value.add(event.point);
+    path.value.add({ x: event.point.x / canvasScale.value, y: event.point.y / canvasScale.value });
   };
   tool.value.onMouseUp = (event: paper.MouseEvent) => {
     if (!path.value) {
       return;
     }
-    path.value.add(event.point);
+    path.value.add({ x: event.point.x / canvasScale.value, y: event.point.y / canvasScale.value });
     path.value.simplify(0.8);
     mutate({
       color: color.value,
@@ -102,11 +124,18 @@ const handleMouseDown = () => {
 </script>
 
 <template>
-  <canvas
-    :id="canvasId"
-    class="rounded-lg cursor-crosshair aspect-square"
-    :style="{ backgroundColor: 'white' }"
-    @mousedown="handleMouseDown"
-    @touchstart="handleMouseDown"
-  />
+  <Panel
+    no-padding
+    class="flex aspect-square max-w-[calc(100vh-8rem)] max-h-[calc(100vh-8rem)] grow"
+  >
+    <canvas
+      :id="canvasId"
+      ref="canvasRef"
+      resize="true"
+      class="rounded-lg cursor-crosshair aspect-square w-full h-full"
+      :style="{ backgroundColor: 'white' }"
+      @mousedown="handleMouseDown"
+      @touchstart="handleMouseDown"
+    />
+  </Panel>
 </template>

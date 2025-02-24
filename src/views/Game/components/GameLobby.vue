@@ -77,7 +77,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex justify-center">
+  <div class="flex justify-center p-5">
     <div class="flex flex-col gap-4 max-xsm:gap-3">
       <div class="flex justify-center flex-wrap gap-4 max-xsm:gap-3">
         <Panel

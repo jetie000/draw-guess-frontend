@@ -14,17 +14,15 @@ const path = ref<paper.Path>();
 </script>
 
 <template>
-  <div class="h-full flex justify-center gap-3">
-    <Panel
-      class="flex aspect-square max-w-[calc(100vh-8rem)] max-h-[calc(100vh-8rem)] width-full height-full max-xsm:w-full"
+  <div class="flex justify-center gap-3 p-5 max-lg:flex-col max-md:p-3 max-sm:p-1 max-sm:gap-1">
+    <GameCanvas
+      :path="path"
+      :game="game"
+      :user="user"
+    />
+    <div
+      class="flex gap-3 flex-col max-lg:justify-between max-lg:grid max-lg:grid-cols-2 max-sm:flex max-sm:flex-col max-sm:gap-1"
     >
-      <GameCanvas
-        :path="path"
-        :game="game"
-        :user="user"
-      />
-    </Panel>
-    <div class="flex flex-col gap-3">
       <GamePlayInfo :game="game" />
       <Panel class="flex flex-col gap-3 max-xsm:w-full text-center">
         <span class="text-gray-secondary">Your word</span>

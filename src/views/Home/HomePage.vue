@@ -98,7 +98,7 @@ watch(isFetchingProfile, () => {
 </script>
 
 <template>
-  <main class="bg-yellow-secondary flex flex-col items-center">
+  <div class="bg-yellow-secondary flex flex-col items-center">
     <div class="flex flex-col items-center">
       <GameButtons
         class="mt-12 mb-6"
@@ -107,5 +107,5 @@ watch(isFetchingProfile, () => {
       <ParticipatingGames />
       <PublicGames />
     </div>
-  </main>
+  </div>
 </template>
