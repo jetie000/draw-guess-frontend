@@ -30,8 +30,11 @@ export const DrawingApi = {
       .then(({ data }) => data),
   getWords: () => drawingApiInstance.get<WordWithType[]>('/drawing-word').then(({ data }) => data),
   addWord: (word: string, typeId: number) =>
-    drawingApiInstance.post<Word>('/drawing-word', { word, typeId }),
-  deleteWord: (wordId: number) => drawingApiInstance.delete<Word>(`/drawing-word/${wordId}`),
+    drawingApiInstance.post<Word>('/drawing-word', { word, typeId }).then(({ data }) => data),
+  deleteWord: (wordId: number) =>
+    drawingApiInstance.delete<Word>(`/drawing-word/${wordId}`).then(({ data }) => data),
   updateWord: (wordId: number, word: string, typeId: number) =>
-    drawingApiInstance.put<Word>(`/drawing-word/${wordId}`, { word, typeId })
+    drawingApiInstance
+      .put<Word>(`/drawing-word/${wordId}`, { word, typeId })
+      .then(({ data }) => data)
 };

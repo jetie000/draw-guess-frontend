@@ -81,7 +81,10 @@ const { mutate: changeWordType, isPending: isPendingChange } = useMutation({
     v-else
     class="flex flex-col grow gap-1 px-3"
   >
-    <Panel no-padding>
+    <Panel
+      v-if="data?.length"
+      no-padding
+    >
       <form
         @submit.prevent="() => addWordType()"
         class="flex"
