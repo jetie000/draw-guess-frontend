@@ -1,20 +1,54 @@
 <script setup lang="ts">
+import { UserApi } from '@/api/user/user.api';
 import duckIcon from '@/assets/duck-icon.svg';
+import { handleNetworkError } from '@/helpers/errors';
+import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
 import { useUserStore } from '@/stores/user/userStore';
+import { UserRoles } from '@/typings/enums/user';
 import { ArrowRightIcon } from '@heroicons/vue/16/solid';
 import { ArrowLeftStartOnRectangleIcon } from '@heroicons/vue/16/solid';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 import { storeToRefs } from 'pinia';
+import { watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const userStore = useUserStore();
 const { token } = storeToRefs(userStore);
 
+const queryClient = useQueryClient();
+
+const { isFetching, isError, data, error, refetch } = useQuery({
+  queryKey: ['profile'],
+  queryFn: UserApi.profile,
+  enabled: false
+});
+
 // TODO: move logout when profile page will be added
-const handleLogout = () => {
-  userStore.removeToken();
-  router.push('/login');
-};
+const { mutate: logout, isPending } = useMutation({
+  mutationFn: UserApi.logout,
+  onSuccess: () => {
+    userStore.removeToken();
+    router.push('/login');
+    queryClient.resetQueries({ queryKey: ['profile'] });
+    queryClient.clear();
+  },
+  onError: (logoutError) => {
+    handleNetworkError(logoutError);
+  }
+});
+
+watch(isFetching, () => {
+  if (isError.value) {
+    useErrorModalStore().showModal(error.value);
+  }
+});
+
+watch(token, () => {
+  if (token.value) {
+    refetch();
+  }
+});
 </script>
 
 <template>
@@ -35,9 +69,17 @@ const handleLogout = () => {
         Guess
       </h1>
       <button
+        v-if="data && data.role === UserRoles.Admin"
+        class="hover:bg-blue-dark hover:text-white transition-all ml-4 px-3 py-1 rounded-full"
+        @click="$router.push('/admin')"
+      >
+        Admin
+      </button>
+      <button
         v-if="token"
+        :disabled="isPending"
         class="flex items-center gap-1.5 ml-auto hover:bg-blue-dark hover:text-white transition-all px-3 py-1 rounded-full"
-        @click="handleLogout"
+        @click="() => logout()"
       >
         Log out <ArrowLeftStartOnRectangleIcon class="inline w-5 h-5" />
       </button>

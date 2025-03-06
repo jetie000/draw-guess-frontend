@@ -3,6 +3,7 @@ import type { LoginResponse, Profile } from './user.api.interface';
 
 export const UserApi = {
   refreshToken: () => userApiInstance.get('/refresh-token').then((res) => res.data),
+  logout: () => userApiInstance.post('/logout'),
   login: (email: string, password: string) =>
     userApiInstance.post<LoginResponse>('/login', { email, password }).then((res) => res.data),
   signUp: (email: string, username: string, password: string) =>

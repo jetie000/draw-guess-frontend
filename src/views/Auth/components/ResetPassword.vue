@@ -8,6 +8,7 @@ import { useMutation } from '@tanstack/vue-query';
 import { UserApi } from '@/api/user/user.api';
 import { handleNetworkError } from '@/helpers/errors';
 import ButtonMain from '@/components/Button/ButtonMain.vue';
+import InputMain from '@/components/Input/InputMain.vue';
 
 const email = ref('');
 const code = ref('');
@@ -65,14 +66,13 @@ const onSubmit = async () => {
         Email address
       </label>
       <div class="mt-1">
-        <input
+        <InputMain
           v-model.trim="email"
           name="email"
           type="email"
           autocomplete="email"
           required
           :disabled="isSuccessRequest"
-          class="block w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
         />
       </div>
     </div>
@@ -102,12 +102,11 @@ const onSubmit = async () => {
           New password
         </label>
         <div class="mt-1">
-          <input
+          <InputMain
             v-model.trim="password"
             name="password"
             type="password"
             required
-            class="block w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
           />
         </div>
       </div>

@@ -25,3 +25,18 @@ export interface Drawing {
   roundNumber: number;
   drawingParts: DrawingPart[];
 }
+
+export interface WordType {
+  id: number;
+  type: string;
+}
+
+export interface Word {
+  id: number;
+  word: string;
+  typeId: number;
+}
+
+export interface WordWithType extends Omit<Word, 'typeId'> {
+  type: WordType;
+}

@@ -7,6 +7,7 @@ import { useMutation } from '@tanstack/vue-query';
 import { UserApi } from '@/api/user/user.api';
 import { handleNetworkError } from '@/helpers/errors';
 import { AlertTypes } from '@/typings/enums/alert';
+import InputMain from '@/components/Input/InputMain.vue';
 
 const formData = ref({
   email: '',
@@ -56,14 +57,13 @@ const handleSignUp = async () => {
         Email address
       </label>
       <div class="mt-2">
-        <input
+        <InputMain
           v-model.trim="formData.email"
           id="email"
           name="email"
           type="email"
           autocomplete="email"
           required
-          class="w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
         />
       </div>
     </div>
@@ -75,13 +75,12 @@ const handleSignUp = async () => {
         Username
       </label>
       <div class="mt-2">
-        <input
+        <InputMain
           v-model.trim="formData.username"
           id="username"
           name="username"
           type="username"
           required
-          class="w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
         />
       </div>
     </div>
@@ -93,13 +92,12 @@ const handleSignUp = async () => {
         Password
       </label>
       <div class="mt-2">
-        <input
+        <InputMain
           v-model.trim="formData.password"
           id="password"
           name="password"
           type="password"
           required
-          class="w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
         />
       </div>
     </div>
@@ -111,13 +109,12 @@ const handleSignUp = async () => {
         Confirm password
       </label>
       <div class="mt-2">
-        <input
+        <InputMain
           v-model.trim="formData.confirmPassword"
           id="confirmPassword"
           name="confirmPassword"
           type="password"
           required
-          class="block w-full rounded-md border border-gray-main py-1.5 px-2 placeholder:text-gray-400 leading-4"
         />
       </div>
     </div>

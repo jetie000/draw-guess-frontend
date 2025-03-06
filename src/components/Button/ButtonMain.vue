@@ -13,7 +13,7 @@ withDefaults(
 );
 
 const themeClasses = {
-  primary: 'bg-blue-dark hover:bg-blue-light text-white',
+  primary: 'bg-blue-dark hover:bg-blue-light text-white border',
   secondary: 'bg-yellow-200 hover:bg-yellow-100 text-blue-dark border border-blue-dark',
   danger: 'bg-red-500 hover:bg-red-600 text-white border border-blue-dark'
 };

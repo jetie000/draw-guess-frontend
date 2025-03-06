@@ -7,6 +7,7 @@ import Spinner from '@/components/Spinner/Spinner.vue';
 import { useMutation } from '@tanstack/vue-query';
 import { GameApi } from '@/api/game/game.api';
 import { handleNetworkError } from '@/helpers/errors';
+import InputMain from '@/components/Input/InputMain.vue';
 
 defineProps<{
   isJoinModalOpen: boolean;
@@ -38,12 +39,11 @@ const { isPending, mutate } = useMutation({
     <h1>Enter game code</h1>
     <form @submit.prevent="mutate()">
       <div class="mt-2">
-        <input
+        <InputMain
           v-model.trim="gameCode"
           name="code"
           type="text"
           required
-          class="block w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
         />
       </div>
       <ButtonMain

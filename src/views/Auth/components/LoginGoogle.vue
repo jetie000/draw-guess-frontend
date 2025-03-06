@@ -3,7 +3,7 @@ import googleIcon from '@/assets/google.svg';
 import { useAlertStore } from '@/stores/alert/alertStore';
 import { useUserStore } from '@/stores/user/userStore';
 import { useRouter } from 'vue-router';
-import { useMutation } from '@tanstack/vue-query';
+import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { UserApi } from '@/api/user/user.api';
 import { googleTokenLogin } from 'vue3-google-login';
 import { handleNetworkError } from '@/helpers/errors';
@@ -12,6 +12,8 @@ const router = useRouter();
 const userStore = useUserStore();
 const alertStore = useAlertStore();
 
+const queryClient = useQueryClient();
+
 const { mutate } = useMutation({
   mutationFn: async () => {
     const { access_token } = await googleTokenLogin();
@@ -19,6 +21,7 @@ const { mutate } = useMutation({
   },
   onSuccess: ({ accessToken }) => {
     userStore.setToken(accessToken);
+    queryClient.resetQueries({ queryKey: ['profile'] });
     router.push('/');
     alertStore.showAlert('Successfully logged in');
   },

@@ -5,14 +5,17 @@ import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user/userStore';
 import Spinner from '@/components/Spinner/Spinner.vue';
 import ButtonMain from '@/components/Button/ButtonMain.vue';
-import { useMutation } from '@tanstack/vue-query';
+import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { UserApi } from '@/api/user/user.api';
 import { handleNetworkError } from '@/helpers/errors';
+import InputMain from '@/components/Input/InputMain.vue';
 
 const formData = ref({
   email: '',
   password: ''
 });
+
+const queryClient = useQueryClient();
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -22,6 +25,7 @@ const { isPending, mutate } = useMutation({
   mutationFn: () => UserApi.login(formData.value.email, formData.value.password),
   onSuccess: ({ accessToken }) => {
     userStore.setToken(accessToken);
+    queryClient.resetQueries({ queryKey: ['profile'] });
     router.push('/');
     alertStore.showAlert('Successfully logged in');
   },
@@ -44,13 +48,12 @@ const { isPending, mutate } = useMutation({
         Email address
       </label>
       <div class="mt-2">
-        <input
+        <InputMain
           v-model.trim="formData.email"
           name="email"
           type="email"
           autocomplete="email"
           required
-          class="w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
         />
       </div>
     </div>
@@ -72,12 +75,11 @@ const { isPending, mutate } = useMutation({
         </div>
       </div>
       <div class="mt-2">
-        <input
+        <InputMain
           v-model.trim="formData.password"
           name="password"
           type="password"
           required
-          class="w-full rounded-md py-1.5 px-2 border border-gray-main placeholder:text-gray-400 leading-4"
         />
       </div>
     </div>

@@ -27,6 +27,11 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('@/views/Game/GamePage.vue')
   },
   {
+    path: '/admin',
+    name: 'Admin',
+    component: () => import('@/views/Admin/AdminPage.vue')
+  },
+  {
     path: '/:pathMatch(.*)*',
     redirect: '/'
   }
