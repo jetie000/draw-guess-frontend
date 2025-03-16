@@ -38,19 +38,26 @@ const handleClick = () => {
 <template>
   <ButtonMain
     theme="secondary"
-    class="flex gap-3 justify-between items-center ps-2.5 font-normal"
+    class="flex flex-col gap-3 ps-2.5 font-normal"
     @click="handleClick"
     :disabled="isPending"
   >
-    <div :class="`font-bold p-2 rounded-md ${game.startDate ? 'bg-green-500' : 'bg-yellow-400'}`">
-      {{ game.startDate ? 'In process' : 'Waiting for start' }}
+    <div class="flex gap-3 justify-between items-center flex-wrap">
+      <div
+        :class="`font-bold p-2 rounded-md ${game.startDate ? 'bg-green-500' : 'bg-yellow-400'} max-sm:w-full`"
+      >
+        {{ game.startDate ? 'In process' : 'Waiting for start' }}
+      </div>
+      <span class="text-xl">#{{ game.id }}</span>
+      <UserCircleIcon class="w-6 h-6 -mr-2 ml-auto" />
+      <span>{{ game.players.length }}/{{ game.maxPlayers }}</span>
+      <ClockIcon class="w-6 h-6 -mr-2" />
+      <span> {{ game.roundDuration }}s </span>
+      <PencilSquareIcon class="w-6 h-6 -mr-2" />
+      <span>{{ game.drawingsPerPlayer }}</span>
     </div>
-    <span class="text-xl">#{{ game.id }}</span>
-    <UserCircleIcon class="w-6 h-6 -mr-2 ml-auto" />
-    <span>{{ game.players.length }}/{{ game.maxPlayers }}</span>
-    <ClockIcon class="w-6 h-6 -mr-2" />
-    <span> {{ game.roundDuration }}s </span>
-    <PencilSquareIcon class="w-6 h-6 -mr-2" />
-    <span>{{ game.drawingsPerPlayer }}</span>
+    <div class="flex w-full justify-end">
+      {{ game.wordTypes.map((t) => t.type).join(', ') }}
+    </div>
   </ButtonMain>
 </template>

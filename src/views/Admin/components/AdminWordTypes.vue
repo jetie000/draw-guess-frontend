@@ -8,10 +8,11 @@ import { handleNetworkError } from '@/helpers/errors';
 import { PencilSquareIcon } from '@heroicons/vue/20/solid';
 import { PlusIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import DeleteModal from './DeleteModal.vue';
 import ChangeWordTypeModal from './ChangeWordTypeModal.vue';
 import type { WordType } from '@/api/drawing/drawing.api.interface';
+import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
 
 const addingWordType = ref('');
 const changingWordType = ref<WordType | undefined>(undefined);
@@ -22,6 +23,12 @@ const queryClient = useQueryClient();
 const { data, isError, error, isLoading } = useQuery({
   queryKey: ['word-types'],
   queryFn: () => DrawingApi.getWordTypes()
+});
+
+watch(isLoading, () => {
+  if (isError.value) {
+    useErrorModalStore().showModal(error.value);
+  }
 });
 
 const { mutate: addWordType, isPending: isPendingAdd } = useMutation({

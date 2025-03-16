@@ -51,10 +51,3 @@ defineEmits(['close']);
     </Transition>
   </div>
 </template>
-
-<style scoped lang="scss">
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>

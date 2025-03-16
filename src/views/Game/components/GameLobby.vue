@@ -112,6 +112,10 @@ onUnmounted(() => {
           </div>
         </Panel>
       </div>
+      <Panel>
+        <span class="text-gray-secondary">Themes:</span>
+        {{ game.wordTypes.map((t) => t.type).join(', ') }}
+      </Panel>
       <ButtonMain
         v-if="user && game.creatorId === user.id && game.players.length > 1"
         size="lg"

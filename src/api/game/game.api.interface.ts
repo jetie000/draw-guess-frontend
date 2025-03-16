@@ -1,4 +1,5 @@
 import type { Player } from '@/typings/interfaces/player.interface';
+import type { WordType } from '../drawing/drawing.api.interface';
 
 export interface Game {
   id: number;
@@ -12,4 +13,5 @@ export interface Game {
   startDate: string | null;
   endDate: string | null;
   players: Player[];
+  wordTypes: WordType[];
 }

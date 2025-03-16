@@ -48,14 +48,15 @@ watch(isLoadingWordTypes, () => {
 });
 
 const { mutate: addWord, isPending: isPendingAdd } = useMutation({
-  mutationFn: () => DrawingApi.addWord(addingWord.value.word, addingWord.value.typeId),
+  mutationFn: ({ word, wordTypeId }: { word: string; wordTypeId: number }) =>
+    DrawingApi.addWord(word, wordTypeId),
   onSuccess: (word) => {
     addingWord.value = { typeId: -1, word: '' };
     queryClient.setQueryData(
       ['words'],
       [
         ...(data.value || []),
-        { ...word, type: wordTypes.value?.find((wt) => wt.id === word.typeId)?.type }
+        { ...word, type: wordTypes.value?.find((wt) => wt.id === word.typeId) }
       ]
     );
   },
@@ -63,6 +64,13 @@ const { mutate: addWord, isPending: isPendingAdd } = useMutation({
     handleNetworkError(error);
   }
 });
+
+const handleAddWord = () => {
+  const words = addingWord.value.word.split(',').map((word) => word.trim());
+  words.forEach((word) => {
+    addWord({ word, wordTypeId: addingWord.value.typeId });
+  });
+};
 
 const { mutate: deleteWord, isPending: isPendingDelete } = useMutation({
   mutationFn: () => DrawingApi.deleteWord(deletingWordId.value || -1),
@@ -117,7 +125,7 @@ const { mutate: changeWord, isPending: isPendingChange } = useMutation({
   >
     <Panel no-padding>
       <form
-        @submit.prevent="() => addWord()"
+        @submit.prevent="() => handleAddWord()"
         class="flex"
       >
         <input

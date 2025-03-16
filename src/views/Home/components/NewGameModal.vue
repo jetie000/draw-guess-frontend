@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import Modal from '@/components/Modal/Modal.vue';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import ButtonMain from '@/components/Button/ButtonMain.vue';
 import { useAlertStore } from '@/stores/alert/alertStore';
 import { AlertTypes } from '@/typings/enums/alert';
 import { useRouter } from 'vue-router';
 import Spinner from '@/components/Spinner/Spinner.vue';
-import { useMutation } from '@tanstack/vue-query';
+import { useMutation, useQuery } from '@tanstack/vue-query';
 import { GameApi } from '@/api/game/game.api';
 import { handleNetworkError } from '@/helpers/errors';
+import { DrawingApi } from '@/api/drawing/drawing.api';
+import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
+import Dropdown from '@/components/Dropdown/Dropdown.vue';
+import { ChevronDownIcon } from '@heroicons/vue/24/outline';
 
 defineProps<{
   isNewModalOpen: boolean;
@@ -22,6 +26,18 @@ const players = ref(2);
 const roundDuration = ref(30);
 const drawingsPerPlayer = ref(1);
 const isPrivate = ref(true);
+const wordTypeIds = ref<number[]>([]);
+
+const { data, isError, error, isLoading } = useQuery({
+  queryKey: ['word-types'],
+  queryFn: () => DrawingApi.getWordTypes()
+});
+
+watch(isLoading, () => {
+  if (isError.value) {
+    useErrorModalStore().showModal(error.value);
+  }
+});
 
 const { isPending, mutate } = useMutation({
   mutationFn: () =>
@@ -29,7 +45,8 @@ const { isPending, mutate } = useMutation({
       players.value,
       roundDuration.value,
       drawingsPerPlayer.value,
-      isPrivate.value
+      isPrivate.value,
+      wordTypeIds.value
     ),
   onSuccess: (data) => {
     router.push({ name: 'Game', params: { id: data } });
@@ -38,6 +55,10 @@ const { isPending, mutate } = useMutation({
     handleNetworkError(error);
   }
 });
+
+const wordTypesLabel = computed(() =>
+  wordTypeIds.value.map((id) => data.value?.find((wt) => wt.id === id)?.type).join(', ')
+);
 
 watch([players, drawingsPerPlayer], () => {
   if (players.value * drawingsPerPlayer.value > 12) {
@@ -91,6 +112,40 @@ watch([players, drawingsPerPlayer], () => {
           </div>
         </div>
       </div>
+      <Dropdown class="col-end-3 mb-1 col-start-1">
+        <template #trigger>
+          <div
+            class="w-full bg-blue-light rounded-lg text-white p-2.5 px-4 cursor-pointer flex items-center justify-between"
+          >
+            {{ wordTypeIds.length === 0 ? 'Choose word types' : wordTypesLabel }}
+            <ChevronDownIcon class="w-5 h-5" />
+          </div>
+        </template>
+        <div class="flex bg-white border rounded-md py-2 flex-col">
+          <label
+            v-for="wordType in data"
+            :key="wordType.id"
+            :value="wordType.id"
+            :for="`word-type-${wordType.id}`"
+            class="cursor-pointer hover:bg-blue-100 px-4"
+          >
+            <div class="flex items-center justify-between gap-4 py-1">
+              <span>{{ wordType.type }}</span>
+              <input
+                :id="`word-type-${wordType.id}`"
+                class="w-4 h-4 bg-white border-gray-main cursor-pointer"
+                type="checkbox"
+                :checked="wordTypeIds.includes(wordType.id)"
+                @input="
+                  wordTypeIds.includes(wordType.id)
+                    ? wordTypeIds.splice(wordTypeIds.indexOf(wordType.id), 1)
+                    : wordTypeIds.push(wordType.id)
+                "
+              />
+            </div>
+          </label>
+        </div>
+      </Dropdown>
       <label
         for="players-range"
         class="text-md flex justify-between items-center gap-3"
@@ -138,6 +193,7 @@ watch([players, drawingsPerPlayer], () => {
     <ButtonMain
       class="w-full mt-5"
       @click="mutate()"
+      :disabled="wordTypeIds.length === 0"
     >
       <Spinner v-if="isPending" />
       <span v-else>Create game</span>

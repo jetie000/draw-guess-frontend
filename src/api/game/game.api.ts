@@ -6,14 +6,16 @@ export const GameApi = {
     maxPlayers: number,
     roundDuration: number,
     drawingsPerPlayer: number,
-    isPrivate: boolean
+    isPrivate: boolean,
+    wordTypeIds: number[]
   ) =>
     gameApiInstance
       .post<number>('/', {
         maxPlayers: Number(maxPlayers),
         roundDuration: Number(roundDuration),
         drawingsPerPlayer: Number(drawingsPerPlayer),
-        isPrivate
+        isPrivate,
+        wordTypeIds
       })
       .then((res) => res.data),
   joinGame: (code: string) =>
