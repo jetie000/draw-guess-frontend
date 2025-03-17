@@ -42,7 +42,7 @@ const handleClick = () => {
     @click="handleClick"
     :disabled="isPending"
   >
-    <div class="flex gap-3 justify-between items-center flex-wrap">
+    <div class="flex gap-3 justify-between items-center flex-wrap w-full">
       <div
         :class="`font-bold p-2 rounded-md ${game.startDate ? 'bg-green-500' : 'bg-yellow-400'} max-sm:w-full`"
       >

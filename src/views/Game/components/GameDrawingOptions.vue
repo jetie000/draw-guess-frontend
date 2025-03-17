@@ -31,7 +31,7 @@ const handleChangeStrokeWidth = (width: number) => {
     <div class="grid grid-cols-5 gap-3 justify-items-center">
       <div
         v-for="colorValue in colors"
-        class="w-7 h-7 rounded-full border border-blue-dark cursor-pointer relative"
+        class="w-7 h-7 rounded-full border border-blue-dark cursor-pointer flex items-center justify-center"
         :style="{
           backgroundColor: colorValue
         }"
@@ -40,7 +40,7 @@ const handleChangeStrokeWidth = (width: number) => {
       >
         <img
           v-if="colorValue === color"
-          class="w-4 h-4 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+          class="w-4 h-4"
           src="@/assets/duck-icon.svg"
           alt="Duck"
         />

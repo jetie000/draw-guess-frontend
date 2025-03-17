@@ -55,7 +55,7 @@ watch(token, () => {
   <header
     class="text-blue-dark bg-white p-2 h-12 flex justify-center sticky top-0 border-b border-blue-dark"
   >
-    <div class="container flex justify-center items-center flex-grow px-4">
+    <div class="container flex justify-center items-center flex-grow px-4 max-xsm:px-2">
       <h1
         class="cursor-pointer"
         @click="$router.push('/')"

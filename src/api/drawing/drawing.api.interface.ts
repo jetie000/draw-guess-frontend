@@ -3,13 +3,11 @@ export interface AddDrawingRequest {
   posY: number[];
   color: string;
   lineWidth: number;
-  roundNumber: number;
   gameId: number;
-  gamePlayerId: number;
-  drawingId?: number;
+  drawingId: number;
 }
 
-interface DrawingPart {
+export interface DrawingPart {
   id: number;
   posX: number[];
   posY: number[];
@@ -24,6 +22,7 @@ export interface Drawing {
   gameId: number;
   roundNumber: number;
   drawingParts: DrawingPart[];
+  word?: Word;
 }
 
 export interface WordType {

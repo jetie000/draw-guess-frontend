@@ -63,7 +63,8 @@ onMounted(() => {
   socket.on('gameStarted', (startDate: string) => {
     queryClient.setQueryData(['game', String(props.game.id)], {
       ...props.game,
-      startDate
+      startDate,
+      currentRound: 1
     });
   });
 });
