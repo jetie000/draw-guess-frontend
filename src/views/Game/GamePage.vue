@@ -68,5 +68,6 @@ watch(isFetching, () => {
       :game="data"
       :user="user"
     />
+    <span v-else>Game ended: {{ data.endDate }}</span>
   </template>
 </template>

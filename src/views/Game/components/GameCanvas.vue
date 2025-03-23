@@ -21,7 +21,9 @@ const props = defineProps<{
   user: Profile;
   drawingData: UseQueryReturnType<Drawing | undefined, Error>;
   currentPlayerIndex: number;
+  isBreak: boolean;
 }>();
+
 const emit = defineEmits<{
   addPart: [part: DrawingPart];
 }>();
@@ -76,6 +78,11 @@ watch(props.drawingData.isFetching, () => {
     useErrorModalStore().showModal(props.drawingData.error.value);
   }
   if (props.drawingData.data.value && scope.value) {
+    new scope.value.Rectangle({
+      point: [0, 0],
+      size: [800, 800],
+      fillColor: '#fff'
+    });
     props.drawingData.data.value.drawingParts.forEach((part) => {
       drawPart(part);
     });
@@ -101,7 +108,7 @@ const isCanvasDisabled = computed(
 );
 
 const handleMouseDown = () => {
-  if (!scope.value || isCanvasDisabled.value) {
+  if (!scope.value || isCanvasDisabled.value || props.isBreak) {
     return;
   }
   tool.value = new scope.value.Tool();
@@ -145,6 +152,7 @@ const handleMouseDown = () => {
     }
 
     path.value = undefined;
+    tool.value?.remove();
   };
 };
 </script>
@@ -159,7 +167,7 @@ const handleMouseDown = () => {
       ref="canvasRef"
       resize="true"
       class="rounded-lg aspect-square w-full h-full"
-      :class="{ 'cursor-crosshair': !isCanvasDisabled }"
+      :class="{ 'cursor-crosshair': !isCanvasDisabled && !isBreak }"
       :style="{ backgroundColor: 'white' }"
       @mousedown="handleMouseDown"
       @touchstart="handleMouseDown"

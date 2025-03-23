@@ -3,13 +3,16 @@ import type { Game } from '@/api/game/game.api.interface';
 import type { Profile } from '@/api/user/user.api.interface';
 import Panel from '@/components/Panel/Panel.vue';
 import GameCanvas from './GameCanvas.vue';
-import { computed, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import paper from 'paper';
 import GamePlayInfo from './GamePlayInfo.vue';
 import GameDrawingOptions from './GameDrawingOptions.vue';
-import { dataTagErrorSymbol, useQuery, useQueryClient } from '@tanstack/vue-query';
+import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import { DrawingApi } from '@/api/drawing/drawing.api';
 import type { DrawingPart } from '@/api/drawing/drawing.api.interface';
+import { breakSecondsNumber } from '@/typings/enums/game';
+import { formatSeconds } from '@/helpers/datetime';
+import { socket } from '@/helpers/socket';
 
 const props = defineProps<{ game: Game; user: Profile }>();
 
@@ -21,6 +24,39 @@ const queryData = useQuery({
 });
 
 const path = ref<paper.Path>();
+
+const remainingTime = ref(props.game.roundDuration);
+
+onMounted(() => {
+  socket.on('timePassed', (time: number) => {
+    const round = Math.floor(time / (props.game.roundDuration + breakSecondsNumber)) + 1;
+    if (round !== props.game.currentRound) {
+      queryClient.setQueryData(['game', String(props.game.id)], {
+        ...props.game,
+        currentRound: round
+      });
+    }
+    if (time % (props.game.roundDuration + breakSecondsNumber) === 0) {
+      queryClient.invalidateQueries({ queryKey: ['drawing', props.game.id] });
+    }
+    remainingTime.value =
+      props.game.roundDuration - (time % (props.game.roundDuration + breakSecondsNumber));
+  });
+
+  socket.on('gameEnded', ({ endDate }: { endDate: string }) => {
+    queryClient.setQueryData(['game', String(props.game.id)], {
+      ...props.game,
+      endDate
+    });
+    queryClient.invalidateQueries({ queryKey: ['public-games'] });
+    queryClient.invalidateQueries({ queryKey: ['participating-games'] });
+  });
+});
+
+onUnmounted(() => {
+  socket.off('timePassed');
+  socket.off('gameEnded');
+});
 
 const currentPlayerIndex = computed(() =>
   props.game.currentRound % props.game.players.length === 0
@@ -47,12 +83,19 @@ const handleAddPart = (part: DrawingPart) => {
       :user="user"
       :drawing-data="queryData"
       :current-player-index="currentPlayerIndex"
+      :is-break="remainingTime <= 0"
       @add-part="handleAddPart"
     />
     <div
       class="flex gap-3 flex-col max-lg:justify-between max-lg:grid max-lg:grid-cols-2 max-sm:flex max-sm:flex-col max-sm:gap-1"
     >
       <GamePlayInfo :game="game" />
+      <Panel>
+        <div class="text-lg font-bold text-center">Round {{ game.currentRound }}</div>
+        <div class="text-2xl text-center mt-2">
+          {{ formatSeconds(remainingTime >= 0 ? remainingTime : 0) }}
+        </div>
+      </Panel>
       <template v-if="user.id === game.players[currentPlayerIndex].user.id">
         <Panel class="flex flex-col gap-3 max-xsm:w-full text-center">
           <span class="text-gray-secondary">Your word</span>
