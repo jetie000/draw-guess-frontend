@@ -1,7 +1,10 @@
 import { drawingApiInstance } from '..';
 import type {
   AddDrawingRequest,
+  AddWordResponse,
   Drawing,
+  DrawingMessage,
+  DrawingMessagesResponse,
   Word,
   WordType,
   WordWithType
@@ -36,5 +39,13 @@ export const DrawingApi = {
   updateWord: (wordId: number, word: string, typeId: number) =>
     drawingApiInstance
       .put<Word>(`/drawing-word/${wordId}`, { word, typeId })
+      .then(({ data }) => data),
+  addDrawingMessage: (drawingId: number, message: string) =>
+    drawingApiInstance
+      .post<AddWordResponse>('/drawing-message', { drawingId, message })
+      .then(({ data }) => data),
+  getDrawingMessages: (drawingId: number) =>
+    drawingApiInstance
+      .get<DrawingMessagesResponse>(`/drawing-message/drawing/${drawingId}`)
       .then(({ data }) => data)
 };

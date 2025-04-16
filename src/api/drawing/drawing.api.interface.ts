@@ -36,6 +36,25 @@ export interface Word {
   typeId: number;
 }
 
+export interface DrawingMessage {
+  id: number;
+  gamePlayerId: number;
+  drawingId: number;
+  sendDate: Date;
+  message: string;
+}
+
+export interface DrawingMessagesResponse {
+  isGuessed: boolean;
+  messages: DrawingMessage[];
+}
+
+export interface AddWordResponse {
+  isGuessed: boolean;
+  updatedPoints: number | null;
+  message: DrawingMessage;
+}
+
 export interface WordWithType extends Omit<Word, 'typeId'> {
   type: WordType;
 }

@@ -3,7 +3,7 @@ import type { Game } from '@/api/game/game.api.interface';
 import type { Profile } from '@/api/user/user.api.interface';
 import Panel from '@/components/Panel/Panel.vue';
 import GameCanvas from './GameCanvas.vue';
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import paper from 'paper';
 import GamePlayInfo from './GamePlayInfo.vue';
 import GameDrawingOptions from './GameDrawingOptions.vue';
@@ -13,6 +13,9 @@ import type { DrawingPart } from '@/api/drawing/drawing.api.interface';
 import { breakSecondsNumber } from '@/typings/enums/game';
 import { formatSeconds } from '@/helpers/datetime';
 import { socket } from '@/helpers/socket';
+import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
+import GameDrawingMessages from './GameDrawingMessages.vue';
+import type { Player } from '@/typings/interfaces/player.interface';
 
 const props = defineProps<{ game: Game; user: Profile }>();
 
@@ -21,6 +24,12 @@ const queryClient = useQueryClient();
 const queryData = useQuery({
   queryKey: ['drawing', props.game.id],
   queryFn: () => DrawingApi.getCurrentGameDrawing(props.game.id)
+});
+
+watch(queryData.isFetching, () => {
+  if (queryData.isError.value) {
+    useErrorModalStore().showModal(queryData.error.value);
+  }
 });
 
 const path = ref<paper.Path>();
@@ -43,6 +52,13 @@ onMounted(() => {
       props.game.roundDuration - (time % (props.game.roundDuration + breakSecondsNumber));
   });
 
+  socket.on('updatedPlayers', (players: Player[]) => {
+    queryClient.setQueryData(['game', String(props.game.id)], {
+      ...props.game,
+      players
+    });
+  });
+
   socket.on('gameEnded', ({ endDate }: { endDate: string }) => {
     queryClient.setQueryData(['game', String(props.game.id)], {
       ...props.game,
@@ -55,6 +71,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   socket.off('timePassed');
+  socket.off('updatedPlayers');
   socket.off('gameEnded');
 });
 
@@ -102,6 +119,12 @@ const handleAddPart = (part: DrawingPart) => {
           <span class="font-bold text-xl">{{ queryData.data?.value?.word?.word || '-' }}</span>
         </Panel>
         <GameDrawingOptions :path="path" />
+      </template>
+      <template v-if="user.id !== game.players[currentPlayerIndex].user.id">
+        <GameDrawingMessages
+          :query-data="queryData"
+          :game="game"
+        />
       </template>
     </div>
   </div>
