@@ -16,6 +16,8 @@ import { useRouter } from 'vue-router';
 import { GameApi } from '@/api/game/game.api';
 import { handleNetworkError } from '@/helpers/errors';
 import Spinner from '@/components/Spinner/Spinner.vue';
+import { QueryKeys } from '@/api/query-keys';
+import { SocketEventKeys } from '@/helpers/socket/event-keys';
 
 const props = defineProps<{ game: Game; user: Profile }>();
 
@@ -37,31 +39,31 @@ const handleCopyCode = async () => {
 };
 
 onMounted(() => {
-  socket.on('joinedGame', (player: Player) => {
+  socket.on(SocketEventKeys.JoinedGame, (player: Player) => {
     if (!props.game.players.find((p) => p.user.id === player.user.id)) {
-      queryClient.setQueryData(['game', String(props.game.id)], {
+      queryClient.setQueryData([QueryKeys.Game, String(props.game.id)], {
         ...props.game,
         players: [...props.game.players, player]
       });
     }
   });
 
-  socket.on('leftGame', (userId) => {
+  socket.on(SocketEventKeys.LeftGame, (userId) => {
     if (props.game) {
-      queryClient.setQueryData(['game', String(props.game.id)], {
+      queryClient.setQueryData([QueryKeys.Game, String(props.game.id)], {
         ...props.game,
         players: props.game.players.filter((p) => p.user.id !== userId)
       });
     }
   });
 
-  socket.on('deletedGame', () => {
+  socket.on(SocketEventKeys.DeletedGame, () => {
     router.push({ name: 'Home' });
     useAlertStore().showAlert('Game has been deleted', AlertTypes.Warning);
   });
 
-  socket.on('gameStarted', (startDate: string) => {
-    queryClient.setQueryData(['game', String(props.game.id)], {
+  socket.on(SocketEventKeys.GameStarted, (startDate: string) => {
+    queryClient.setQueryData([QueryKeys.Game, String(props.game.id)], {
       ...props.game,
       startDate,
       currentRound: 1
@@ -70,10 +72,10 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  socket.off('joinedGame');
-  socket.off('leftGame');
-  socket.off('deletedGame');
-  socket.off('gameStarted');
+  socket.off(SocketEventKeys.JoinedGame);
+  socket.off(SocketEventKeys.LeftGame);
+  socket.off(SocketEventKeys.DeletedGame);
+  socket.off(SocketEventKeys.GameStarted);
 });
 </script>
 

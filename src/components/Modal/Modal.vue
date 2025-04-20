@@ -28,7 +28,7 @@ defineEmits(['close']);
         @click="backdropDismiss && $emit('close')"
       >
         <div
-          class="flex flex-col bg-white border border-blue-dark rounded-xl shadow-lg text-left max-xsm:min-w-[calc(100%-1rem)] lg:max-w-lg sm:max-w-md mx-4 max-xsm:mx-2"
+          class="flex flex-col bg-white border border-blue-dark rounded-xl shadow-lg text-left max-xsm:min-w-[calc(100%-1rem)] lg:max-w-lg sm:max-w-md mx-4 max-xsm:mx-2 max-h-[calc(100%-2rem)]"
           :class="`modal-${size}`"
           @click.stop
         >
@@ -43,7 +43,7 @@ defineEmits(['close']);
             </button>
           </div>
           <hr />
-          <div class="p-3 px-4">
+          <div class="p-3 px-4 overflow-y-auto">
             <slot />
           </div>
         </div>

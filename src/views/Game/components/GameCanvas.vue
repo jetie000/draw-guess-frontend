@@ -14,6 +14,9 @@ import debounce from 'lodash.debounce';
 import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
 import { defaultStrokeCapStyle, defaultStrokeJoinStyle } from '@/helpers/constants';
 import { socket } from '@/helpers/socket';
+import { drawingCanvasSize } from '@/typings/enums/game';
+import { SocketEventKeys } from '@/helpers/socket/event-keys';
+import { SocketEmitKeys } from '@/helpers/socket/emit-keys';
 
 const path = defineModel<paper.Path>('path');
 const props = defineProps<{
@@ -48,9 +51,9 @@ const setCanvasSize = () => {
   if (!canvasRef.value) {
     return;
   }
-  canvasScale.value = Number(canvasRef.value.width) / window.devicePixelRatio / 800;
-  canvasRef.value.width = 800;
-  canvasRef.value.height = 800;
+  canvasScale.value = Number(canvasRef.value.width) / window.devicePixelRatio / drawingCanvasSize;
+  canvasRef.value.width = drawingCanvasSize;
+  canvasRef.value.height = drawingCanvasSize;
 };
 
 const debouncedSetCanvasSize = debounce(setCanvasSize, 500);
@@ -60,7 +63,7 @@ onMounted(() => {
   scope.value.setup(canvasId);
   setCanvasSize();
 
-  socket.on('drewPart', (part: DrawingPart) => {
+  socket.on(SocketEventKeys.DrewPart, (part: DrawingPart) => {
     drawPart(part);
     emit('addPart', part);
   });
@@ -70,7 +73,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('resize', debouncedSetCanvasSize);
-  socket.off('drewPart');
+  socket.off(SocketEventKeys.DrewPart);
 });
 
 watch(props.drawingData.isFetching, () => {
@@ -78,10 +81,10 @@ watch(props.drawingData.isFetching, () => {
     useErrorModalStore().showModal(props.drawingData.error.value);
   }
   if (props.drawingData.data.value && scope.value) {
-    new scope.value.Rectangle({
+    new scope.value.Path.Rectangle({
       point: [0, 0],
-      size: [800, 800],
-      fillColor: '#fff'
+      size: [drawingCanvasSize, drawingCanvasSize],
+      fillColor: '#ffffff'
     });
     props.drawingData.data.value.drawingParts.forEach((part) => {
       drawPart(part);
@@ -90,13 +93,14 @@ watch(props.drawingData.isFetching, () => {
 });
 
 const drawPart = (part: DrawingPart) => {
-  const newPath = new scope.value!.Path({
+  const newPath = new paper.Path({
     strokeJoin: defaultStrokeJoinStyle,
     strokeCap: defaultStrokeCapStyle,
     strokeColor: part.color,
     strokeWidth: part.lineWidth
   });
   newPath.add(...part.posX.map((x, i) => ({ x, y: part.posY[i] }) as paper.PointLike));
+  scope.value!.project.activeLayer.addChild(newPath);
 };
 
 const isCanvasDisabled = computed(
@@ -148,7 +152,7 @@ const handleMouseDown = () => {
       };
       mutate(drawing);
 
-      socket.emit('drewPart', { drawing, room: props.game.id });
+      socket.emit(SocketEmitKeys.DrewPart, { drawing, room: props.game.id });
     }
 
     path.value = undefined;

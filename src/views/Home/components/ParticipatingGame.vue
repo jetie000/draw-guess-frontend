@@ -5,9 +5,10 @@ import { useQuery } from '@tanstack/vue-query';
 import { watch } from 'vue';
 import Spinner from '@/components/Spinner/Spinner.vue';
 import GameCard from './GameCard.vue';
+import { QueryKeys } from '@/api/query-keys';
 
 const { isFetching, isSuccess, isError, data, error } = useQuery({
-  queryKey: ['participating-games'],
+  queryKey: [QueryKeys.ParticipatingGames],
   queryFn: () => GameApi.getParticipatingGames()
 });
 

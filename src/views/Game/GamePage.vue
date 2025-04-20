@@ -9,6 +9,9 @@ import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
 import { socket } from '@/helpers/socket';
 import { UserApi } from '@/api/user/user.api';
 import GamePlay from './components/GamePlay.vue';
+import GameResults from './components/GameResults.vue';
+import { QueryKeys } from '@/api/query-keys';
+import { SocketEmitKeys } from '@/helpers/socket/emit-keys';
 
 const route = useRoute();
 
@@ -20,7 +23,7 @@ const {
   error: errorProfile,
   refetch: refetchProfile
 } = useQuery({
-  queryKey: ['profile'],
+  queryKey: [QueryKeys.Profile],
   queryFn: UserApi.profile,
   enabled: false
 });
@@ -31,9 +34,9 @@ watch(isFetchingProfile, () => {
   }
   if (data.value && user.value) {
     if (!data.value.isPrivate) {
-      socket.emit('joinGamePublic', { game: data.value });
+      socket.emit(SocketEmitKeys.JoinGamePublic, { game: data.value });
     }
-    socket.emit('joinGame', {
+    socket.emit(SocketEmitKeys.JoinGame, {
       room: data.value.id,
       player: data.value.players.find((p) => p.user.id === user.value.id)
     });
@@ -41,7 +44,7 @@ watch(isFetchingProfile, () => {
 });
 
 const { isFetching, isSuccess, isError, data, error } = useQuery({
-  queryKey: ['game', route.params.id],
+  queryKey: [QueryKeys.Game, route.params.id],
   queryFn: () => GameApi.getGame(Number(route.params.id))
 });
 
@@ -68,6 +71,10 @@ watch(isFetching, () => {
       :game="data"
       :user="user"
     />
-    <span v-else>Game ended: {{ data.endDate }}</span>
+    <GameResults
+      v-else
+      :game="data"
+      :user="user"
+    />
   </template>
 </template>

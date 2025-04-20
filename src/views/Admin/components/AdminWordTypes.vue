@@ -13,6 +13,7 @@ import DeleteModal from './DeleteModal.vue';
 import ChangeWordTypeModal from './ChangeWordTypeModal.vue';
 import type { WordType } from '@/api/drawing/drawing.api.interface';
 import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
+import { QueryKeys } from '@/api/query-keys';
 
 const addingWordType = ref('');
 const changingWordType = ref<WordType | undefined>(undefined);
@@ -21,7 +22,7 @@ const deletingWordTypeId = ref<number | undefined>(undefined);
 const queryClient = useQueryClient();
 
 const { data, isError, error, isLoading } = useQuery({
-  queryKey: ['word-types'],
+  queryKey: [QueryKeys.WordTypes],
   queryFn: () => DrawingApi.getWordTypes()
 });
 
@@ -35,7 +36,7 @@ const { mutate: addWordType, isPending: isPendingAdd } = useMutation({
   mutationFn: () => DrawingApi.addWordType(addingWordType.value),
   onSuccess: (wordType) => {
     addingWordType.value = '';
-    queryClient.setQueryData(['word-types'], [...(data.value || []), wordType]);
+    queryClient.setQueryData([QueryKeys.WordTypes], [...(data.value || []), wordType]);
   },
   onError: (error) => {
     handleNetworkError(error);
@@ -46,7 +47,7 @@ const { mutate: deleteWordType, isPending: isPendingDelete } = useMutation({
   mutationFn: () => DrawingApi.deleteWordType(deletingWordTypeId.value || -1),
   onSuccess: (wordType) => {
     queryClient.setQueryData(
-      ['word-types'],
+      [QueryKeys.WordTypes],
       data.value?.filter((wt) => wt.id !== wordType.id) || []
     );
     deletingWordTypeId.value = undefined;
@@ -65,7 +66,7 @@ const { mutate: changeWordType, isPending: isPendingChange } = useMutation({
       return;
     }
     queryClient.setQueryData(
-      ['word-types'],
+      [QueryKeys.WordTypes],
       data.value?.map((wt) => (wt.id !== wordType.id ? wt : wordType)) || []
     );
     changingWordType.value = undefined;

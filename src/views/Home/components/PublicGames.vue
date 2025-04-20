@@ -2,20 +2,22 @@
 import { GameApi } from '@/api/game/game.api';
 import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
-import { onMounted, watch } from 'vue';
+import { onMounted, onUnmounted, watch } from 'vue';
 import GameCard from './GameCard.vue';
 import { socket } from '@/helpers/socket';
 import type { Game } from '@/api/game/game.api.interface';
+import { QueryKeys } from '@/api/query-keys';
+import { SocketEventKeys } from '@/helpers/socket/event-keys';
 
 const queryClient = useQueryClient();
 
 const { isFetching, isSuccess, isError, data, error } = useQuery({
-  queryKey: ['public-games'],
+  queryKey: [QueryKeys.PublicGames],
   queryFn: () => GameApi.getPublicGames()
 });
 
 const { data: participatingGames } = useQuery({
-  queryKey: ['participating-games'],
+  queryKey: [QueryKeys.ParticipatingGames],
   queryFn: () => GameApi.getParticipatingGames()
 });
 
@@ -26,29 +28,29 @@ watch(isFetching, () => {
 });
 
 onMounted(() => {
-  socket.on('joinedGamePublic', (game: Game) => {
+  socket.on(SocketEventKeys.JoinedGamePublic, (game: Game) => {
     if (!data.value) {
       return;
     }
     const index = data.value.findIndex((pGame) => pGame.id === game.id);
     if (index === -1) {
-      queryClient.setQueryData(['public-games'], [game, ...data.value]);
+      queryClient.setQueryData([QueryKeys.PublicGames], [game, ...data.value]);
       return;
     }
     queryClient.setQueryData(
-      ['public-games'],
+      [QueryKeys.PublicGames],
       [...data.value.slice(0, index), game, ...data.value.slice(index + 1)]
     );
   });
 
-  socket.on('leftGamePublic', ({ room, userId }) => {
+  socket.on(SocketEventKeys.LeftGamePublic, ({ room, userId }) => {
     if (!data.value) {
       return;
     }
     const index = data.value.findIndex((pGame) => pGame.id === room);
     if (index === -1) {
       queryClient.setQueryData(
-        ['public-games'],
+        [QueryKeys.PublicGames],
         [
           ...data.value.slice(0, index),
           {
@@ -61,15 +63,21 @@ onMounted(() => {
     }
   });
 
-  socket.on('deletedGamePublic', (room) => {
+  socket.on(SocketEventKeys.DeletedGamePublic, (room) => {
     if (!data.value) {
       return;
     }
     queryClient.setQueryData(
-      ['public-games'],
+      [QueryKeys.PublicGames],
       data.value.filter((pGame) => pGame.id !== room)
     );
   });
+});
+
+onUnmounted(() => {
+  socket.off(SocketEventKeys.JoinedGamePublic);
+  socket.off(SocketEventKeys.LeftGamePublic);
+  socket.off(SocketEventKeys.DeletedGamePublic);
 });
 </script>
 

@@ -9,6 +9,7 @@ import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { UserApi } from '@/api/user/user.api';
 import { handleNetworkError } from '@/helpers/errors';
 import InputMain from '@/components/Input/InputMain.vue';
+import { QueryKeys } from '@/api/query-keys';
 
 const formData = ref({
   email: '',
@@ -25,7 +26,7 @@ const { isPending, mutate } = useMutation({
   mutationFn: () => UserApi.login(formData.value.email, formData.value.password),
   onSuccess: ({ accessToken }) => {
     userStore.setToken(accessToken);
-    queryClient.resetQueries({ queryKey: ['profile'] });
+    queryClient.resetQueries({ queryKey: [QueryKeys.Profile] });
     router.push('/');
     alertStore.showAlert('Successfully logged in');
   },

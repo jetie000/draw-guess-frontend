@@ -16,13 +16,16 @@ import { socket } from '@/helpers/socket';
 import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
 import GameDrawingMessages from './GameDrawingMessages.vue';
 import type { Player } from '@/typings/interfaces/player.interface';
+import GameScoreModal from './GameScoreModal.vue';
+import { QueryKeys } from '@/api/query-keys';
+import { SocketEventKeys } from '@/helpers/socket/event-keys';
 
 const props = defineProps<{ game: Game; user: Profile }>();
 
 const queryClient = useQueryClient();
 
 const queryData = useQuery({
-  queryKey: ['drawing', props.game.id],
+  queryKey: [QueryKeys.Drawing, props.game.id],
   queryFn: () => DrawingApi.getCurrentGameDrawing(props.game.id)
 });
 
@@ -37,42 +40,42 @@ const path = ref<paper.Path>();
 const remainingTime = ref(props.game.roundDuration);
 
 onMounted(() => {
-  socket.on('timePassed', (time: number) => {
+  socket.on(SocketEventKeys.TimePassed, (time: number) => {
     const round = Math.floor(time / (props.game.roundDuration + breakSecondsNumber)) + 1;
     if (round !== props.game.currentRound) {
-      queryClient.setQueryData(['game', String(props.game.id)], {
+      queryClient.setQueryData([QueryKeys.Game, String(props.game.id)], {
         ...props.game,
         currentRound: round
       });
     }
     if (time % (props.game.roundDuration + breakSecondsNumber) === 0) {
-      queryClient.invalidateQueries({ queryKey: ['drawing', props.game.id] });
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.Drawing, props.game.id] });
     }
     remainingTime.value =
       props.game.roundDuration - (time % (props.game.roundDuration + breakSecondsNumber));
   });
 
-  socket.on('updatedPlayers', (players: Player[]) => {
-    queryClient.setQueryData(['game', String(props.game.id)], {
+  socket.on(SocketEventKeys.UpdatedPlayers, (players: Player[]) => {
+    queryClient.setQueryData([QueryKeys.Game, String(props.game.id)], {
       ...props.game,
       players
     });
   });
 
-  socket.on('gameEnded', ({ endDate }: { endDate: string }) => {
-    queryClient.setQueryData(['game', String(props.game.id)], {
+  socket.on(SocketEventKeys.GameEnded, ({ endDate }: { endDate: string }) => {
+    queryClient.setQueryData([QueryKeys.Game, String(props.game.id)], {
       ...props.game,
       endDate
     });
-    queryClient.invalidateQueries({ queryKey: ['public-games'] });
-    queryClient.invalidateQueries({ queryKey: ['participating-games'] });
+    queryClient.invalidateQueries({ queryKey: [QueryKeys.PublicGames] });
+    queryClient.invalidateQueries({ queryKey: [QueryKeys.ParticipatingGames] });
   });
 });
 
 onUnmounted(() => {
-  socket.off('timePassed');
-  socket.off('updatedPlayers');
-  socket.off('gameEnded');
+  socket.off(SocketEventKeys.TimePassed);
+  socket.off(SocketEventKeys.UpdatedPlayers);
+  socket.off(SocketEventKeys.GameEnded);
 });
 
 const currentPlayerIndex = computed(() =>
@@ -85,7 +88,7 @@ const handleAddPart = (part: DrawingPart) => {
   if (!queryData.data.value) {
     return;
   }
-  queryClient.setQueryData(['drawing', props.game.id], {
+  queryClient.setQueryData([QueryKeys.Drawing, props.game.id], {
     ...queryData.data.value,
     drawingParts: [...queryData.data.value.drawingParts, part]
   });
@@ -120,12 +123,17 @@ const handleAddPart = (part: DrawingPart) => {
         </Panel>
         <GameDrawingOptions :path="path" />
       </template>
-      <template v-if="user.id !== game.players[currentPlayerIndex].user.id">
+      <template v-else>
         <GameDrawingMessages
           :query-data="queryData"
           :game="game"
         />
       </template>
     </div>
+    <GameScoreModal
+      :players="game.players"
+      :round="game.currentRound"
+      :is-open="remainingTime <= 0"
+    />
   </div>
 </template>

@@ -13,6 +13,7 @@ import { DrawingApi } from '@/api/drawing/drawing.api';
 import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
 import Dropdown from '@/components/Dropdown/Dropdown.vue';
 import { ChevronDownIcon } from '@heroicons/vue/24/outline';
+import { QueryKeys } from '@/api/query-keys';
 
 defineProps<{
   isNewModalOpen: boolean;
@@ -29,7 +30,7 @@ const isPrivate = ref(true);
 const wordTypeIds = ref<number[]>([]);
 
 const { data, isError, error, isLoading } = useQuery({
-  queryKey: ['word-types'],
+  queryKey: [QueryKeys.WordTypes],
   queryFn: () => DrawingApi.getWordTypes()
 });
 

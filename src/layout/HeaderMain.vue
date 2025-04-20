@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { QueryKeys } from '@/api/query-keys';
 import { UserApi } from '@/api/user/user.api';
 import duckIcon from '@/assets/duck-icon.svg';
 import { handleNetworkError } from '@/helpers/errors';
@@ -19,7 +20,7 @@ const { token } = storeToRefs(userStore);
 const queryClient = useQueryClient();
 
 const { isFetching, isError, data, error, refetch } = useQuery({
-  queryKey: ['profile'],
+  queryKey: [QueryKeys.Profile],
   queryFn: UserApi.profile,
   enabled: false
 });
@@ -30,7 +31,7 @@ const { mutate: logout, isPending } = useMutation({
   onSuccess: () => {
     userStore.removeToken();
     router.push('/login');
-    queryClient.resetQueries({ queryKey: ['profile'] });
+    queryClient.resetQueries({ queryKey: [QueryKeys.Profile] });
     queryClient.clear();
   },
   onError: (logoutError) => {

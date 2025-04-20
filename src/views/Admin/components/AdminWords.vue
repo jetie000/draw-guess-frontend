@@ -13,6 +13,7 @@ import DeleteModal from './DeleteModal.vue';
 import ChangeWordModal from './ChangeWordModal.vue';
 import type { Word } from '@/api/drawing/drawing.api.interface';
 import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
+import { QueryKeys } from '@/api/query-keys';
 
 const addingWord = ref<Omit<Word, 'id'>>({ typeId: -1, word: '' });
 const changingWord = ref<Word | undefined>(undefined);
@@ -21,7 +22,7 @@ const deletingWordId = ref<number | undefined>(undefined);
 const queryClient = useQueryClient();
 
 const { data, isError, error, isLoading } = useQuery({
-  queryKey: ['words'],
+  queryKey: [QueryKeys.Words],
   queryFn: () => DrawingApi.getWords()
 });
 
@@ -37,7 +38,7 @@ const {
   error: errorWordTypes,
   isLoading: isLoadingWordTypes
 } = useQuery({
-  queryKey: ['word-types'],
+  queryKey: [QueryKeys.WordTypes],
   queryFn: () => DrawingApi.getWordTypes()
 });
 
@@ -53,7 +54,7 @@ const { mutate: addWord, isPending: isPendingAdd } = useMutation({
   onSuccess: (word) => {
     addingWord.value = { typeId: -1, word: '' };
     queryClient.setQueryData(
-      ['words'],
+      [QueryKeys.Words],
       [
         ...(data.value || []),
         { ...word, type: wordTypes.value?.find((wt) => wt.id === word.typeId) }
@@ -75,7 +76,10 @@ const handleAddWord = () => {
 const { mutate: deleteWord, isPending: isPendingDelete } = useMutation({
   mutationFn: () => DrawingApi.deleteWord(deletingWordId.value || -1),
   onSuccess: (word) => {
-    queryClient.setQueryData(['words'], data.value?.filter((wt) => wt.id !== word.id) || []);
+    queryClient.setQueryData(
+      [QueryKeys.Words],
+      data.value?.filter((wt) => wt.id !== word.id) || []
+    );
     deletingWordId.value = undefined;
   },
   onError: (error) => {
@@ -96,7 +100,7 @@ const { mutate: changeWord, isPending: isPendingChange } = useMutation({
       return;
     }
     queryClient.setQueryData(
-      ['words'],
+      [QueryKeys.Words],
       data.value?.map((w) =>
         w.id !== word.id
           ? w

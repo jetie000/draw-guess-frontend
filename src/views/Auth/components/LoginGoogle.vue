@@ -7,6 +7,7 @@ import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { UserApi } from '@/api/user/user.api';
 import { googleTokenLogin } from 'vue3-google-login';
 import { handleNetworkError } from '@/helpers/errors';
+import { QueryKeys } from '@/api/query-keys';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -21,7 +22,7 @@ const { mutate } = useMutation({
   },
   onSuccess: ({ accessToken }) => {
     userStore.setToken(accessToken);
-    queryClient.resetQueries({ queryKey: ['profile'] });
+    queryClient.resetQueries({ queryKey: [QueryKeys.Profile] });
     router.push('/');
     alertStore.showAlert('Successfully logged in');
   },

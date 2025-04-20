@@ -11,11 +11,14 @@ import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
 import type { Player } from '@/typings/interfaces/player.interface';
 import { useAlertStore } from '@/stores/alert/alertStore';
 import { AlertTypes } from '@/typings/enums/alert';
+import { QueryKeys } from '@/api/query-keys';
+import { SocketEventKeys } from '@/helpers/socket/event-keys';
+import { SocketEmitKeys } from '@/helpers/socket/emit-keys';
 
 const queryClient = useQueryClient();
 
 const { isFetching, data, isError, error, isSuccess } = useQuery({
-  queryKey: ['participating-games'],
+  queryKey: [QueryKeys.ParticipatingGames],
   queryFn: () => GameApi.getParticipatingGames()
 });
 
@@ -26,16 +29,16 @@ const {
   error: errorProfile,
   refetch: refetchProfile
 } = useQuery({
-  queryKey: ['profile'],
+  queryKey: [QueryKeys.Profile],
   queryFn: UserApi.profile,
   enabled: false
 });
 
 onMounted(() => {
-  socket.on('joinedGame', (player: Player) => {
+  socket.on(SocketEventKeys.JoinedGame, (player: Player) => {
     if (data.value?.length && !data.value[0].players.find((p) => p.user.id === player.user.id)) {
       queryClient.setQueryData(
-        ['participating-games'],
+        [QueryKeys.ParticipatingGames],
         [
           {
             ...data.value[0],
@@ -46,10 +49,10 @@ onMounted(() => {
     }
   });
 
-  socket.on('leftGame', (userId) => {
+  socket.on(SocketEventKeys.LeftGame, (userId) => {
     if (data.value?.length) {
       queryClient.setQueryData(
-        ['participating-games'],
+        [QueryKeys.ParticipatingGames],
         [
           {
             ...data.value[0],
@@ -60,19 +63,19 @@ onMounted(() => {
     }
   });
 
-  socket.on('deletedGame', () => {
-    queryClient.setQueryData(['participating-games'], []);
+  socket.on(SocketEventKeys.DeletedGame, () => {
+    queryClient.setQueryData([QueryKeys.ParticipatingGames], []);
     useAlertStore().showAlert('Game has been deleted', AlertTypes.Warning);
   });
 
-  socket.emit('joinPublic');
+  socket.emit(SocketEmitKeys.JoinPublic);
 });
 
 onUnmounted(() => {
-  socket.emit('leavePublic');
-  socket.off('joinedGame');
-  socket.off('leftGame');
-  socket.off('deletedGame');
+  socket.emit(SocketEmitKeys.LeavePublic);
+  socket.off(SocketEventKeys.JoinedGame);
+  socket.off(SocketEventKeys.LeftGame);
+  socket.off(SocketEventKeys.DeletedGame);
 });
 
 watch(isFetching, () => {
@@ -89,7 +92,7 @@ watch(isFetchingProfile, () => {
     useErrorModalStore().showModal(errorProfile.value);
   }
   if (data.value && data.value[0] && user.value) {
-    socket.emit('joinGame', {
+    socket.emit(SocketEmitKeys.JoinGame, {
       room: data.value[0].id,
       player: data.value[0].players.find((p) => p.user.id === user.value.id)
     });

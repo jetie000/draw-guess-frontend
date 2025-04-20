@@ -8,6 +8,7 @@ import { GameApi } from '@/api/game/game.api';
 import { handleNetworkError } from '@/helpers/errors';
 import { TrashIcon, ArrowLeftStartOnRectangleIcon } from '@heroicons/vue/24/outline';
 import { socket } from '@/helpers/socket';
+import { SocketEmitKeys } from '@/helpers/socket/emit-keys';
 
 const props = defineProps<{
   isDeleteModalOpen: boolean;
@@ -24,14 +25,14 @@ const { isPending, mutate } = useMutation({
   mutationFn: () => GameApi.deleteGame(props.gameId),
   onSuccess: () => {
     if (props.isCreator) {
-      socket.emit('deleteGame', { room: props.gameId });
+      socket.emit(SocketEmitKeys.DeleteGame, { room: props.gameId });
       if (!props.isPrivate) {
-        socket.emit('deleteGamePublic', { room: props.gameId });
+        socket.emit(SocketEmitKeys.DeleteGamePublic, { room: props.gameId });
       }
     } else {
-      socket.emit('leaveGame', { room: props.gameId, userId: props.userId });
+      socket.emit(SocketEmitKeys.LeaveGame, { room: props.gameId, userId: props.userId });
       if (!props.isPrivate) {
-        socket.emit('leaveGamePublic', { room: props.gameId, userId: props.userId });
+        socket.emit(SocketEmitKeys.LeaveGamePublic, { room: props.gameId, userId: props.userId });
       }
     }
     router.push({ name: 'Home' });

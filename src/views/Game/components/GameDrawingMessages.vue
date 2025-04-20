@@ -18,6 +18,7 @@ import Spinner from '@/components/Spinner/Spinner.vue';
 import { useAlertStore } from '@/stores/alert/alertStore';
 import { AlertTypes } from '@/typings/enums/alert';
 import type { Game } from '@/api/game/game.api.interface';
+import { QueryKeys } from '@/api/query-keys';
 
 const props = defineProps<{
   queryData: UseQueryReturnType<Drawing | undefined, Error>;
@@ -28,7 +29,7 @@ const queryClient = useQueryClient();
 const message = ref('');
 
 const { data, isLoading, isError, refetch, error } = useQuery({
-  queryKey: ['drawing-messages'],
+  queryKey: [QueryKeys.DrawingMessages],
   queryFn: () => DrawingApi.getDrawingMessages(props.queryData.data.value?.id || 0),
   enabled: false
 });
@@ -43,7 +44,7 @@ const { mutate, isPending } = useMutation({
     if (wordResponse.isGuessed) {
       useAlertStore().showAlert('You guessed!', AlertTypes.Success);
     }
-    queryClient.setQueryData(['game', String(props.game.id)], {
+    queryClient.setQueryData([QueryKeys.Game, String(props.game.id)], {
       ...props.game,
       players: props.game.players.map((p) => {
         if (p.id === wordResponse.message.gamePlayerId) {
@@ -55,7 +56,7 @@ const { mutate, isPending } = useMutation({
         return p;
       })
     });
-    queryClient.setQueryData(['drawing-messages'], {
+    queryClient.setQueryData([QueryKeys.DrawingMessages], {
       isGuessed: wordResponse.isGuessed,
       messages: [...(data.value?.messages || []), wordResponse.message]
     } as DrawingMessagesResponse);
