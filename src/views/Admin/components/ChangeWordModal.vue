@@ -26,17 +26,28 @@ defineEmits(['pressed', 'closed']);
   >
     <form
       v-if="word"
-      class="flex flex-col"
+      class="flex flex-col gap-2"
       @submit.prevent="$emit('pressed')"
     >
-      <p class="p-1 m-1">ID: {{ word.id }}</p>
-      <InputMain
-        v-model.trim="word.word"
-        name="change-word-word"
-        required
-      />
+      <p class="pl-1 text-lg">
+        ID: <span class="font-bold">{{ word?.id }}</span>
+      </p>
+      <div>
+        <label
+          class="text-sm"
+          for="change-word-word"
+        >
+          Word
+        </label>
+        <InputMain
+          v-model.trim="word.word"
+          class="mt-1"
+          name="change-word-word"
+          required
+        />
+      </div>
       <select
-        class="bg-blue-dark mt-2 text-white px-3 py-1.5 rounded-md focus-visible:outline-none"
+        class="bg-blue-dark text-white px-3 py-1.5 rounded-md focus-visible:outline-none"
         v-model="word.typeId"
       >
         <option
@@ -55,7 +66,7 @@ defineEmits(['pressed', 'closed']);
         </option>
       </select>
       <ButtonMain
-        class="mt-4 w-full"
+        class="mt-3 w-full"
         :disabled="isLoading"
         type="submit"
       >

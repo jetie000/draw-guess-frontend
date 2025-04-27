@@ -1,24 +1,19 @@
 <script setup lang="ts">
 import ButtonMain from '@/components/Button/ButtonMain.vue';
 import { ref } from 'vue';
-import AdminUsers from './components/AdminUsers.vue';
-import AdminWords from './components/AdminWords.vue';
-import AdminWordTypes from './components/AdminWordTypes.vue';
+import ProfileChangeInfo from './components/ProfileChangeInfo.vue';
+import LevelAndGames from './components/LevelAndGames.vue';
 
 const tabIndex = ref(0);
 
 const tabs = [
   {
-    title: 'Users',
-    component: AdminUsers
+    title: 'Level & Games',
+    component: LevelAndGames
   },
   {
-    title: 'Words',
-    component: AdminWords
-  },
-  {
-    title: 'Word Types',
-    component: AdminWordTypes
+    title: 'Change Info',
+    component: ProfileChangeInfo
   }
 ];
 </script>
@@ -26,7 +21,7 @@ const tabs = [
 <template>
   <div class="p-4 flex max-md:flex-col gap-4">
     <div class="flex flex-col gap-2 max-md:px-3">
-      <h1 class="text-xl text-center font-bold mb-3">Admin page</h1>
+      <h1 class="text-xl text-center font-bold mb-3">My Profile</h1>
       <ButtonMain
         v-for="(tab, index) in tabs"
         :key="tab.title"

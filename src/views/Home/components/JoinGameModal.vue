@@ -47,6 +47,7 @@ const { isPending, mutate } = useMutation({
         />
       </div>
       <ButtonMain
+        :disabled="isPending || gameCode.length !== 6"
         type="submit"
         class="mt-3 w-full"
       >

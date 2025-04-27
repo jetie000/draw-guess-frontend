@@ -102,7 +102,7 @@ onUnmounted(() => {
           <div class="flex justify-between gap-4 text-sm text-gray-secondary">
             <div class="flex flex-col gap-2">
               <span>Access</span>
-              <span>Round Duration</span>
+              <span>Round duration</span>
               <span>Players</span>
               <span>Drawings per player</span>
             </div>

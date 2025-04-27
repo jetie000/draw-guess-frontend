@@ -1,5 +1,5 @@
 import type { Player } from '@/typings/interfaces/player.interface';
-import type { Drawing, Word, WordType } from '../drawing/drawing.api.interface';
+import type { Drawing, WordType } from '../drawing/drawing.api.interface';
 
 export interface GameDrawing extends Required<Drawing> {
   gamePlayer: Player;

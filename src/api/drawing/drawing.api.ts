@@ -3,7 +3,6 @@ import type {
   AddDrawingRequest,
   AddWordResponse,
   Drawing,
-  DrawingMessage,
   DrawingMessagesResponse,
   Word,
   WordType,

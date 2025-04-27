@@ -1,5 +1,10 @@
 import { userApiInstance } from '..';
-import type { LoginResponse, Profile } from './user.api.interface';
+import type {
+  LoginResponse,
+  PatchUserRequest,
+  PatchUserRequestAdmin,
+  ProfileExtended
+} from './user.api.interface';
 
 export const UserApi = {
   refreshToken: () => userApiInstance.get('/refresh-token').then((res) => res.data),
@@ -13,5 +18,15 @@ export const UserApi = {
   requestCode: (email: string) => userApiInstance.get(`/request-code/${email}`),
   resetPassword: (email: string, code: string, password: string) =>
     userApiInstance.put('/reset-password', { email, code, password }),
-  profile: () => userApiInstance.get<Profile>('/profile').then((res) => res.data)
+  profile: () => userApiInstance.get<ProfileExtended>('/profile').then((res) => res.data),
+  getAll: () => userApiInstance.get<ProfileExtended[]>('/all').then((res) => res.data),
+  patchMe: (patchUserRequest: PatchUserRequest) =>
+    userApiInstance.patch<LoginResponse>('/me', patchUserRequest).then((res) => res.data),
+  patchUser: (patchUserRequest: PatchUserRequestAdmin) =>
+    userApiInstance
+      .patch<ProfileExtended>(`/${patchUserRequest.id}`, {
+        ...patchUserRequest,
+        password: patchUserRequest.password || undefined
+      })
+      .then((res) => res.data)
 };

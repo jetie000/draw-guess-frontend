@@ -4,8 +4,37 @@ import type { Profile } from '@/api/user/user.api.interface';
 import Panel from '@/components/Panel/Panel.vue';
 import PlayerLobby from './PlayerLobby.vue';
 import GameDrawingCard from './GameDrawingCard.vue';
+import { format } from 'date-fns';
 
-defineProps<{ game: Game; user: Profile }>();
+const props = defineProps<{ game: Game; user: Profile }>();
+
+const gameInfo = [
+  {
+    name: 'Access',
+    value: props.game.isPrivate ? 'Private' : 'Public'
+  },
+  {
+    name: 'Round duration',
+    value: `${props.game.roundDuration}s`
+  },
+  {
+    name: 'Players',
+    value: `${props.game.players.length}/${props.game.maxPlayers}`
+  },
+  {
+    name: 'Drawings per player',
+    value: props.game.drawingsPerPlayer
+  },
+  {
+    name: 'End date',
+    value: props.game.endDate
+      ? format(
+          props.game.endDate,
+          `H:m, dd.LL${new Date().getFullYear() === new Date(props.game.endDate).getFullYear() ? '' : '.Y'}`
+        )
+      : '-'
+  }
+];
 </script>
 
 <template>
@@ -22,18 +51,17 @@ defineProps<{ game: Game; user: Profile }>();
     </div>
     <div class="flex flex-col gap-3">
       <div class="text-2xl font-bold my-1 text-center">Game #{{ game.id }}</div>
-      <Panel class="flex justify-between gap-4 text-sm text-gray-secondary max-xsm:w-full">
-        <div class="flex flex-col gap-2">
-          <span>Access</span>
-          <span>Round Duration</span>
-          <span>Players</span>
-          <span>Drawings per player</span>
-        </div>
-        <div class="flex flex-col gap-2 font-bold text-blue-dark items-center">
-          <span>{{ game.isPrivate ? 'Private' : 'Public' }}</span>
-          <span>{{ game.roundDuration }}s</span>
-          <span>{{ game.players.length }}/{{ game.maxPlayers }}</span>
-          <span>{{ game.drawingsPerPlayer }}</span>
+      <Panel class="flex flex-col justify-between gap-2 text-sm text-gray-secondary max-xsm:w-full">
+        <div
+          v-for="infoItem in gameInfo"
+          :key="infoItem.name"
+        >
+          <div class="flex gap-3 justify-between shrink-0 whitespace-nowrap">
+            <span>{{ infoItem.name }}</span>
+            <span class="font-bold text-blue-dark whitespace-nowrap">
+              {{ infoItem.value }}
+            </span>
+          </div>
         </div>
       </Panel>
       <Panel class="max-xsm:w-full">

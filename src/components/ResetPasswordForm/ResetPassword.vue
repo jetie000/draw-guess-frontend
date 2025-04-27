@@ -10,7 +10,11 @@ import { handleNetworkError } from '@/helpers/errors';
 import ButtonMain from '@/components/Button/ButtonMain.vue';
 import InputMain from '@/components/Input/InputMain.vue';
 
-const email = ref('');
+const props = defineProps<{
+  userEmail?: string;
+}>();
+
+const email = ref(props.userEmail || '');
 const code = ref('');
 const password = ref('');
 
@@ -22,7 +26,8 @@ const buttonTitle = computed(() => (isSuccessRequest.value ? 'Change password' :
 const {
   isPending: isLoadingRequest,
   mutate: requestCode,
-  isSuccess: isSuccessRequest
+  isSuccess: isSuccessRequest,
+  reset
 } = useMutation({
   mutationFn: () => UserApi.requestCode(email.value),
   onSuccess: () => {
@@ -37,7 +42,13 @@ const { isPending: isLoadingReset, mutate: resetPassword } = useMutation({
   mutationFn: () => UserApi.resetPassword(email.value, code.value, password.value),
   onSuccess: () => {
     alertStore.showAlert('Password changed successfully');
-    router.push('/login');
+    if (!props.userEmail) {
+      router.push('/login');
+    } else {
+      code.value = '';
+      password.value = '';
+      reset();
+    }
   },
   onError: (error) => {
     handleNetworkError(error);
@@ -72,7 +83,7 @@ const onSubmit = async () => {
           type="email"
           autocomplete="email"
           required
-          :disabled="isSuccessRequest"
+          :disabled="isSuccessRequest || userEmail"
         />
       </div>
     </div>
@@ -114,6 +125,7 @@ const onSubmit = async () => {
     <ButtonMain
       type="submit"
       class="w-full"
+      :disabled="isLoadingRequest || isLoadingReset"
     >
       <Spinner v-if="isLoadingRequest || isLoadingReset" />
       <span v-else>{{ buttonTitle }}</span>

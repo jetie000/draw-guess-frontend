@@ -24,10 +24,12 @@ defineEmits(['pressed', 'closed']);
     @close="$emit('closed')"
   >
     <form
-      class="flex flex-col"
+      class="flex flex-col gap-2"
       @submit.prevent="$emit('pressed')"
     >
-      <p class="p-1 m-1">ID: {{ wordType?.id }}</p>
+      <p class="pl-1 text-lg">
+        ID: <span class="font-bold">{{ wordType?.id }}</span>
+      </p>
       <InputMain
         v-if="wordType"
         v-model.trim="wordType.type"
@@ -35,7 +37,7 @@ defineEmits(['pressed', 'closed']);
         required
       />
       <ButtonMain
-        class="mt-4 w-full"
+        class="mt-3 w-full"
         :disabled="isLoading"
         type="submit"
       >

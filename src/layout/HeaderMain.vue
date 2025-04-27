@@ -2,6 +2,7 @@
 import { QueryKeys } from '@/api/query-keys';
 import { UserApi } from '@/api/user/user.api';
 import duckIcon from '@/assets/duck-icon.svg';
+import Dropdown from '@/components/Dropdown/Dropdown.vue';
 import { handleNetworkError } from '@/helpers/errors';
 import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
 import { useUserStore } from '@/stores/user/userStore';
@@ -10,14 +11,16 @@ import { ArrowRightIcon } from '@heroicons/vue/16/solid';
 import { ArrowLeftStartOnRectangleIcon } from '@heroicons/vue/16/solid';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 import { storeToRefs } from 'pinia';
-import { watch } from 'vue';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import userIcon from '@/assets/user.svg';
 
 const router = useRouter();
 const userStore = useUserStore();
 const { token } = storeToRefs(userStore);
 
 const queryClient = useQueryClient();
+const dropdown = ref<InstanceType<typeof Dropdown> | null>(null);
 
 const { isFetching, isError, data, error, refetch } = useQuery({
   queryKey: [QueryKeys.Profile],
@@ -45,11 +48,19 @@ watch(isFetching, () => {
   }
 });
 
-watch(token, () => {
-  if (token.value) {
-    refetch();
-  }
-});
+watch(
+  token,
+  () => {
+    if (token.value) {
+      refetch();
+    }
+  },
+  { immediate: true }
+);
+
+const replaceAvatarByDefault = (event: Event) => {
+  (event.target as HTMLImageElement).src = userIcon;
+};
 </script>
 
 <template>
@@ -76,14 +87,44 @@ watch(token, () => {
       >
         Admin
       </button>
-      <button
+      <Dropdown
         v-if="token"
-        :disabled="isPending"
-        class="flex items-center gap-1.5 ml-auto hover:bg-blue-dark hover:text-white transition-all px-3 py-1 rounded-full"
-        @click="() => logout()"
+        ref="dropdown"
+        class="flex ml-auto"
+        trigger-wrapper-class="flex"
+        align="right"
       >
-        Log out <ArrowLeftStartOnRectangleIcon class="inline w-5 h-5" />
-      </button>
+        <template #trigger>
+          <button
+            :disabled="isPending"
+            class="transition-all rounded-full border border-transparent hover:border-blue-dark"
+          >
+            <img
+              class="w-8 h-8 rounded-full"
+              :src="data?.avatarUrl || userIcon"
+              alt="Avatar"
+              @error="replaceAvatarByDefault"
+            />
+          </button>
+        </template>
+        <div class="flex bg-white border rounded-md py-2 flex-col">
+          <RouterLink
+            to="/profile"
+            class="cursor-pointer hover:bg-blue-100 py-1 px-4 text-center"
+            @click="() => dropdown?.hideMenu()"
+          >
+            My Profile
+          </RouterLink>
+          <div
+            class="flex items-center gap-2 flex-nowrap px-4 py-1 hover:bg-blue-100 cursor-pointer"
+            @click="() => !isPending && logout()"
+          >
+            <span class="whitespace-nowrap">Log out</span>
+            <ArrowLeftStartOnRectangleIcon class="inline w-5 h-5 shrink-0" />
+          </div>
+        </div>
+      </Dropdown>
+
       <button
         v-else
         class="flex items-center gap-1 ml-auto hover:bg-blue-dark hover:text-white transition-all px-3 py-1 rounded-full"

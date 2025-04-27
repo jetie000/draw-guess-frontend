@@ -1,5 +1,5 @@
 import { UserApi } from './user/user.api';
-import type { AxiosInstance } from 'axios';
+import { isAxiosError, type AxiosInstance } from 'axios';
 import { useUserStore } from '@/stores/user/userStore';
 import { router } from '@/router';
 
@@ -17,8 +17,13 @@ const onResponseError = async (instance: AxiosInstance, error: any) => {
 
       return instance(originalRequest);
     } catch (refreshError) {
-      userStore.removeToken();
-      router.push({ name: 'Login' });
+      if (
+        !isAxiosError(refreshError) ||
+        (isAxiosError(refreshError) && refreshError.status !== 404)
+      ) {
+        userStore.removeToken();
+        router.push({ name: 'Login' });
+      }
 
       return Promise.reject(refreshError);
     }

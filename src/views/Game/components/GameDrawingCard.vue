@@ -17,8 +17,6 @@ const canvasScale = ref(1);
 
 const setCanvasSize = () => {
   if (!canvasRef.value) {
-    console.log('no canvas');
-
     return;
   }
   canvasScale.value = Number(canvasRef.value.width) / window.devicePixelRatio / drawingCanvasSize;
@@ -33,8 +31,6 @@ onMounted(() => {
   scope.value = new paper.PaperScope();
   scope.value.setup(canvasId);
   setCanvasSize();
-
-  props.drawing.drawingParts.forEach(drawPart);
 
   window.addEventListener('resize', debouncedSetCanvasSize);
 });

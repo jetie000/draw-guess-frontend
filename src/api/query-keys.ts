@@ -6,5 +6,6 @@ export enum QueryKeys {
   PublicGames = 'public-games',
   DrawingMessages = 'drawing-messages',
   Words = 'words',
-  WordTypes = 'word-types'
+  WordTypes = 'word-types',
+  Users = 'users'
 }

@@ -9,7 +9,7 @@ export const router = createRouter({
 
 const UnauthorizedRoutes = ['Login', 'SignUp', 'ResetPassword'];
 
-router.beforeEach((to, from) => {
+router.beforeEach((to, _from) => {
   const { token } = useUserStore();
 
   if (!token && !UnauthorizedRoutes.includes(to.name as string)) {
