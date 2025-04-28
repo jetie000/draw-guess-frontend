@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Game } from '@/api/game/game.api.interface';
+import type { Game, GameDrawing } from '@/api/game/game.api.interface';
 import type { Profile } from '@/api/user/user.api.interface';
 import Panel from '@/components/Panel/Panel.vue';
 import GameCanvas from './GameCanvas.vue';
@@ -62,14 +62,18 @@ onMounted(() => {
     });
   });
 
-  socket.on(SocketEventKeys.GameEnded, ({ endDate }: { endDate: string }) => {
-    queryClient.setQueryData([QueryKeys.Game, String(props.game.id)], {
-      ...props.game,
-      endDate
-    });
-    queryClient.invalidateQueries({ queryKey: [QueryKeys.PublicGames] });
-    queryClient.invalidateQueries({ queryKey: [QueryKeys.ParticipatingGames] });
-  });
+  socket.on(
+    SocketEventKeys.GameEnded,
+    ({ endDate, drawings }: { endDate: string; drawings: GameDrawing[] }) => {
+      queryClient.setQueryData([QueryKeys.Game, String(props.game.id)], {
+        ...props.game,
+        endDate,
+        drawings
+      });
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.PublicGames] });
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.ParticipatingGames] });
+    }
+  );
 });
 
 onUnmounted(() => {

@@ -30,7 +30,7 @@ const gameInfo = [
     value: props.game.endDate
       ? format(
           props.game.endDate,
-          `H:m, dd.LL${new Date().getFullYear() === new Date(props.game.endDate).getFullYear() ? '' : '.Y'}`
+          `HH:mm, dd.MM${new Date().getFullYear() === new Date(props.game.endDate).getFullYear() ? '' : '.Y'}`
         )
       : '-'
   }
@@ -46,6 +46,7 @@ const gameInfo = [
           v-for="drawing in game.drawings"
           :key="drawing.id"
           :drawing="drawing"
+          :players="game.players"
         />
       </div>
     </div>

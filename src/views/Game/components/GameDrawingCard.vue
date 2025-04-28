@@ -7,8 +7,9 @@ import debounce from 'lodash.debounce';
 import { defaultStrokeCapStyle, defaultStrokeJoinStyle } from '@/helpers/constants';
 import type { DrawingPart } from '@/api/drawing/drawing.api.interface';
 import { drawingCanvasSize } from '@/typings/enums/game';
+import type { Player } from '@/typings/interfaces/player.interface';
 
-const props = defineProps<{ drawing: GameDrawing }>();
+const props = defineProps<{ drawing: GameDrawing; players: Player[] }>();
 
 const canvasId = `game-canvas-${props.drawing.id}`;
 const canvasRef = ref<HTMLCanvasElement>();
@@ -64,6 +65,9 @@ const drawPart = (part: DrawingPart) => {
       <span>#{{ drawing.roundNumber }}</span>
       <span class="font-bold text-center">{{ drawing.word?.word }}</span>
     </div>
-    <span class="text-right">by {{ drawing.gamePlayer.user.username }}</span>
+    <span class="text-right">
+      by
+      {{ players.find((player) => player.id === drawing.gamePlayerId)?.user.username ?? '-' }}
+    </span>
   </Panel>
 </template>

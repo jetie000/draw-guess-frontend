@@ -17,6 +17,8 @@ import { socket } from '@/helpers/socket';
 import { drawingCanvasSize } from '@/typings/enums/game';
 import { SocketEventKeys } from '@/helpers/socket/event-keys';
 import { SocketEmitKeys } from '@/helpers/socket/emit-keys';
+import { useAlertStore } from '@/stores/alert/alertStore';
+import { AlertTypes } from '@/typings/enums/alert';
 
 const path = defineModel<paper.Path>('path');
 const props = defineProps<{
@@ -141,7 +143,7 @@ const handleMouseDown = () => {
     path.value.add({ x: event.point.x / canvasScale.value, y: event.point.y / canvasScale.value });
     path.value.simplify(1);
 
-    if (props.drawingData.data.value) {
+    if (props.drawingData.data.value && !props.isBreak) {
       const drawing = {
         color: color.value,
         gameId: props.game.id,
@@ -153,6 +155,9 @@ const handleMouseDown = () => {
       mutate(drawing);
 
       socket.emit(SocketEmitKeys.DrewPart, { drawing, room: props.game.id });
+    }
+    if (props.isBreak) {
+      useAlertStore().showAlert('Last line will not be shown', AlertTypes.Warning);
     }
 
     path.value = undefined;

@@ -11,9 +11,10 @@ import { ArrowRightIcon } from '@heroicons/vue/16/solid';
 import { ArrowLeftStartOnRectangleIcon } from '@heroicons/vue/16/solid';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 import { storeToRefs } from 'pinia';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import userIcon from '@/assets/user.svg';
+import { getLevelAndProgressByExp } from '@/helpers/game';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -61,6 +62,9 @@ watch(
 const replaceAvatarByDefault = (event: Event) => {
   (event.target as HTMLImageElement).src = userIcon;
 };
+const levelAndProgress = computed(
+  () => data.value && getLevelAndProgressByExp(data.value.experience)
+);
 </script>
 
 <template>
@@ -97,7 +101,7 @@ const replaceAvatarByDefault = (event: Event) => {
         <template #trigger>
           <button
             :disabled="isPending"
-            class="transition-all rounded-full border border-transparent hover:border-blue-dark"
+            class="transition-all rounded-full border border-transparent hover:border-blue-dark relative"
           >
             <img
               class="w-8 h-8 rounded-full"
@@ -105,6 +109,31 @@ const replaceAvatarByDefault = (event: Event) => {
               alt="Avatar"
               @error="replaceAvatarByDefault"
             />
+            <template v-if="levelAndProgress">
+              <div
+                class="absolute h-4 min-w-4 -top-1 left-5 text-xs text-center align-middle px-1 rounded-full border border-blue-dark"
+                :style="{
+                  background: levelAndProgress.background,
+                  color: levelAndProgress.color
+                }"
+              >
+                {{ levelAndProgress.level }}
+              </div>
+              <div
+                class="absolute left-1 -bottom-1 w-6 h-1.5 border border-blue-dark"
+                :style="{
+                  background: levelAndProgress.background
+                }"
+              >
+                <div
+                  :style="{
+                    background: levelAndProgress.color,
+                    width: `${levelAndProgress.progress}%`,
+                    height: '100%'
+                  }"
+                />
+              </div>
+            </template>
           </button>
         </template>
         <div class="flex bg-white border rounded-md py-2 flex-col">

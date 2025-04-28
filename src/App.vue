@@ -3,14 +3,14 @@ import { RouterView } from 'vue-router';
 import HeaderMain from '@/layout/HeaderMain.vue';
 import FooterMain from '@/layout/FooterMain.vue';
 import Alert from '@/components/Alert/Alert.vue';
-import { onMounted } from 'vue';
+import { onBeforeMount } from 'vue';
 import { useUserStore } from './stores/user/userStore';
 import ErrorModal from './components/ErrorModal.vue';
 import { initSocket } from './helpers/socket';
 
 const userStore = useUserStore();
 
-onMounted(() => {
+onBeforeMount(() => {
   userStore.assignToken();
   initSocket();
 });

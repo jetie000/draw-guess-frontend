@@ -3,22 +3,19 @@ import { GameApi } from '@/api/game/game.api';
 import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import { onMounted, onUnmounted, watch } from 'vue';
-import GameCard from './GameCard.vue';
+import GameJoinCard from './GameJoinCard.vue';
 import { socket } from '@/helpers/socket';
 import type { Game } from '@/api/game/game.api.interface';
 import { QueryKeys } from '@/api/query-keys';
 import { SocketEventKeys } from '@/helpers/socket/event-keys';
+
+defineProps<{ participatingGames: Game[] | undefined }>();
 
 const queryClient = useQueryClient();
 
 const { isFetching, isSuccess, isError, data, error } = useQuery({
   queryKey: [QueryKeys.PublicGames],
   queryFn: () => GameApi.getPublicGames()
-});
-
-const { data: participatingGames } = useQuery({
-  queryKey: [QueryKeys.ParticipatingGames],
-  queryFn: () => GameApi.getParticipatingGames()
 });
 
 watch(isFetching, () => {
@@ -87,7 +84,7 @@ onUnmounted(() => {
     class="flex flex-col w-full gap-3"
   >
     <h2 class="text-2xl font-bold text-center mt-3">Public</h2>
-    <GameCard
+    <GameJoinCard
       v-for="game in data"
       :key="game.id"
       :game="game"

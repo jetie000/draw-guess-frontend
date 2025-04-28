@@ -12,6 +12,7 @@ export interface Profile {
   loginDate: string;
   avatarUrl?: string;
   role: UserRoles;
+  experience: number;
 }
 
 export interface ProfileExtended extends Profile {

@@ -19,7 +19,7 @@ const onResponseError = async (instance: AxiosInstance, error: any) => {
     } catch (refreshError) {
       if (
         !isAxiosError(refreshError) ||
-        (isAxiosError(refreshError) && refreshError.status !== 404)
+        (isAxiosError(refreshError) && refreshError.status !== 404 && originalRequest._retry)
       ) {
         userStore.removeToken();
         router.push({ name: 'Login' });

@@ -107,8 +107,11 @@ watch(isFetchingProfile, () => {
         class="mt-12 mb-6"
         :is-participating="(data && data?.length > 0) || isFetching"
       />
-      <ParticipatingGames />
-      <PublicGames />
+      <ParticipatingGames
+        :participating-games="data"
+        :is-fetching="isFetching"
+      />
+      <PublicGames :participating-games="data" />
     </div>
   </div>
 </template>
