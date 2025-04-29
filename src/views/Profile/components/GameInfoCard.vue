@@ -20,32 +20,34 @@ const handleClick = () => {
     class="flex flex-col gap-3 ps-2.5 font-normal"
     @click="handleClick"
   >
-    <div class="flex gap-3 justify-between items-center flex-wrap w-full">
-      <span class="text-xl">#{{ game.id }}</span>
-      <div
-        v-if="!game.endDate"
-        :class="`font-bold p-2 rounded-md ${game.startDate ? 'bg-green-500' : 'bg-yellow-400'} max-sm:w-full`"
-      >
-        {{ game.startDate ? 'In process' : 'Waiting for start' }}
+    <div class="flex gap-3 max-sm:flex-col">
+      <div class="flex gap-3 justify-between items-center max-sm:flex-wrap max-sm:w-full">
+        <span class="text-xl">#{{ game.id }}</span>
+        <div
+          v-if="!game.endDate"
+          :class="`font-bold p-2 rounded-md ${game.startDate ? 'bg-green-500' : 'bg-yellow-400'} max-sm:w-full`"
+        >
+          {{ game.startDate ? 'In process' : 'Waiting for start' }}
+        </div>
+        <UserCircleIcon class="w-6 h-6 -mr-2 ml-auto" />
+        <span>{{ game.players.length }}/{{ game.maxPlayers }}</span>
+        <ClockIcon class="w-6 h-6 -mr-2" />
+        <span> {{ game.roundDuration }}s </span>
+        <PencilSquareIcon class="w-6 h-6 -mr-2" />
+        <span>{{ game.drawingsPerPlayer }}</span>
       </div>
-      <UserCircleIcon class="w-6 h-6 -mr-2 ml-auto" />
-      <span>{{ game.players.length }}/{{ game.maxPlayers }}</span>
-      <ClockIcon class="w-6 h-6 -mr-2" />
-      <span> {{ game.roundDuration }}s </span>
-      <PencilSquareIcon class="w-6 h-6 -mr-2" />
-      <span>{{ game.drawingsPerPlayer }}</span>
+      <div
+        v-if="game.endDate"
+        class="flex items-center w-full gap-3 justify-end"
+      >
+        {{ formatDate(game.endDate) }}
+        <span class="text-green-500 text-lg">
+          + {{ game.players.find((player) => player.user.id === userId)?.points ?? 0 }}
+        </span>
+      </div>
     </div>
     <div class="flex w-full justify-end">
       {{ game.wordTypes.map((t) => t.type).join(', ') }}
-    </div>
-    <div
-      v-if="game.endDate"
-      class="flex items-center w-full gap-3 justify-end"
-    >
-      {{ formatDate(game.endDate) }}
-      <span class="text-green-500 text-lg">
-        + {{ game.players.find((player) => player.user.id === userId)?.points ?? 0 }}
-      </span>
     </div>
   </ButtonMain>
 </template>

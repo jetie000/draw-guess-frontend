@@ -50,12 +50,25 @@ const replaceAvatarByDefault = (event: Event) => {
 const levelAndProgress = computed(
   () => user.value && getLevelAndProgressByExp(user.value.experience)
 );
+
+const gamesWon = computed(() =>
+  data.value?.length && user.value
+    ? data.value.reduce((acc, game) => {
+        const wonPlayer = game.players.slice().sort((a, b) => b.points - a.points)[0];
+        const myPlayer = game.players.find((player) => player.user.id === user.value.id);
+        if (myPlayer?.points === wonPlayer.points) {
+          return acc + 1;
+        }
+        return acc;
+      }, 0)
+    : 0
+);
 </script>
 
 <template>
   <div class="flex flex-col items-center gap-3">
     <h3 class="font-bold text-lg">My Level</h3>
-    <div class="flex relative items-center gap-6 mt-3 max-xsm:flex-col">
+    <div class="flex relative items-center gap-6 mt-3 max-sm:flex-col">
       <img
         class="w-36 h-36 rounded-full"
         :src="user?.avatarUrl || userIcon"
@@ -98,6 +111,15 @@ const levelAndProgress = computed(
           </span>
         </div>
       </template>
+      <div class="text-lg flex flex-col gap-2">
+        <div class="flex justify-between gap-2">
+          Played games: <span class="font-bold">{{ data?.length ?? 0 }}</span>
+        </div>
+        <div class="flex justify-between gap-2">
+          Won games:
+          <span class="font-bold">{{ gamesWon }}</span>
+        </div>
+      </div>
     </div>
     <h3 class="font-bold text-lg mt-3">Recent Games</h3>
     <Spinner
@@ -110,14 +132,17 @@ const levelAndProgress = computed(
     >
       {{ getErrorMessage(error) }}
     </p>
-    <template v-else-if="data && data.length && user">
+    <div
+      class="flex flex-col gap-2"
+      v-else-if="data && data.length && user"
+    >
       <GameInfoCard
         v-for="game in data"
         :key="game.id"
         :game="game"
         :user-id="user.id"
       />
-    </template>
+    </div>
     <template v-else> No recent games yet </template>
   </div>
 </template>

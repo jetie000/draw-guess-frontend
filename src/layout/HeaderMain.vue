@@ -51,8 +51,8 @@ watch(isFetching, () => {
 
 watch(
   token,
-  () => {
-    if (token.value) {
+  (newToken, oldToken) => {
+    if (!oldToken && newToken) {
       refetch();
     }
   },

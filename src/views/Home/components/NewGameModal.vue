@@ -83,7 +83,7 @@ watch([players, drawingsPerPlayer], () => {
               type="radio"
               v-model="isPrivate"
               :value="true"
-              name="room_type"
+              name="room-type"
               id="roomPrivate"
               checked
               hidden
@@ -100,7 +100,7 @@ watch([players, drawingsPerPlayer], () => {
               type="radio"
               v-model="isPrivate"
               :value="false"
-              name="room_type"
+              name="room-type"
               id="roomPublic"
               hidden
             />

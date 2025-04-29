@@ -70,6 +70,15 @@ onMounted(() => {
         endDate,
         drawings
       });
+      const myPoints = props.game.players.find(
+        (player) => player.user.id === props.user.id
+      )?.points;
+      if (myPoints) {
+        queryClient.setQueryData([QueryKeys.Profile], {
+          ...props.user,
+          experience: props.user.experience + myPoints
+        });
+      }
       queryClient.invalidateQueries({ queryKey: [QueryKeys.PublicGames] });
       queryClient.invalidateQueries({ queryKey: [QueryKeys.ParticipatingGames] });
     }

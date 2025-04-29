@@ -38,7 +38,7 @@ const tabs = [
     </div>
     <component
       :is="tabs[tabIndex].component"
-      class="flex-1"
+      class="flex-1 overflow-y-auto max-h-[calc(100vh-7rem)] max-md:max-h-[calc(100vh-21rem)]"
     />
   </div>
 </template>
