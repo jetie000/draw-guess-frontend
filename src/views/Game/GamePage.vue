@@ -5,7 +5,7 @@ import { GameApi } from '@/api/game/game.api';
 import SpinnerCenter from '@/components/Spinner/SpinnerCenter.vue';
 import GameLobby from './components/GameLobby.vue';
 import { watch } from 'vue';
-import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
+import { useModalStore } from '@/stores/modal/modalStore';
 import { socket } from '@/helpers/socket';
 import { UserApi } from '@/api/user/user.api';
 import GamePlay from './components/GamePlay.vue';
@@ -30,7 +30,7 @@ const {
 
 watch(isFetchingProfile, () => {
   if (isErrorProfile.value) {
-    useErrorModalStore().showModal(errorProfile.value);
+    useModalStore().showErrorModal(errorProfile.value);
   }
   if (data.value && user.value) {
     if (!data.value.isPrivate) {
@@ -50,7 +50,7 @@ const { isFetching, isSuccess, isError, data, error } = useQuery({
 
 watch(isFetching, () => {
   if (isError.value) {
-    useErrorModalStore().showModal(error.value);
+    useModalStore().showErrorModal(error.value);
   }
   if (isSuccess.value) {
     refetchProfile();

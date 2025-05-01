@@ -11,7 +11,7 @@ import type { Profile } from '@/api/user/user.api.interface';
 import type { Game } from '@/api/game/game.api.interface';
 import Panel from '@/components/Panel/Panel.vue';
 import debounce from 'lodash.debounce';
-import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
+import { useModalStore } from '@/stores/modal/modalStore';
 import { defaultStrokeCapStyle, defaultStrokeJoinStyle } from '@/helpers/constants';
 import { socket } from '@/helpers/socket';
 import { drawingCanvasSize } from '@/typings/enums/game';
@@ -80,7 +80,7 @@ onUnmounted(() => {
 
 watch(props.drawingData.isFetching, () => {
   if (props.drawingData.isError.value) {
-    useErrorModalStore().showModal(props.drawingData.error.value);
+    useModalStore().showErrorModal(props.drawingData.error.value);
   }
   if (props.drawingData.data.value && scope.value) {
     new scope.value.Path.Rectangle({

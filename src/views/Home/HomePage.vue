@@ -7,7 +7,7 @@ import PublicGames from './components/PublicGames.vue';
 import { onMounted, onUnmounted, watch } from 'vue';
 import { socket } from '@/helpers/socket';
 import { UserApi } from '@/api/user/user.api';
-import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
+import { useModalStore } from '@/stores/modal/modalStore';
 import type { Player } from '@/typings/interfaces/player.interface';
 import { useAlertStore } from '@/stores/alert/alertStore';
 import { AlertTypes } from '@/typings/enums/alert';
@@ -80,7 +80,7 @@ onUnmounted(() => {
 
 watch(isFetching, () => {
   if (isError.value) {
-    useErrorModalStore().showModal(error.value);
+    useModalStore().showErrorModal(error.value);
   }
   if (isSuccess.value && !user.value) {
     refetchProfile();
@@ -89,7 +89,7 @@ watch(isFetching, () => {
 
 watch(isFetchingProfile, () => {
   if (isErrorProfile.value) {
-    useErrorModalStore().showModal(errorProfile.value);
+    useModalStore().showErrorModal(errorProfile.value);
   }
   if (data.value && data.value[0] && user.value) {
     socket.emit(SocketEmitKeys.JoinGame, {

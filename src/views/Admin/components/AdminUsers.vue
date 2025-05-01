@@ -4,7 +4,7 @@ import Panel from '@/components/Panel/Panel.vue';
 import SpinnerCenter from '@/components/Spinner/SpinnerCenter.vue';
 import { CheckIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
-import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
+import { useModalStore } from '@/stores/modal/modalStore';
 import { QueryKeys } from '@/api/query-keys';
 import { UserApi } from '@/api/user/user.api';
 import { ref, watch } from 'vue';
@@ -22,7 +22,7 @@ const { isLoading, isError, error, data } = useQuery({
 
 watch(isLoading, () => {
   if (isError.value) {
-    useErrorModalStore().showModal(error.value);
+    useModalStore().showErrorModal(error.value);
   }
 });
 

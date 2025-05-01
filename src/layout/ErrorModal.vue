@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import Modal from './Modal/Modal.vue';
-import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
+import { useModalStore } from '@/stores/modal/modalStore';
 import { useRouter } from 'vue-router';
-import ButtonMain from './Button/ButtonMain.vue';
+import Modal from '@/components/Modal/Modal.vue';
+import ButtonMain from '@/components/Button/ButtonMain.vue';
 
 const router = useRouter();
-const { isModalOpen, message } = storeToRefs(useErrorModalStore());
-const { hideModal } = useErrorModalStore();
+const { isErrorModalOpen, messageError } = storeToRefs(useModalStore());
+const { hideModal } = useModalStore();
 
 const handleGoHome = () => {
   hideModal();
@@ -19,11 +19,11 @@ const handleGoHome = () => {
   <Modal
     title="Network error"
     :size="'sm'"
-    :is-open="isModalOpen"
+    :is-open="isErrorModalOpen"
     :backdrop-dismiss="false"
     no-dismiss-button
   >
-    <p class="mt-4 mb-8">{{ message }}</p>
+    <p class="mt-4 mb-8">{{ messageError }}</p>
     <div class="flex gap-3 justify-evenly">
       <ButtonMain
         class="grow"

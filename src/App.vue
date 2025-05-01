@@ -2,11 +2,12 @@
 import { RouterView } from 'vue-router';
 import HeaderMain from '@/layout/HeaderMain.vue';
 import FooterMain from '@/layout/FooterMain.vue';
-import Alert from '@/components/Alert/Alert.vue';
+import Alert from '@/layout/Alert.vue';
 import { onBeforeMount } from 'vue';
 import { useUserStore } from './stores/user/userStore';
-import ErrorModal from './components/ErrorModal.vue';
+import ErrorModal from './layout/ErrorModal.vue';
 import { initSocket } from './helpers/socket';
+import NewLevelModal from './layout/NewLevelModal.vue';
 
 const userStore = useUserStore();
 
@@ -21,6 +22,7 @@ onBeforeMount(() => {
     <HeaderMain />
     <Alert />
     <ErrorModal />
+    <NewLevelModal />
     <div class="min-h-[calc(100vh-3rem)] bg-yellow-secondary text-blue-dark">
       <main class="container flex flex-col mx-auto min-h-[calc(100vh-5rem)]">
         <RouterView />

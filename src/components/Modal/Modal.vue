@@ -40,7 +40,7 @@ const emit = defineEmits(['close']);
     <Transition name="fade">
       <div
         v-if="isOpen"
-        class="flex justify-center items-center fixed inset-0 bg-black bg-opacity-35 transition-opacity duration-200"
+        class="flex justify-center items-center fixed z-10 inset-0 bg-black bg-opacity-35 transition-opacity duration-200"
         @click="handleClickBackdrop"
       >
         <div

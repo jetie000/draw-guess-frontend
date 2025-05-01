@@ -5,7 +5,7 @@ import { UserApi } from '@/api/user/user.api';
 import Spinner from '@/components/Spinner/Spinner.vue';
 import { getErrorMessage } from '@/helpers/errors';
 import { getLevelAndProgressByExp } from '@/helpers/game';
-import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
+import { useModalStore } from '@/stores/modal/modalStore';
 import { useQuery } from '@tanstack/vue-query';
 import { computed, watch } from 'vue';
 import userIcon from '@/assets/user.svg';
@@ -30,7 +30,7 @@ const {
 
 watch(isFetching, () => {
   if (isError.value) {
-    useErrorModalStore().showModal(error.value);
+    useModalStore().showErrorModal(error.value);
   }
   if (isSuccess.value && !user.value) {
     refetchProfile();
@@ -39,7 +39,7 @@ watch(isFetching, () => {
 
 watch(isFetchingProfile, () => {
   if (isErrorProfile.value) {
-    useErrorModalStore().showModal(errorProfile.value);
+    useModalStore().showErrorModal(errorProfile.value);
   }
 });
 
@@ -68,7 +68,7 @@ const gamesWon = computed(() =>
 <template>
   <div class="flex flex-col items-center gap-3">
     <h3 class="font-bold text-lg">My Level</h3>
-    <div class="flex relative items-center gap-6 mt-3 max-sm:flex-col">
+    <div class="flex relative z-0 items-center gap-6 mt-3 max-sm:flex-col">
       <img
         class="w-36 h-36 rounded-full"
         :src="user?.avatarUrl || userIcon"

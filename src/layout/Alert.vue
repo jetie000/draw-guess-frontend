@@ -32,7 +32,7 @@ const { isAlertOpen, message, type } = storeToRefs(alertStore);
 
 <template>
   <div
-    :class="`${isAlertOpen ? 'opacity-100' : 'opacity-0'} ${isAlertOpen ? 'z-10' : '-z-10'} flex flex-col fixed bottom-4 right-4 max-w-xs min-w-48 bg-white border border-blue-dark rounded-xl shadow-lg transition-all duration-500`"
+    :class="`${isAlertOpen ? 'opacity-100' : 'opacity-0'} ${isAlertOpen ? 'z-20' : '-z-20'} flex flex-col fixed bottom-4 right-4 max-w-xs min-w-48 bg-white border border-blue-dark rounded-xl shadow-lg transition-all duration-500`"
     role="alert"
     tabindex="-1"
   >

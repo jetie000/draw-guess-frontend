@@ -12,7 +12,7 @@ import { ref, watch } from 'vue';
 import DeleteModal from './DeleteModal.vue';
 import ChangeWordTypeModal from './ChangeWordTypeModal.vue';
 import type { WordType } from '@/api/drawing/drawing.api.interface';
-import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
+import { useModalStore } from '@/stores/modal/modalStore';
 import { QueryKeys } from '@/api/query-keys';
 
 const addingWordType = ref('');
@@ -28,7 +28,7 @@ const { data, isError, error, isLoading } = useQuery({
 
 watch(isLoading, () => {
   if (isError.value) {
-    useErrorModalStore().showModal(error.value);
+    useModalStore().showErrorModal(error.value);
   }
 });
 

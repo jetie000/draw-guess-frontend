@@ -13,16 +13,18 @@ import type { DrawingPart } from '@/api/drawing/drawing.api.interface';
 import { breakSecondsNumber } from '@/typings/enums/game';
 import { formatSeconds } from '@/helpers/datetime';
 import { socket } from '@/helpers/socket';
-import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
+import { useModalStore } from '@/stores/modal/modalStore';
 import GameDrawingMessages from './GameDrawingMessages.vue';
 import type { Player } from '@/typings/interfaces/player.interface';
 import GameScoreModal from './GameScoreModal.vue';
 import { QueryKeys } from '@/api/query-keys';
 import { SocketEventKeys } from '@/helpers/socket/event-keys';
+import { getLevelAndProgressByExp } from '@/helpers/game';
 
 const props = defineProps<{ game: Game; user: Profile }>();
 
 const queryClient = useQueryClient();
+const { showErrorModal, showLevelModal } = useModalStore();
 
 const queryData = useQuery({
   queryKey: [QueryKeys.Drawing, props.game.id],
@@ -31,7 +33,7 @@ const queryData = useQuery({
 
 watch(queryData.isFetching, () => {
   if (queryData.isError.value) {
-    useErrorModalStore().showModal(queryData.error.value);
+    showErrorModal(queryData.error.value);
   }
 });
 
@@ -74,10 +76,15 @@ onMounted(() => {
         (player) => player.user.id === props.user.id
       )?.points;
       if (myPoints) {
+        const currentLevel = getLevelAndProgressByExp(props.user.experience + myPoints).level;
+        const prevLevel = getLevelAndProgressByExp(props.user.experience).level;
         queryClient.setQueryData([QueryKeys.Profile], {
           ...props.user,
           experience: props.user.experience + myPoints
         });
+        if (currentLevel !== prevLevel) {
+          showLevelModal(currentLevel);
+        }
       }
       queryClient.invalidateQueries({ queryKey: [QueryKeys.PublicGames] });
       queryClient.invalidateQueries({ queryKey: [QueryKeys.ParticipatingGames] });

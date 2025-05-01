@@ -10,7 +10,7 @@ import { useMutation, useQuery } from '@tanstack/vue-query';
 import { GameApi } from '@/api/game/game.api';
 import { handleNetworkError } from '@/helpers/errors';
 import { DrawingApi } from '@/api/drawing/drawing.api';
-import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
+import { useModalStore } from '@/stores/modal/modalStore';
 import Dropdown from '@/components/Dropdown/Dropdown.vue';
 import { ChevronDownIcon } from '@heroicons/vue/24/outline';
 import { QueryKeys } from '@/api/query-keys';
@@ -36,7 +36,7 @@ const { data, isError, error, isLoading } = useQuery({
 
 watch(isLoading, () => {
   if (isError.value) {
-    useErrorModalStore().showModal(error.value);
+    useModalStore().showErrorModal(error.value);
   }
 });
 

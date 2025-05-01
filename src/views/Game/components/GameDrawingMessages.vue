@@ -11,7 +11,7 @@ import {
 import { DrawingApi } from '@/api/drawing/drawing.api';
 import type { Drawing, DrawingMessagesResponse } from '@/api/drawing/drawing.api.interface';
 import { ref, watch } from 'vue';
-import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
+import { useModalStore } from '@/stores/modal/modalStore';
 import Panel from '@/components/Panel/Panel.vue';
 import { handleNetworkError } from '@/helpers/errors';
 import Spinner from '@/components/Spinner/Spinner.vue';
@@ -66,7 +66,7 @@ const { mutate, isPending } = useMutation({
 
 watch(isLoading, () => {
   if (isError.value) {
-    useErrorModalStore().showModal(error.value);
+    useModalStore().showErrorModal(error.value);
   }
 });
 

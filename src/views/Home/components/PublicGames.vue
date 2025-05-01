@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { GameApi } from '@/api/game/game.api';
-import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
+import { useModalStore } from '@/stores/modal/modalStore';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import { onMounted, onUnmounted, watch } from 'vue';
 import GameJoinCard from './GameJoinCard.vue';
@@ -20,7 +20,7 @@ const { isFetching, isSuccess, isError, data, error } = useQuery({
 
 watch(isFetching, () => {
   if (isError.value) {
-    useErrorModalStore().showModal(error.value);
+    useModalStore().showErrorModal(error.value);
   }
 });
 

@@ -4,7 +4,7 @@ import { UserApi } from '@/api/user/user.api';
 import duckIcon from '@/assets/duck-icon.svg';
 import Dropdown from '@/components/Dropdown/Dropdown.vue';
 import { handleNetworkError } from '@/helpers/errors';
-import { useErrorModalStore } from '@/stores/errorModal/errorModalStore';
+import { useModalStore } from '@/stores/modal/modalStore';
 import { useUserStore } from '@/stores/user/userStore';
 import { UserRoles } from '@/typings/enums/user';
 import { ArrowRightIcon } from '@heroicons/vue/16/solid';
@@ -45,7 +45,7 @@ const { mutate: logout, isPending } = useMutation({
 
 watch(isFetching, () => {
   if (isError.value) {
-    useErrorModalStore().showModal(error.value);
+    useModalStore().showErrorModal(error.value);
   }
 });
 
