@@ -8,8 +8,17 @@ import { defaultStrokeCapStyle, defaultStrokeJoinStyle } from '@/helpers/constan
 import type { DrawingPart } from '@/api/drawing/drawing.api.interface';
 import { drawingCanvasSize } from '@/typings/enums/game';
 import type { Player } from '@/typings/interfaces/player.interface';
+import ButtonMain from '../Button/ButtonMain.vue';
 
-const props = defineProps<{ drawing: GameDrawing; players: Player[] }>();
+const props = withDefaults(
+  defineProps<{
+    drawing: GameDrawing;
+    players: Player[];
+    hidePlayer?: boolean;
+    hideGame?: boolean;
+  }>(),
+  { hidePlayer: false, hideGame: false }
+);
 
 const canvasId = `game-canvas-${props.drawing.id}`;
 const canvasRef = ref<HTMLCanvasElement>();
@@ -62,12 +71,23 @@ const drawPart = (part: DrawingPart) => {
       :style="{ backgroundColor: 'white' }"
     />
     <div class="flex justify-between mt-4">
-      <span>#{{ drawing.roundNumber }}</span>
+      <span>Round #{{ drawing.roundNumber }}</span>
       <span class="font-bold text-center">{{ drawing.word?.word }}</span>
     </div>
-    <span class="text-right">
+    <span
+      v-if="!hidePlayer"
+      class="text-right"
+    >
       by
       {{ players.find((player) => player.id === drawing.gamePlayerId)?.user.username ?? '-' }}
     </span>
+    <ButtonMain
+      size="sm"
+      is-rounded
+      v-if="!hideGame"
+      @click="$router.push(`/game/${props.drawing.gameId}`)"
+    >
+      Game # {{ props.drawing.gameId }}
+    </ButtonMain>
   </Panel>
 </template>

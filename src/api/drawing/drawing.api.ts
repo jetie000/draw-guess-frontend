@@ -16,6 +16,8 @@ export const DrawingApi = {
     drawingApiInstance
       .get<Drawing | undefined>(`/drawing/game-current/${gameId}`)
       .then(({ data }) => data),
+  getMyDrawings: () =>
+    drawingApiInstance.get<Required<Drawing>[]>('/drawing/my').then(({ data }) => data),
   getWordTypes: () =>
     drawingApiInstance.get<WordType[]>('/drawing-word-type').then(({ data }) => data),
   addWordType: (wordType: string) =>

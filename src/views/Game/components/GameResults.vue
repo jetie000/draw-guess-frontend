@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { format } from 'date-fns';
 import type { Game } from '@/api/game/game.api.interface';
 import type { Profile } from '@/api/user/user.api.interface';
 import Panel from '@/components/Panel/Panel.vue';
+import DrawingCard from '@/components/Drawing/DrawingCard.vue';
 import PlayerLobby from './PlayerLobby.vue';
-import GameDrawingCard from './GameDrawingCard.vue';
-import { format } from 'date-fns';
 
 const props = defineProps<{ game: Game; user: Profile }>();
 
@@ -41,12 +41,13 @@ const gameInfo = [
   <div class="flex gap-3 p-3 place-self-center w-full">
     <div class="flex flex-col gap-3 grow">
       <div class="text-xl font-bold my-1.5 text-center">Drawings</div>
-      <div class="grid cols grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-3">
-        <GameDrawingCard
+      <div class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-3">
+        <DrawingCard
           v-for="drawing in game.drawings"
           :key="drawing.id"
           :drawing="drawing"
           :players="game.players"
+          hide-game
         />
       </div>
     </div>

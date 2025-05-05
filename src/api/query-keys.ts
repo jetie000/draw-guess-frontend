@@ -7,5 +7,6 @@ export enum QueryKeys {
   DrawingMessages = 'drawing-messages',
   Words = 'words',
   WordTypes = 'word-types',
-  Users = 'users'
+  Users = 'users',
+  Drawings = 'drawings'
 }
