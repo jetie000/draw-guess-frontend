@@ -14,6 +14,10 @@ const gameInfo = [
     value: props.game.isPrivate ? 'Private' : 'Public'
   },
   {
+    name: 'Mode',
+    value: props.game.isSimplified ? 'Simplified' : 'Standard'
+  },
+  {
     name: 'Round duration',
     value: `${props.game.roundDuration}s`
   },

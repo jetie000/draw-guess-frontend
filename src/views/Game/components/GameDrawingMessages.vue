@@ -58,6 +58,7 @@ const { mutate, isPending } = useMutation({
     });
     queryClient.setQueryData([QueryKeys.DrawingMessages], {
       isGuessed: wordResponse.isGuessed,
+      guessedLetters: wordResponse.guessedLetters,
       messages: [...(data.value?.messages || []), wordResponse.message]
     } as DrawingMessagesResponse);
     message.value = '';
@@ -79,10 +80,24 @@ watch(props.queryData.isFetching, () => {
 
 <template>
   <Panel
-    class="flex flex-col gap-1 max-xsm:w-full h-44"
+    class="flex flex-col gap-1 max-xsm:w-full h-52"
     no-padding
   >
-    <p class="m-2 text-center">{{ data && data.isGuessed ? 'You guessed!' : 'Guess the word' }}</p>
+    <p class="m-1.5 mb-1 text-center">
+      {{ data && data.isGuessed ? 'You guessed!' : 'Guess the word' }}
+    </p>
+    <div
+      class="flex gap-0.5 text-sm leading-4 justify-center flex-wrap"
+      v-if="data?.guessedLetters"
+    >
+      <div
+        class="bg-slate-100 border border-gray-main rounded-md h-5 w-5 text-blue-dark text-center"
+        v-for="(letter, index) in data.guessedLetters"
+        :key="index"
+      >
+        {{ letter }}
+      </div>
+    </div>
     <div
       v-if="data"
       class="flex flex-col overflow-y-auto gap-1"

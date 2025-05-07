@@ -101,7 +101,7 @@ watch(isFetchingProfile, () => {
 </script>
 
 <template>
-  <div class="bg-yellow-secondary flex flex-col items-center">
+  <div class="flex flex-col items-center px-3">
     <div class="flex flex-col items-center">
       <GameButtons
         class="mt-12 mb-6"

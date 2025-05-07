@@ -46,11 +46,13 @@ export interface DrawingMessage {
 
 export interface DrawingMessagesResponse {
   isGuessed: boolean;
+  guessedLetters: null | (string | null)[];
   messages: DrawingMessage[];
 }
 
 export interface AddWordResponse {
   isGuessed: boolean;
+  guessedLetters: null | (string | null)[];
   updatedPoints: number | null;
   message: DrawingMessage;
 }

@@ -43,12 +43,14 @@ const handleIncreasePage = () => {
     <div class="flex justify-between gap-4 text-sm text-gray-secondary">
       <div class="flex flex-col gap-2">
         <span>Access</span>
+        <span>Mode</span>
         <span>Round duration</span>
         <span>Players</span>
         <span>Drawings per player</span>
       </div>
       <div class="flex flex-col gap-2 font-bold text-blue-dark items-center">
         <span>{{ game.isPrivate ? 'Private' : 'Public' }}</span>
+        <span>{{ game.isSimplified ? 'Simplified' : 'Standard' }}</span>
         <span>{{ game.roundDuration }}s</span>
         <span>{{ game.players.length }}</span>
         <span>{{ game.drawingsPerPlayer }}</span>

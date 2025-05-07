@@ -7,6 +7,7 @@ export const GameApi = {
     roundDuration: number,
     drawingsPerPlayer: number,
     isPrivate: boolean,
+    isSimplified: boolean,
     wordTypeIds: number[]
   ) =>
     gameApiInstance
@@ -15,6 +16,7 @@ export const GameApi = {
         roundDuration: Number(roundDuration),
         drawingsPerPlayer: Number(drawingsPerPlayer),
         isPrivate,
+        isSimplified,
         wordTypeIds
       })
       .then((res) => res.data),

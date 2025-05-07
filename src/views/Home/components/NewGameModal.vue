@@ -27,6 +27,7 @@ const players = ref(2);
 const roundDuration = ref(30);
 const drawingsPerPlayer = ref(1);
 const isPrivate = ref(true);
+const isSimplified = ref(false);
 const wordTypeIds = ref<number[]>([]);
 
 const { data, isError, error, isLoading } = useQuery({
@@ -47,6 +48,7 @@ const { isPending, mutate } = useMutation({
       roundDuration.value,
       drawingsPerPlayer.value,
       isPrivate.value,
+      isSimplified.value,
       wordTypeIds.value
     ),
   onSuccess: (data) => {
@@ -81,15 +83,52 @@ watch([players, drawingsPerPlayer], () => {
           <div class="inline-flex rounded-lg w-1/2">
             <input
               type="radio"
-              v-model="isPrivate"
-              :value="true"
-              name="room-type"
-              id="roomPrivate"
+              v-model="isSimplified"
+              :value="false"
+              name="room-difficulty-type"
+              id="room-standard"
               checked
               hidden
             />
             <label
-              for="roomPrivate"
+              for="room-standard"
+              class="radio grow text-center self-center py-2 px-4 rounded-lg cursor-pointer hover:opacity-75"
+            >
+              Standard
+            </label>
+          </div>
+          <div class="inline-flex rounded-lg w-1/2">
+            <input
+              type="radio"
+              v-model="isSimplified"
+              :value="true"
+              name="room-difficulty-type"
+              id="room-simplified"
+              hidden
+            />
+            <label
+              for="room-simplified"
+              class="radio grow text-center self-center py-2 px-4 rounded-lg cursor-pointer hover:opacity-75"
+            >
+              Simplified
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-center items-center col-end-3 col-start-1 mb-1">
+        <div class="bg-gray-200 rounded-lg w-full">
+          <div class="inline-flex rounded-lg w-1/2">
+            <input
+              type="radio"
+              v-model="isPrivate"
+              :value="true"
+              name="room-type"
+              id="room-private"
+              checked
+              hidden
+            />
+            <label
+              for="room-private"
               class="radio grow text-center self-center py-2 px-4 rounded-lg cursor-pointer hover:opacity-75"
             >
               Private
@@ -101,11 +140,11 @@ watch([players, drawingsPerPlayer], () => {
               v-model="isPrivate"
               :value="false"
               name="room-type"
-              id="roomPublic"
+              id="room-public"
               hidden
             />
             <label
-              for="roomPublic"
+              for="room-public"
               class="radio grow text-center self-center py-2 px-4 rounded-lg cursor-pointer hover:opacity-75"
             >
               Public

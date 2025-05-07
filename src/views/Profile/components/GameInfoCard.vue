@@ -17,7 +17,7 @@ const handleClick = () => {
 <template>
   <ButtonMain
     theme="secondary"
-    class="flex flex-col gap-3 ps-2.5 font-normal"
+    class="flex flex-col gap-3 ps-2.5 font-normal items-stretch"
     @click="handleClick"
   >
     <div class="flex gap-3 max-sm:flex-col">
@@ -46,8 +46,13 @@ const handleClick = () => {
         </span>
       </div>
     </div>
-    <div class="flex w-full justify-end">
-      {{ game.wordTypes.map((t) => t.type).join(', ') }}
+    <div class="flex w-full justify-between items-center">
+      <div
+        :class="`font-bold p-2 rounded-md ${game.isSimplified ? 'bg-lime-400' : 'bg-zinc-400'} max-sm:w-full`"
+      >
+        {{ game.isSimplified ? 'Simple' : 'Standard' }}
+      </div>
+      <span>{{ game.wordTypes.map((t) => t.type).join(', ') }}</span>
     </div>
   </ButtonMain>
 </template>
