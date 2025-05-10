@@ -30,3 +30,20 @@ export interface PatchUserRequestAdmin extends PatchUserRequest {
   access: boolean;
   password: string;
 }
+
+export interface AchievementType {
+  id: number;
+  name: string;
+  description: string;
+  level1Amount: number;
+  level2Amount: number;
+  level3Amount: number;
+}
+
+export interface Achievement {
+  id: number;
+  typeId: number;
+  userId: number;
+  level: number;
+  type: AchievementType;
+}

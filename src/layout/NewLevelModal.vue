@@ -6,7 +6,7 @@ import confettiJson from '@/assets/confetti.json';
 import { Vue3Lottie } from 'vue3-lottie';
 import duckIcon from '@/assets/duck-icon.svg';
 
-const { isLevelModalOpen, level } = storeToRefs(useModalStore());
+const { isLevelModalOpen, isErrorModalOpen, level } = storeToRefs(useModalStore());
 </script>
 
 <template>
@@ -14,7 +14,7 @@ const { isLevelModalOpen, level } = storeToRefs(useModalStore());
     title="Congratulations!"
     backdrop-dismiss
     size="sm"
-    :is-open="isLevelModalOpen"
+    :is-open="!isErrorModalOpen && isLevelModalOpen"
     @close="isLevelModalOpen = false"
   >
     <div class="text-xl font bold mb-12 text-center">You've got a level up!</div>

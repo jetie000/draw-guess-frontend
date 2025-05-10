@@ -56,7 +56,7 @@ const gamesWon = computed(() =>
     ? data.value.reduce((acc, game) => {
         const wonPlayer = game.players.slice().sort((a, b) => b.points - a.points)[0];
         const myPlayer = game.players.find((player) => player.user.id === user.value.id);
-        if (myPlayer?.points === wonPlayer.points) {
+        if (myPlayer?.points === wonPlayer.points && myPlayer.points > 0) {
           return acc + 1;
         }
         return acc;
@@ -100,10 +100,9 @@ const gamesWon = computed(() =>
               :style="{
                 background: levelAndProgress.color,
                 width: `${levelAndProgress.progress}%`,
-                height: '100%',
-                borderTopLeftRadius: '0.625rem',
-                borderBottomLeftRadius: '0.625rem'
+                height: '100%'
               }"
+              class="rounded-s-[20px]"
             />
           </div>
           <span class="text-xs font-bold">

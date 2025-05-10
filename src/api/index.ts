@@ -9,7 +9,7 @@ const createAxiosInstance = (url: string, timeoutSeconds: number = 15) =>
     withCredentials: true
   });
 
-export const userApiInstance = createAxiosInstance(`${config.ACCOUNT_URL}/user`);
+export const userApiInstance = createAxiosInstance(`${config.ACCOUNT_URL}`);
 export const drawingApiInstance = createAxiosInstance(`${config.DRAWING_URL}`);
 export const gameApiInstance = createAxiosInstance(`${config.GAME_URL}/game`);
 

@@ -69,7 +69,7 @@ const levelAndProgress = computed(
 
 <template>
   <header
-    class="text-blue-dark bg-white p-2 h-12 flex justify-center sticky top-0 border-b border-blue-dark"
+    class="text-blue-dark bg-white p-2 h-12 flex justify-center sticky top-0 border-b z-10 border-blue-dark"
   >
     <div class="container flex justify-center items-center flex-grow px-4 max-xsm:px-2">
       <h1
@@ -144,8 +144,15 @@ const levelAndProgress = computed(
           >
             My Profile
           </RouterLink>
+          <RouterLink
+            to="/achievements"
+            class="cursor-pointer hover:bg-blue-100 py-1 px-4 text-center"
+            @click="() => dropdown?.hideMenu()"
+          >
+            Achievements
+          </RouterLink>
           <div
-            class="flex items-center gap-2 flex-nowrap px-4 py-1 hover:bg-blue-100 cursor-pointer"
+            class="flex items-center justify-center gap-2 flex-nowrap px-4 py-1 hover:bg-blue-100 cursor-pointer"
             @click="() => !isPending && logout()"
           >
             <span class="whitespace-nowrap">Log out</span>

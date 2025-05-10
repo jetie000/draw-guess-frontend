@@ -7,10 +7,10 @@ import ButtonMain from '@/components/Button/ButtonMain.vue';
 
 const router = useRouter();
 const { isErrorModalOpen, messageError } = storeToRefs(useModalStore());
-const { hideModal } = useModalStore();
+const { hideErrorModal } = useModalStore();
 
 const handleGoHome = () => {
-  hideModal();
+  hideErrorModal();
   router.push({ name: 'Home' });
 };
 </script>

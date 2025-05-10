@@ -3,10 +3,22 @@ import { isAxiosError, type AxiosInstance } from 'axios';
 import { useUserStore } from '@/stores/user/userStore';
 import { router } from '@/router';
 
+const ignoreUrlsToRetry = [
+  '/login',
+  '/sign-up',
+  '/request-code',
+  '/reset-password',
+  '/refresh-token'
+];
+
 const onResponseError = async (instance: AxiosInstance, error: any) => {
   const originalRequest = error.config;
 
-  if (error.response.status === 401 && !originalRequest._retry) {
+  if (
+    error.response.status === 401 &&
+    !originalRequest._retry &&
+    !ignoreUrlsToRetry.some((url) => error.config.url.includes(url))
+  ) {
     originalRequest._retry = true;
     const userStore = useUserStore();
 

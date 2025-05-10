@@ -24,7 +24,7 @@ watch(isLoading, () => {
     <h3 class="font-bold text-lg">My Drawings</h3>
     <SpinnerCenter v-if="isLoading" />
     <div
-      v-else-if="data"
+      v-else-if="data?.length"
       class="grid cols grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-3"
     >
       <DrawingCard
