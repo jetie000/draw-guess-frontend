@@ -6,7 +6,7 @@ import InputMain from '@/components/Input/InputMain.vue';
 import InputRadio from '@/components/Input/InputRadio.vue';
 import Modal from '@/components/Modal/Modal.vue';
 import Spinner from '@/components/Spinner/Spinner.vue';
-import { UserRoles } from '@/typings/enums/user';
+import { AccountTypes, UserRoles } from '@/typings/enums/user';
 
 defineProps<{
   isChangeModalOpen: boolean;
@@ -48,7 +48,7 @@ defineEmits(['pressed', 'closed']);
             required
           />
         </div>
-        <div>
+        <div v-if="user.type === AccountTypes.Email">
           <label
             class="text-sm"
             for="change-password"

@@ -1,5 +1,7 @@
 export const storageKeys = {
-  token: 'accessToken'
+  token: 'accessToken',
+  volumeSoundsLevel: 'volumeSoundsLevel',
+  volumeMusicLevel: 'volumeMusicLevel'
 };
 
 export const colors = [
@@ -19,3 +21,7 @@ export const strokeWidths = [4, 8, 12, 16, 20];
 
 export const defaultStrokeCapStyle = 'round';
 export const defaultStrokeJoinStyle = 'round';
+
+export const maxVolumeLevel = 20;
+export const defaultVolumeMusicLevel = 2;
+export const defaultVolumeSoundsLevel = 5;

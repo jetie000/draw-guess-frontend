@@ -43,6 +43,7 @@ const imgByLevel = (level: number) => {
       <Panel
         v-for="achievement in data"
         :key="achievement.id"
+        class="flex flex-col"
       >
         <img
           class="h-40 mx-auto mb-3"
@@ -50,7 +51,7 @@ const imgByLevel = (level: number) => {
           :src="imgByLevel(achievement.level)"
           :alt="`level ${achievement.level}`"
         />
-        <div class="text-center text-lg font-bold">{{ achievement.type.name }}</div>
+        <div class="text-center text-lg font-bold mb-auto">{{ achievement.type.name }}</div>
         <div class="flex justify-around gap-2 mt-3">
           <div
             v-for="(amount, index) in [

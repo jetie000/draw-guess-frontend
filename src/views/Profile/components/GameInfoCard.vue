@@ -46,7 +46,7 @@ const handleClick = () => {
         </span>
       </div>
     </div>
-    <div class="flex w-full justify-between items-center">
+    <div class="flex w-full justify-between items-center gap-2">
       <div
         :class="`font-bold p-2 rounded-md ${game.isSimplified ? 'bg-lime-400' : 'bg-zinc-400'} max-sm:w-full`"
       >

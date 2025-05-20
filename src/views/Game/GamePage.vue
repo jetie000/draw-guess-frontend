@@ -14,6 +14,8 @@ import { QueryKeys } from '@/api/query-keys';
 import { SocketEmitKeys } from '@/helpers/socket/emit-keys';
 import { SocketEventKeys } from '@/helpers/socket/event-keys';
 import type { Achievement } from '@/api/user/user.api.interface';
+import { useSettingsStore } from '@/stores/settingsStore';
+import levelUpAudio from '@/assets/sounds/level-up.wav';
 
 const route = useRoute();
 
@@ -65,6 +67,7 @@ onMounted(() => {
     ({ achievements, userId }: { achievements: Achievement[]; userId: number }) => {
       if (userId === user.value?.id) {
         useModalStore().showAchievementsModal(achievements);
+        useSettingsStore().playAudio(levelUpAudio);
       }
     }
   );

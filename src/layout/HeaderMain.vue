@@ -11,14 +11,25 @@ import { ArrowRightIcon } from '@heroicons/vue/16/solid';
 import { ArrowLeftStartOnRectangleIcon } from '@heroicons/vue/16/solid';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 import { storeToRefs } from 'pinia';
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import userIcon from '@/assets/user.svg';
 import { getLevelAndProgressByExp } from '@/helpers/game';
+import {
+  MusicalNoteIcon,
+  SpeakerWaveIcon,
+  SpeakerXMarkIcon,
+  XMarkIcon
+} from '@heroicons/vue/24/outline';
+import { useSettingsStore } from '@/stores/settingsStore';
+import musicFile from '@/assets/sounds/friendly-town-menu-music.mp3';
+import { maxVolumeLevel } from '@/helpers/constants';
 
 const router = useRouter();
 const userStore = useUserStore();
 const { token } = storeToRefs(userStore);
+const settingsStore = useSettingsStore();
+const { volumeSoundsLevel, volumeMusicLevel } = storeToRefs(settingsStore);
 
 const queryClient = useQueryClient();
 const dropdown = ref<InstanceType<typeof Dropdown> | null>(null);
@@ -58,6 +69,10 @@ watch(
   },
   { immediate: true }
 );
+
+onMounted(() => {
+  settingsStore.playMusic(musicFile);
+});
 
 const replaceAvatarByDefault = (event: Event) => {
   (event.target as HTMLImageElement).src = userIcon;
@@ -151,6 +166,49 @@ const levelAndProgress = computed(
           >
             Achievements
           </RouterLink>
+          <div class="px-4 py-2 pb-1 flex gap-2 items-center">
+            <SpeakerWaveIcon
+              v-if="volumeSoundsLevel > 0"
+              class="w-6 h-6"
+            />
+            <SpeakerXMarkIcon
+              v-else
+              class="w-6 h-6"
+            />
+            <input
+              :value="volumeSoundsLevel"
+              id="duration-range"
+              type="range"
+              :max="maxVolumeLevel / 2"
+              min="0"
+              step="0.25"
+              class="w-full h-1 bg-gray-300 appearance-none cursor-pointer"
+              @input="
+                (e) =>
+                  settingsStore.setVolumeSoundsLevel(Number((e.target as HTMLInputElement).value))
+              "
+            />
+          </div>
+          <div class="px-4 py-2 flex gap-2 items-center">
+            <MusicalNoteIcon class="w-6 h-6 relative" />
+            <XMarkIcon
+              v-if="volumeMusicLevel === 0"
+              class="w-6 h-6 absolute left-[15px]"
+            />
+            <input
+              :value="volumeMusicLevel"
+              id="duration-range"
+              type="range"
+              :max="maxVolumeLevel / 2"
+              min="0"
+              step="0.25"
+              class="w-full h-1 bg-gray-300 appearance-none cursor-pointer"
+              @input="
+                (e) =>
+                  settingsStore.setVolumeMusicLevel(Number((e.target as HTMLInputElement).value))
+              "
+            />
+          </div>
           <div
             class="flex items-center justify-center gap-2 flex-nowrap px-4 py-1 hover:bg-blue-100 cursor-pointer"
             @click="() => !isPending && logout()"

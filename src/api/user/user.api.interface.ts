@@ -29,6 +29,7 @@ export interface PatchUserRequestAdmin extends PatchUserRequest {
   role: UserRoles;
   access: boolean;
   password: string;
+  type: AccountTypes;
 }
 
 export interface AchievementType {

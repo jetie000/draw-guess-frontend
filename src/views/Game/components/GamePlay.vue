@@ -20,6 +20,8 @@ import GameScoreModal from './GameScoreModal.vue';
 import { QueryKeys } from '@/api/query-keys';
 import { SocketEventKeys } from '@/helpers/socket/event-keys';
 import { getLevelAndProgressByExp } from '@/helpers/game';
+import { useSettingsStore } from '@/stores/settingsStore';
+import timeSound from '@/assets/sounds/time.wav';
 
 const props = defineProps<{ game: Game; user: Profile }>();
 
@@ -49,12 +51,13 @@ onMounted(() => {
         ...props.game,
         currentRound: round
       });
-    }
-    if (time % (props.game.roundDuration + breakSecondsNumber) === 0) {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.Drawing, props.game.id] });
     }
     remainingTime.value =
       props.game.roundDuration - (time % (props.game.roundDuration + breakSecondsNumber));
+    if (remainingTime.value > 0 && remainingTime.value <= 5) {
+      useSettingsStore().playAudio(timeSound);
+    }
   });
 
   socket.on(SocketEventKeys.UpdatedPlayers, (players: Player[]) => {

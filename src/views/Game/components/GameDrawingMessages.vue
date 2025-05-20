@@ -19,12 +19,16 @@ import { useAlertStore } from '@/stores/alert/alertStore';
 import { AlertTypes } from '@/typings/enums/alert';
 import type { Game } from '@/api/game/game.api.interface';
 import { QueryKeys } from '@/api/query-keys';
+import { useSettingsStore } from '@/stores/settingsStore';
+import successSound from '@/assets/sounds/success.wav';
+import failSound from '@/assets/sounds/fail.wav';
 
 const props = defineProps<{
   queryData: UseQueryReturnType<Drawing | undefined, Error>;
   game: Game;
 }>();
 
+const { playAudio } = useSettingsStore();
 const queryClient = useQueryClient();
 const message = ref('');
 
@@ -44,6 +48,7 @@ const { mutate, isPending } = useMutation({
     if (wordResponse.isGuessed) {
       useAlertStore().showAlert('You guessed!', AlertTypes.Success);
     }
+    playAudio(wordResponse.isGuessed ? successSound : failSound);
     queryClient.setQueryData([QueryKeys.Game, String(props.game.id)], {
       ...props.game,
       players: props.game.players.map((p) => {

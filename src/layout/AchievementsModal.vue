@@ -37,7 +37,7 @@ const label = computed(() =>
       class="flex flex-col"
     >
       <hr class="-mx-4" />
-      <div class="mt-3 flex justify-around">
+      <div class="mt-3 flex justify-center gap-2">
         <div class="font-bold text-blue-dark">{{ achievement.type.name }}</div>
         <div>-</div>
         <div>Level {{ achievement.level }}</div>
