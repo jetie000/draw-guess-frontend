@@ -18,7 +18,7 @@ import { QueryKeys } from '@/api/query-keys';
 defineProps<{
   isNewModalOpen: boolean;
 }>();
-defineEmits(['toggle']);
+defineEmits(['close']);
 
 const alertStore = useAlertStore();
 const router = useRouter();
@@ -75,7 +75,7 @@ watch([players, drawingsPerPlayer], () => {
   <Modal
     title="Create a new game"
     :is-open="isNewModalOpen"
-    @close="$emit('toggle')"
+    @close="$emit('close')"
   >
     <div class="grid grid-cols-2 items-center gap-2">
       <div class="flex justify-center items-center col-end-3 col-start-1 mb-1">

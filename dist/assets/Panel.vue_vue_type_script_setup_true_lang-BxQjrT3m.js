@@ -1,0 +1,1 @@
+import{d as o,c as a,ai as n,D as l,o as r}from"./index-iSi7JLtP.js";const p=o({__name:"Panel",props:{noPadding:{type:Boolean,default:!1}},setup(s){return(e,d)=>(r(),a("div",{class:l(["bg-yellow-200 border border-blue-light rounded-lg",{"p-4":!e.noPadding,"p-0":e.noPadding}])},[n(e.$slots,"default")],2))}});export{p as _};
