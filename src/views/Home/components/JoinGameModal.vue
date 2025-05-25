@@ -12,7 +12,7 @@ import InputMain from '@/components/Input/InputMain.vue';
 defineProps<{
   isJoinModalOpen: boolean;
 }>();
-defineEmits(['toggle']);
+defineEmits(['close']);
 
 const router = useRouter();
 
@@ -34,7 +34,7 @@ const { isPending, mutate } = useMutation({
     title="Join a game"
     size="sm"
     :is-open="isJoinModalOpen"
-    @close="$emit('toggle')"
+    @close="$emit('close')"
   >
     <h1>Enter game code</h1>
     <form @submit.prevent="mutate()">

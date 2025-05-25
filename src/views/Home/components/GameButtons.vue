@@ -22,23 +22,23 @@ const toggleModal = (callback: Function) => {
   callback();
 };
 
-const toggleNewModal = () => {
-  isNewModalOpen.value = !isNewModalOpen.value;
+const setIsOpenNewModal = (isOpen: boolean) => {
+  isNewModalOpen.value = isOpen;
 };
 
-const toggleJoinModal = () => {
-  isJoinModalOpen.value = !isJoinModalOpen.value;
+const setIsOpenJoinModal = (isOpen: boolean) => {
+  isJoinModalOpen.value = isOpen;
 };
 
 const buttons = [
   {
     title: 'Create Game',
-    onClick: () => toggleModal(toggleNewModal),
+    onClick: () => toggleModal(() => setIsOpenNewModal(true)),
     icon: PlusIcon
   },
   {
     title: 'Join Game',
-    onClick: () => toggleModal(toggleJoinModal),
+    onClick: () => toggleModal(() => setIsOpenJoinModal(true)),
     icon: ArrowRightEndOnRectangleIcon
   }
 ];
@@ -64,11 +64,11 @@ const buttons = [
 
     <NewGameModal
       :is-new-modal-open="isNewModalOpen"
-      @toggle="toggleNewModal"
+      @close="setIsOpenNewModal(false)"
     />
     <JoinGameModal
       :is-join-modal-open="isJoinModalOpen"
-      @toggle="toggleJoinModal"
+      @close="setIsOpenJoinModal(false)"
     />
   </div>
 </template>
