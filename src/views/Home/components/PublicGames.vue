@@ -45,7 +45,7 @@ onMounted(() => {
       return;
     }
     const index = data.value.findIndex((pGame) => pGame.id === room);
-    if (index === -1) {
+    if (index !== -1) {
       queryClient.setQueryData(
         [QueryKeys.PublicGames],
         [
