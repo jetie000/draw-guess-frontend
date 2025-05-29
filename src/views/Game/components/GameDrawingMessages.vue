@@ -76,11 +76,15 @@ watch(isLoading, () => {
   }
 });
 
-watch(props.queryData.isFetching, () => {
-  if (props.queryData.isSuccess.value) {
-    refetch();
-  }
-});
+watch(
+  props.queryData.isFetching,
+  () => {
+    if (props.queryData.isSuccess.value) {
+      refetch();
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
