@@ -118,7 +118,10 @@ const { mutate: changeWordType, isPending: isPendingChange } = useMutation({
         </ButtonMain>
       </form>
     </Panel>
-    <Panel no-padding>
+    <Panel
+      no-padding
+      class="overflow-auto"
+    >
       <table class="w-full">
         <thead>
           <tr>

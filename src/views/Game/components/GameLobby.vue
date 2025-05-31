@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Game } from '@/api/game/game.api.interface';
 import Panel from '@/components/Panel/Panel.vue';
-import PlayerLobby from './PlayerLobby.vue';
 import { useAlertStore } from '@/stores/alert/alertStore';
 import { AlertTypes } from '@/typings/enums/alert';
 import ButtonMain from '@/components/Button/ButtonMain.vue';
@@ -18,6 +17,7 @@ import { handleNetworkError } from '@/helpers/errors';
 import Spinner from '@/components/Spinner/Spinner.vue';
 import { QueryKeys } from '@/api/query-keys';
 import { SocketEventKeys } from '@/helpers/socket/event-keys';
+import PlayerWithPoints from '@/components/User/PlayerWithPoints.vue';
 
 const props = defineProps<{ game: Game; user: Profile }>();
 
@@ -132,14 +132,16 @@ onUnmounted(() => {
       </ButtonMain>
       <Panel class="max-xsm:w-full">
         <div class="font-bold mb-2 text-center">Creator</div>
-        <PlayerLobby :player="game.players.find((p) => p.user.id === game.creatorId)!" />
+        <PlayerWithPoints :player="game.players.find((p) => p.user.id === game.creatorId)!" />
         <template v-if="game.players.length > 1">
           <hr class="my-4 -mx-4" />
-          <PlayerLobby
-            v-for="player in game.players.filter((p) => p.user.id !== game.creatorId)"
-            :player="player"
-            :key="player.user.id"
-          />
+          <div class="flex flex-col gap-3">
+            <PlayerWithPoints
+              v-for="player in game.players.filter((p) => p.user.id !== game.creatorId)"
+              :player="player"
+              :key="player.user.id"
+            />
+          </div>
         </template>
       </Panel>
       <ButtonMain

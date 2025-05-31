@@ -2,56 +2,25 @@
 import { QueryKeys } from '@/api/query-keys';
 import { UserApi } from '@/api/user/user.api';
 import duckIcon from '@/assets/duck-icon.svg';
-import Dropdown from '@/components/Dropdown/Dropdown.vue';
-import { handleNetworkError } from '@/helpers/errors';
 import { useModalStore } from '@/stores/modal/modalStore';
 import { useUserStore } from '@/stores/user/userStore';
 import { UserRoles } from '@/typings/enums/user';
 import { ArrowRightIcon } from '@heroicons/vue/16/solid';
-import { ArrowLeftStartOnRectangleIcon } from '@heroicons/vue/16/solid';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
+import { useQuery } from '@tanstack/vue-query';
 import { storeToRefs } from 'pinia';
-import { computed, onMounted, ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
-import userIcon from '@/assets/user.svg';
-import { getLevelAndProgressByExp } from '@/helpers/game';
-import {
-  MusicalNoteIcon,
-  SpeakerWaveIcon,
-  SpeakerXMarkIcon,
-  XMarkIcon
-} from '@heroicons/vue/24/outline';
+import { onMounted, watch } from 'vue';
 import { useSettingsStore } from '@/stores/settingsStore';
 import musicFile from '@/assets/sounds/friendly-town-menu-music.mp3';
-import { maxVolumeLevel } from '@/helpers/constants';
+import UserDropdown from './UserDropdown.vue';
 
-const router = useRouter();
 const userStore = useUserStore();
 const { token } = storeToRefs(userStore);
 const settingsStore = useSettingsStore();
-const { volumeSoundsLevel, volumeMusicLevel } = storeToRefs(settingsStore);
-
-const queryClient = useQueryClient();
-const dropdown = ref<InstanceType<typeof Dropdown> | null>(null);
 
 const { isFetching, isError, data, error, refetch } = useQuery({
   queryKey: [QueryKeys.Profile],
   queryFn: UserApi.profile,
   enabled: false
-});
-
-// TODO: move logout when profile page will be added
-const { mutate: logout, isPending } = useMutation({
-  mutationFn: UserApi.logout,
-  onSuccess: () => {
-    userStore.removeToken();
-    router.push('/login');
-    queryClient.resetQueries({ queryKey: [QueryKeys.Profile] });
-    queryClient.clear();
-  },
-  onError: (logoutError) => {
-    handleNetworkError(logoutError);
-  }
 });
 
 watch(isFetching, () => {
@@ -73,13 +42,6 @@ watch(
 onMounted(() => {
   settingsStore.playMusic(musicFile);
 });
-
-const replaceAvatarByDefault = (event: Event) => {
-  (event.target as HTMLImageElement).src = userIcon;
-};
-const levelAndProgress = computed(
-  () => data.value && getLevelAndProgressByExp(data.value.experience)
-);
 </script>
 
 <template>
@@ -106,119 +68,10 @@ const levelAndProgress = computed(
       >
         Admin
       </button>
-      <Dropdown
+      <UserDropdown
         v-if="token"
-        ref="dropdown"
-        class="flex ml-auto"
-        trigger-wrapper-class="flex"
-        align="right"
-      >
-        <template #trigger>
-          <button
-            :disabled="isPending"
-            class="transition-all rounded-full border border-transparent hover:border-blue-dark relative"
-          >
-            <img
-              class="w-8 h-8 rounded-full"
-              :src="data?.avatarUrl || userIcon"
-              alt="Avatar"
-              @error="replaceAvatarByDefault"
-            />
-            <template v-if="levelAndProgress">
-              <div
-                class="absolute h-4 min-w-4 -top-1 left-5 text-xs text-center align-middle px-1 rounded-full border border-blue-dark"
-                :style="{
-                  background: levelAndProgress.background,
-                  color: levelAndProgress.color
-                }"
-              >
-                {{ levelAndProgress.level }}
-              </div>
-              <div
-                class="absolute left-1 -bottom-1 w-6 h-1.5 border border-blue-dark"
-                :style="{
-                  background: levelAndProgress.background
-                }"
-              >
-                <div
-                  :style="{
-                    background: levelAndProgress.color,
-                    width: `${levelAndProgress.progress}%`,
-                    height: '100%'
-                  }"
-                />
-              </div>
-            </template>
-          </button>
-        </template>
-        <div class="flex bg-white border rounded-md py-2 flex-col">
-          <RouterLink
-            to="/profile"
-            class="cursor-pointer hover:bg-blue-100 py-1 px-4 text-center"
-            @click="() => dropdown?.hideMenu()"
-          >
-            My Profile
-          </RouterLink>
-          <RouterLink
-            to="/achievements"
-            class="cursor-pointer hover:bg-blue-100 py-1 px-4 text-center"
-            @click="() => dropdown?.hideMenu()"
-          >
-            Achievements
-          </RouterLink>
-          <div class="px-4 py-2 pb-1 flex gap-2 items-center">
-            <SpeakerWaveIcon
-              v-if="volumeSoundsLevel > 0"
-              class="w-6 h-6"
-            />
-            <SpeakerXMarkIcon
-              v-else
-              class="w-6 h-6"
-            />
-            <input
-              :value="volumeSoundsLevel"
-              id="duration-range"
-              type="range"
-              :max="maxVolumeLevel / 2"
-              min="0"
-              step="0.25"
-              class="w-full h-1 bg-gray-300 appearance-none cursor-pointer"
-              @input="
-                (e) =>
-                  settingsStore.setVolumeSoundsLevel(Number((e.target as HTMLInputElement).value))
-              "
-            />
-          </div>
-          <div class="px-4 py-2 flex gap-2 items-center">
-            <MusicalNoteIcon class="w-6 h-6 relative" />
-            <XMarkIcon
-              v-if="volumeMusicLevel === 0"
-              class="w-6 h-6 absolute left-[15px]"
-            />
-            <input
-              :value="volumeMusicLevel"
-              id="duration-range"
-              type="range"
-              :max="maxVolumeLevel / 2"
-              min="0"
-              step="0.25"
-              class="w-full h-1 bg-gray-300 appearance-none cursor-pointer"
-              @input="
-                (e) =>
-                  settingsStore.setVolumeMusicLevel(Number((e.target as HTMLInputElement).value))
-              "
-            />
-          </div>
-          <div
-            class="flex items-center justify-center gap-2 flex-nowrap px-4 py-1 hover:bg-blue-100 cursor-pointer"
-            @click="() => !isPending && logout()"
-          >
-            <span class="whitespace-nowrap">Log out</span>
-            <ArrowLeftStartOnRectangleIcon class="inline w-5 h-5 shrink-0" />
-          </div>
-        </div>
-      </Dropdown>
-
+        :user="data"
+      />
       <button
         v-else
         class="flex items-center gap-1 ml-auto hover:bg-blue-dark hover:text-white transition-all px-3 py-1 rounded-full"

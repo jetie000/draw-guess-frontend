@@ -14,6 +14,7 @@ import { useModalStore } from '@/stores/modal/modalStore';
 import Dropdown from '@/components/Dropdown/Dropdown.vue';
 import { ChevronDownIcon } from '@heroicons/vue/24/outline';
 import { QueryKeys } from '@/api/query-keys';
+import InputRadioButtons from '@/components/Input/InputRadioButtons.vue';
 
 defineProps<{
   isNewModalOpen: boolean;
@@ -79,78 +80,24 @@ watch([players, drawingsPerPlayer], () => {
   >
     <div class="grid grid-cols-2 items-center gap-2">
       <div class="flex justify-center items-center col-end-3 col-start-1 mb-1">
-        <div class="bg-gray-200 rounded-lg w-full">
-          <div class="inline-flex rounded-lg w-1/2">
-            <input
-              type="radio"
-              v-model="isSimplified"
-              :value="false"
-              name="room-difficulty-type"
-              id="room-standard"
-              checked
-              hidden
-            />
-            <label
-              for="room-standard"
-              class="radio grow text-center self-center py-2 px-4 rounded-lg cursor-pointer hover:opacity-75"
-            >
-              Standard
-            </label>
-          </div>
-          <div class="inline-flex rounded-lg w-1/2">
-            <input
-              type="radio"
-              v-model="isSimplified"
-              :value="true"
-              name="room-difficulty-type"
-              id="room-simplified"
-              hidden
-            />
-            <label
-              for="room-simplified"
-              class="radio grow text-center self-center py-2 px-4 rounded-lg cursor-pointer hover:opacity-75"
-            >
-              Simplified
-            </label>
-          </div>
-        </div>
+        <InputRadioButtons
+          v-model="isSimplified"
+          name="room-difficulty-type"
+          :radio-values="[
+            { id: 'standard', label: 'Standard', value: false },
+            { id: 'simplified', label: 'Simplified', value: true }
+          ]"
+        />
       </div>
       <div class="flex justify-center items-center col-end-3 col-start-1 mb-1">
-        <div class="bg-gray-200 rounded-lg w-full">
-          <div class="inline-flex rounded-lg w-1/2">
-            <input
-              type="radio"
-              v-model="isPrivate"
-              :value="true"
-              name="room-type"
-              id="room-private"
-              checked
-              hidden
-            />
-            <label
-              for="room-private"
-              class="radio grow text-center self-center py-2 px-4 rounded-lg cursor-pointer hover:opacity-75"
-            >
-              Private
-            </label>
-          </div>
-          <div class="inline-flex rounded-lg w-1/2">
-            <input
-              type="radio"
-              v-model="isPrivate"
-              :value="false"
-              name="room-type"
-              id="room-public"
-              hidden
-            />
-            <label
-              for="room-public"
-              class="radio grow text-center self-center py-2 px-4 rounded-lg cursor-pointer hover:opacity-75"
-            >
-              Public
-            </label>
-          </div>
-        </div>
+        <InputRadioButtons
+          v-model="isPrivate"
+          name="room-type"
+          :radio-values="[
+            { id: 'private', label: 'Private', value: true },
+            { id: 'public', label: 'Public', value: false }
+          ]"
+        />
       </div>
       <Dropdown class="col-end-3 mb-1 col-start-1">
         <template #trigger>
@@ -240,10 +187,3 @@ watch([players, drawingsPerPlayer], () => {
     </ButtonMain>
   </Modal>
 </template>
-
-<style scoped lang="scss">
-input:checked ~ .radio {
-  color: white;
-  background-color: $blue-light;
-}
-</style>

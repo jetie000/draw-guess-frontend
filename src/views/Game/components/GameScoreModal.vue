@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Player } from '@/typings/interfaces/player.interface';
 import Modal from '@/components/Modal/Modal.vue';
-import PlayerLobby from './PlayerLobby.vue';
+import PlayerWithPoints from '@/components/User/PlayerWithPoints.vue';
 
 defineProps<{
   players: Player[];
@@ -19,7 +19,7 @@ defineProps<{
     :title="`Score after round ${round}`"
   >
     <div class="flex flex-col gap-3">
-      <PlayerLobby
+      <PlayerWithPoints
         v-for="player in players.slice().sort((a, b) => b.points - a.points)"
         :player="player"
         display-points

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Game, GameDrawing } from '@/api/game/game.api.interface';
-import type { Profile } from '@/api/user/user.api.interface';
+import type { Profile, ProfileExtended } from '@/api/user/user.api.interface';
 import Panel from '@/components/Panel/Panel.vue';
 import GameCanvas from './GameCanvas.vue';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
@@ -22,8 +22,10 @@ import { SocketEventKeys } from '@/helpers/socket/event-keys';
 import { getLevelAndProgressByExp } from '@/helpers/game';
 import { useSettingsStore } from '@/stores/settingsStore';
 import timeSound from '@/assets/sounds/time.wav';
+import levelUpAudio from '@/assets/sounds/level-up.wav';
+import { getMoneyAmountForLevelUp } from '@/helpers/account';
 
-const props = defineProps<{ game: Game; user: Profile }>();
+const props = defineProps<{ game: Game; user: ProfileExtended }>();
 
 const queryClient = useQueryClient();
 const { showErrorModal, showLevelModal } = useModalStore();
@@ -81,13 +83,17 @@ onMounted(() => {
       if (myPoints) {
         const currentLevel = getLevelAndProgressByExp(props.user.experience + myPoints).level;
         const prevLevel = getLevelAndProgressByExp(props.user.experience).level;
+        let moneyEarned = 0;
+        if (currentLevel !== prevLevel) {
+          moneyEarned = getMoneyAmountForLevelUp(currentLevel);
+          showLevelModal(currentLevel, moneyEarned);
+          useSettingsStore().playAudio(levelUpAudio);
+        }
         queryClient.setQueryData([QueryKeys.Profile], {
           ...props.user,
-          experience: props.user.experience + myPoints
+          experience: props.user.experience + myPoints,
+          money: props.user.money + moneyEarned
         });
-        if (currentLevel !== prevLevel) {
-          showLevelModal(currentLevel);
-        }
       }
       queryClient.invalidateQueries({ queryKey: [QueryKeys.PublicGames] });
       queryClient.invalidateQueries({ queryKey: [QueryKeys.ParticipatingGames] });

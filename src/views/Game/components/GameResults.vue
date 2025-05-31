@@ -4,7 +4,7 @@ import type { Game } from '@/api/game/game.api.interface';
 import type { Profile } from '@/api/user/user.api.interface';
 import Panel from '@/components/Panel/Panel.vue';
 import DrawingCard from '@/components/Drawing/DrawingCard.vue';
-import PlayerLobby from './PlayerLobby.vue';
+import PlayerWithPoints from '@/components/User/PlayerWithPoints.vue';
 
 const props = defineProps<{ game: Game; user: Profile }>();
 
@@ -72,21 +72,23 @@ const gameInfo = [
       </Panel>
       <Panel class="max-xsm:w-full">
         <div class="font-bold mb-2 text-center">Creator</div>
-        <PlayerLobby
+        <PlayerWithPoints
           :player="game.players.find((p) => p.user.id === game.creatorId)!"
           display-points
         />
         <template v-if="game.players.length > 1">
           <hr class="my-4 -mx-4" />
-          <PlayerLobby
-            v-for="player in game.players
-              .filter((p) => p.user.id !== game.creatorId)
-              .slice()
-              .sort((a, b) => b.points - a.points)"
-            :player="player"
-            :key="player.user.id"
-            display-points
-          />
+          <div class="flex flex-col gap-3">
+            <PlayerWithPoints
+              v-for="player in game.players
+                .filter((p) => p.user.id !== game.creatorId)
+                .slice()
+                .sort((a, b) => b.points - a.points)"
+              :player="player"
+              :key="player.user.id"
+              display-points
+            />
+          </div>
         </template>
       </Panel>
     </div>

@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/vue-query';
 import { GameApi } from '@/api/game/game.api';
 import SpinnerCenter from '@/components/Spinner/SpinnerCenter.vue';
 import GameLobby from './components/GameLobby.vue';
-import { onMounted, onUnmounted, watch } from 'vue';
 import { useModalStore } from '@/stores/modal/modalStore';
 import { socket } from '@/helpers/socket';
 import { UserApi } from '@/api/user/user.api';
@@ -12,10 +11,7 @@ import GamePlay from './components/GamePlay.vue';
 import GameResults from './components/GameResults.vue';
 import { QueryKeys } from '@/api/query-keys';
 import { SocketEmitKeys } from '@/helpers/socket/emit-keys';
-import { SocketEventKeys } from '@/helpers/socket/event-keys';
-import type { Achievement } from '@/api/user/user.api.interface';
-import { useSettingsStore } from '@/stores/settingsStore';
-import levelUpAudio from '@/assets/sounds/level-up.wav';
+import { watch } from 'vue';
 
 const route = useRoute();
 
@@ -59,22 +55,6 @@ watch(isFetching, () => {
   if (isSuccess.value) {
     refetchProfile();
   }
-});
-
-onMounted(() => {
-  socket.on(
-    SocketEventKeys.AchievementsEarned,
-    ({ achievements, userId }: { achievements: Achievement[]; userId: number }) => {
-      if (userId === user.value?.id) {
-        useModalStore().showAchievementsModal(achievements);
-        useSettingsStore().playAudio(levelUpAudio);
-      }
-    }
-  );
-});
-
-onUnmounted(() => {
-  socket.off(SocketEventKeys.AchievementsEarned);
 });
 </script>
 
