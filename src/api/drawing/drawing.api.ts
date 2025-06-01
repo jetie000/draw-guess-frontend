@@ -4,6 +4,7 @@ import type {
   AddWordResponse,
   Drawing,
   DrawingMessagesResponse,
+  OperLetterResponse,
   Word,
   WordType,
   WordWithType
@@ -44,6 +45,10 @@ export const DrawingApi = {
   addDrawingMessage: (drawingId: number, message: string) =>
     drawingApiInstance
       .post<AddWordResponse>('/drawing-message', { drawingId, message })
+      .then(({ data }) => data),
+  openDrawingLetter: (drawingId: number, letterIndex: number) =>
+    drawingApiInstance
+      .post<OperLetterResponse>('/drawing-message/open-letter/', { letterIndex, drawingId })
       .then(({ data }) => data),
   getDrawingMessages: (drawingId: number) =>
     drawingApiInstance

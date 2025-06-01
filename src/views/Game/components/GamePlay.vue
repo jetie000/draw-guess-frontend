@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Game, GameDrawing } from '@/api/game/game.api.interface';
-import type { Profile, ProfileExtended } from '@/api/user/user.api.interface';
+import type { ProfileExtended } from '@/api/user/user.api.interface';
 import Panel from '@/components/Panel/Panel.vue';
 import GameCanvas from './GameCanvas.vue';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
@@ -10,7 +10,7 @@ import GameDrawingOptions from './GameDrawingOptions.vue';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import { DrawingApi } from '@/api/drawing/drawing.api';
 import type { DrawingPart } from '@/api/drawing/drawing.api.interface';
-import { breakSecondsNumber } from '@/typings/enums/game';
+import { breakSecondsNumber, noGuessesSecondsNumber } from '@/typings/enums/game';
 import { formatSeconds } from '@/helpers/datetime';
 import { socket } from '@/helpers/socket';
 import { useModalStore } from '@/stores/modal/modalStore';
@@ -156,6 +156,7 @@ const handleAddPart = (part: DrawingPart) => {
         <GameDrawingMessages
           :query-data="queryData"
           :game="game"
+          :is-disabled-sending="remainingTime >= game.roundDuration - noGuessesSecondsNumber"
         />
       </template>
     </div>

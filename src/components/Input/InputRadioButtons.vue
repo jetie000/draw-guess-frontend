@@ -18,7 +18,8 @@ defineModel<string | number | boolean>();
     <div
       v-for="radio in radioValues"
       :key="radio.id"
-      :class="`inline-flex rounded-lg w-${isVertical ? 'full' : `1/${radioValues.length}`}`"
+      class="inline-flex rounded-lg"
+      :style="`width: ${isVertical ? '100%' : `${100 / radioValues.length}%`}`"
     >
       <input
         type="radio"

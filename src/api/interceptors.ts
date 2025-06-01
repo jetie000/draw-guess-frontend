@@ -13,16 +13,18 @@ const ignoreUrlsToRetry = [
 
 const onResponseError = async (instance: AxiosInstance, error: any) => {
   const originalRequest = error.config;
+  const userStore = useUserStore();
 
   if (
     error.response.status === 401 &&
+    !userStore.isLoadingRefresh &&
     !originalRequest._retry &&
     !ignoreUrlsToRetry.some((url) => error.config.url.includes(url))
   ) {
     originalRequest._retry = true;
-    const userStore = useUserStore();
 
     try {
+      userStore.isLoadingRefresh = true;
       const { accessToken } = await UserApi.refreshToken();
       userStore.setToken(accessToken);
       originalRequest.headers.Authorization = `Bearer ${accessToken}`;
@@ -38,6 +40,8 @@ const onResponseError = async (instance: AxiosInstance, error: any) => {
       }
 
       return Promise.reject(refreshError);
+    } finally {
+      userStore.isLoadingRefresh = false;
     }
   }
   return Promise.reject(error);

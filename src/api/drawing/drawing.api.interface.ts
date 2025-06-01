@@ -42,6 +42,10 @@ export interface DrawingMessage {
   drawingId: number;
   sendDate: Date;
   message: string;
+  isGuessed: boolean;
+  isFirst: boolean;
+  secondsPassedAfterRound: number;
+  isLetterBought: boolean;
 }
 
 export interface DrawingMessagesResponse {
@@ -55,6 +59,10 @@ export interface AddWordResponse {
   guessedLetters: null | (string | null)[];
   updatedPoints: number | null;
   message: DrawingMessage;
+}
+
+export interface OperLetterResponse extends AddWordResponse {
+  updatedMoney: number;
 }
 
 export interface WordWithType extends Omit<Word, 'typeId'> {
