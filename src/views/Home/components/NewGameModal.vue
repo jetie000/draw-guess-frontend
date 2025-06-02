@@ -6,7 +6,7 @@ import { useAlertStore } from '@/stores/alert/alertStore';
 import { AlertTypes } from '@/typings/enums/alert';
 import { useRouter } from 'vue-router';
 import Spinner from '@/components/Spinner/Spinner.vue';
-import { useMutation, useQuery } from '@tanstack/vue-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 import { GameApi } from '@/api/game/game.api';
 import { handleNetworkError } from '@/helpers/errors';
 import { DrawingApi } from '@/api/drawing/drawing.api';
@@ -15,6 +15,10 @@ import Dropdown from '@/components/Dropdown/Dropdown.vue';
 import { ChevronDownIcon } from '@heroicons/vue/24/outline';
 import { QueryKeys } from '@/api/query-keys';
 import InputRadioButtons from '@/components/Input/InputRadioButtons.vue';
+import InputCheckbox from '@/components/Input/InputCheckbox.vue';
+import coinImg from '@/assets/coin.svg';
+import { UserApi } from '@/api/user/user.api';
+import type { ProfileExtended } from '@/api/user/user.api.interface';
 
 defineProps<{
   isNewModalOpen: boolean;
@@ -23,6 +27,7 @@ defineEmits(['close']);
 
 const alertStore = useAlertStore();
 const router = useRouter();
+const queryClient = useQueryClient();
 
 const players = ref(2);
 const roundDuration = ref(30);
@@ -34,6 +39,12 @@ const wordTypeIds = ref<number[]>([]);
 const { data, isError, error, isLoading } = useQuery({
   queryKey: [QueryKeys.WordTypes],
   queryFn: () => DrawingApi.getWordTypes()
+});
+
+const { data: user } = useQuery({
+  queryKey: [QueryKeys.Profile],
+  queryFn: () => UserApi.profile(),
+  enabled: false
 });
 
 watch(isLoading, () => {
@@ -53,7 +64,11 @@ const { isPending, mutate } = useMutation({
       wordTypeIds.value
     ),
   onSuccess: (data) => {
-    router.push({ name: 'Game', params: { id: data } });
+    queryClient.setQueryData([QueryKeys.Profile], (profile: ProfileExtended) => ({
+      ...profile,
+      money: data.updatedMoney
+    }));
+    router.push({ name: 'Game', params: { id: data.gameId } });
   },
   onError: (error) => {
     handleNetworkError(error);
@@ -62,6 +77,15 @@ const { isPending, mutate } = useMutation({
 
 const wordTypesLabel = computed(() =>
   wordTypeIds.value.map((id) => data.value?.find((wt) => wt.id === id)?.type).join(', ')
+);
+
+const userAvailableMoney = computed(
+  () =>
+    (user.value?.money || 0) -
+    wordTypeIds.value.reduce(
+      (acc, id) => acc + (data.value?.find((wt) => wt.id === id)?.price || 0),
+      0
+    )
 );
 
 watch([players, drawingsPerPlayer], () => {
@@ -113,16 +137,40 @@ watch([players, drawingsPerPlayer], () => {
             v-for="wordType in data"
             :key="wordType.id"
             :value="wordType.id"
-            :for="`word-type-${wordType.id}`"
+            :for="`word-type-${wordType.id}-checkbox-id`"
             class="cursor-pointer hover:bg-blue-100 px-4"
           >
-            <div class="flex items-center justify-between gap-4 py-1">
-              <span>{{ wordType.type }}</span>
-              <input
-                :id="`word-type-${wordType.id}`"
-                class="w-4 h-4 bg-white border-gray-main cursor-pointer"
-                type="checkbox"
+            <div
+              class="flex items-center justify-between gap-4 py-1"
+              :class="{
+                'opacity-70':
+                  wordType.price > 0 &&
+                  userAvailableMoney < wordType.price &&
+                  !wordTypeIds.includes(wordType.id)
+              }"
+            >
+              <span class="me-6">{{ wordType.type }}</span>
+              <div
+                class="flex items-center gap-1 ms-auto"
+                v-if="wordType.price > 0"
+              >
+                <span class="font-bold">
+                  {{ wordType.price }}
+                </span>
+                <img
+                  class="w-5 h-5"
+                  :src="coinImg"
+                  alt="coin"
+                />
+              </div>
+              <InputCheckbox
+                :name="`word-type-${wordType.id}`"
                 :checked="wordTypeIds.includes(wordType.id)"
+                :disabled="
+                  wordType.price > 0 &&
+                  userAvailableMoney < wordType.price &&
+                  !wordTypeIds.includes(wordType.id)
+                "
                 @input="
                   wordTypeIds.includes(wordType.id)
                     ? wordTypeIds.splice(wordTypeIds.indexOf(wordType.id), 1)

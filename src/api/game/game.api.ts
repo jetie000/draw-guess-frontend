@@ -11,7 +11,7 @@ export const GameApi = {
     wordTypeIds: number[]
   ) =>
     gameApiInstance
-      .post<number>('/', {
+      .post<{ gameId: number; updatedMoney: number }>('/', {
         maxPlayers: Number(maxPlayers),
         roundDuration: Number(roundDuration),
         drawingsPerPlayer: Number(drawingsPerPlayer),
@@ -26,6 +26,9 @@ export const GameApi = {
   getParticipatingGames: (isEnded: boolean = false) =>
     gameApiInstance.get<Game[]>(`/participating?isEnded=${isEnded}`).then((res) => res.data),
   getPublicGames: () => gameApiInstance.get<Game[]>('/public').then((res) => res.data),
-  deleteGame: (gameId: number) => gameApiInstance.delete(`/${gameId}`),
+  deleteGame: (gameId: number) =>
+    gameApiInstance
+      .delete<{ game: Game; updatedMoney: number }>(`/${gameId}`)
+      .then((res) => res.data),
   startGame: (gameId: number) => gameApiInstance.post(`/${gameId}/start`)
 };

@@ -7,6 +7,7 @@ import type {
   OperLetterResponse,
   Word,
   WordType,
+  WordTypeRequest,
   WordWithType
 } from './drawing.api.interface';
 
@@ -25,17 +26,15 @@ export const DrawingApi = {
     drawingApiInstance.get<Required<Drawing>[]>('/drawing/my').then(({ data }) => data),
   getWordTypes: () =>
     drawingApiInstance.get<WordType[]>('/drawing-word-type').then(({ data }) => data),
-  addWordType: (wordType: string) =>
-    drawingApiInstance
-      .post<WordType>('/drawing-word-type', { type: wordType })
-      .then(({ data }) => data),
+  addWordType: (wordType: WordTypeRequest) =>
+    drawingApiInstance.post<WordType>('/drawing-word-type', wordType).then(({ data }) => data),
   deleteWordType: (wordTypeId: number) =>
     drawingApiInstance
       .delete<WordType>(`/drawing-word-type/${wordTypeId}`)
       .then(({ data }) => data),
-  updateWordType: (wordTypeId: number, wordType: string) =>
+  updateWordType: (wordType: WordType) =>
     drawingApiInstance
-      .put<WordType>(`/drawing-word-type/${wordTypeId}`, { type: wordType })
+      .put<WordType>(`/drawing-word-type/${wordType.id}`, wordType)
       .then(({ data }) => data),
   getWords: () => drawingApiInstance.get<WordWithType[]>('/drawing-word').then(({ data }) => data),
   addWord: (word: string, typeId: number) =>

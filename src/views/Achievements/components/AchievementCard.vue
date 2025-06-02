@@ -70,5 +70,11 @@ const progressWidthPercent = computed(
         {{ progress }} / {{ getAchievementLevelAmount(achievement.level + 1, achievement.type) }}
       </div>
     </template>
+    <div
+      v-else
+      class="text-center text-gray-secondary mt-4"
+    >
+      {{ achievement.type.description }}
+    </div>
   </Panel>
 </template>

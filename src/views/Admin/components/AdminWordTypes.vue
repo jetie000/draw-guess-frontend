@@ -15,7 +15,7 @@ import type { WordType } from '@/api/drawing/drawing.api.interface';
 import { useModalStore } from '@/stores/modal/modalStore';
 import { QueryKeys } from '@/api/query-keys';
 
-const addingWordType = ref('');
+const addingWordType = ref({ type: '', price: 0 });
 const changingWordType = ref<WordType | undefined>(undefined);
 const deletingWordTypeId = ref<number | undefined>(undefined);
 
@@ -35,7 +35,7 @@ watch(isLoading, () => {
 const { mutate: addWordType, isPending: isPendingAdd } = useMutation({
   mutationFn: () => DrawingApi.addWordType(addingWordType.value),
   onSuccess: (wordType) => {
-    addingWordType.value = '';
+    addingWordType.value = { type: '', price: 0 };
     queryClient.setQueryData([QueryKeys.WordTypes], [...(data.value || []), wordType]);
   },
   onError: (error) => {
@@ -58,8 +58,7 @@ const { mutate: deleteWordType, isPending: isPendingDelete } = useMutation({
 });
 
 const { mutate: changeWordType, isPending: isPendingChange } = useMutation({
-  mutationFn: () =>
-    DrawingApi.updateWordType(changingWordType.value?.id || -1, changingWordType.value?.type || ''),
+  mutationFn: (wordType: WordType) => DrawingApi.updateWordType(wordType),
   onSuccess: (wordType) => {
     const index = data.value?.findIndex((wt) => wt.id === wordType.id);
     if (index === -1) {
@@ -75,6 +74,13 @@ const { mutate: changeWordType, isPending: isPendingChange } = useMutation({
     handleNetworkError(error);
   }
 });
+
+const handleChangeWordType = () => {
+  if (!changingWordType.value) {
+    return;
+  }
+  changeWordType(changingWordType.value);
+};
 </script>
 
 <template>
@@ -98,10 +104,18 @@ const { mutate: changeWordType, isPending: isPendingChange } = useMutation({
         class="flex"
       >
         <input
-          v-model.trim="addingWordType"
+          v-model.trim="addingWordType.type"
           name="add-word-type"
           required
           class="w-full rounded-lg py-1.5 px-3 placeholder:text-gray-400 leading-4 rounded-r-none"
+        />
+        <div class="w-5 bg-blue-dark" />
+        <input
+          type="number"
+          v-model.number="addingWordType.price"
+          name="add-word-price"
+          required
+          class="w-24 py-1.5 px-3"
         />
         <ButtonMain
           type="submit"
@@ -127,6 +141,7 @@ const { mutate: changeWordType, isPending: isPendingChange } = useMutation({
           <tr>
             <th class="p-2 w-36">ID</th>
             <th class="p-2 text-left">Type</th>
+            <th class="p-2 text-center">Price</th>
             <th class="p-2 w-24">Actions</th>
           </tr>
         </thead>
@@ -141,6 +156,9 @@ const { mutate: changeWordType, isPending: isPendingChange } = useMutation({
             </td>
             <td class="p-2">
               {{ wordType.type }}
+            </td>
+            <td class="p-2 text-center">
+              {{ wordType.price }}
             </td>
             <td class="flex">
               <ButtonMain
@@ -176,7 +194,7 @@ const { mutate: changeWordType, isPending: isPendingChange } = useMutation({
       :is-change-modal-open="changingWordType !== undefined"
       :word-type="changingWordType"
       :is-loading="isPendingChange"
-      @pressed="changeWordType()"
+      @pressed="handleChangeWordType"
       @closed="changingWordType = undefined"
     />
   </div>

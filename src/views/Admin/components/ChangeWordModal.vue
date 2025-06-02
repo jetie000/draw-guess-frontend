@@ -46,25 +46,34 @@ defineEmits(['pressed', 'closed']);
           required
         />
       </div>
-      <select
-        class="bg-blue-dark text-white px-3 py-1.5 rounded-md focus-visible:outline-none"
-        v-model="word.typeId"
-      >
-        <option
-          value="-1"
-          hidden
-          selected
+      <div>
+        <label
+          class="text-sm"
+          for="change-word-type"
         >
-          Choose a type
-        </option>
-        <option
-          v-for="wordType in wordTypes"
-          :key="wordType.id"
-          :value="wordType.id"
+          Type
+        </label>
+        <select
+          name="change-word-type"
+          class="bg-blue-dark text-white px-3 py-1.5 rounded-md focus-visible:outline-none block w-full mt-1"
+          v-model="word.typeId"
         >
-          {{ wordType.type }}
-        </option>
-      </select>
+          <option
+            value="-1"
+            hidden
+            selected
+          >
+            Choose a type
+          </option>
+          <option
+            v-for="wordType in wordTypes"
+            :key="wordType.id"
+            :value="wordType.id"
+          >
+            {{ wordType.type }}
+          </option>
+        </select>
+      </div>
       <ButtonMain
         class="mt-3 w-full"
         :disabled="isLoading"

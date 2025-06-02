@@ -28,7 +28,10 @@ export interface Drawing {
 export interface WordType {
   id: number;
   type: string;
+  price: number;
 }
+
+export type WordTypeRequest = Omit<WordType, 'id'>;
 
 export interface Word {
   id: number;

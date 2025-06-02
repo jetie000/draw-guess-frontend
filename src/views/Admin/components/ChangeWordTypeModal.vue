@@ -24,18 +24,42 @@ defineEmits(['pressed', 'closed']);
     @close="$emit('closed')"
   >
     <form
+      v-if="wordType"
       class="flex flex-col gap-2"
       @submit.prevent="$emit('pressed')"
     >
       <p class="pl-1 text-lg">
         ID: <span class="font-bold">{{ wordType?.id }}</span>
       </p>
-      <InputMain
-        v-if="wordType"
-        v-model.trim="wordType.type"
-        name="change-word-type-name"
-        required
-      />
+      <div>
+        <label
+          class="text-sm"
+          for="change-word-type-name"
+        >
+          Name
+        </label>
+        <InputMain
+          v-model.trim="wordType.type"
+          name="change-word-type-name"
+          class="mt-1"
+          required
+        />
+      </div>
+      <div>
+        <label
+          class="text-sm"
+          for="change-word-type-price"
+        >
+          Price
+        </label>
+        <InputMain
+          v-model.number="wordType.price"
+          name="change-word-type-price"
+          type="number"
+          class="mt-1"
+          required
+        />
+      </div>
       <ButtonMain
         class="mt-3 w-full"
         :disabled="isLoading"

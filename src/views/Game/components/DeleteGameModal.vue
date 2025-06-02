@@ -3,12 +3,14 @@ import ButtonMain from '@/components/Button/ButtonMain.vue';
 import Modal from '@/components/Modal/Modal.vue';
 import { useRouter } from 'vue-router';
 import Spinner from '@/components/Spinner/Spinner.vue';
-import { useMutation } from '@tanstack/vue-query';
+import { useMutation, useQueryClient } from '@tanstack/vue-query';
 import { GameApi } from '@/api/game/game.api';
 import { handleNetworkError } from '@/helpers/errors';
 import { TrashIcon, ArrowLeftStartOnRectangleIcon } from '@heroicons/vue/24/outline';
 import { socket } from '@/helpers/socket';
 import { SocketEmitKeys } from '@/helpers/socket/emit-keys';
+import { QueryKeys } from '@/api/query-keys';
+import type { ProfileExtended } from '@/api/user/user.api.interface';
 
 const props = defineProps<{
   isDeleteModalOpen: boolean;
@@ -20,11 +22,16 @@ const props = defineProps<{
 defineEmits(['close']);
 
 const router = useRouter();
+const queryClient = useQueryClient();
 
 const { isPending, mutate } = useMutation({
   mutationFn: () => GameApi.deleteGame(props.gameId),
-  onSuccess: () => {
+  onSuccess: (data) => {
     if (props.isCreator) {
+      queryClient.setQueryData([QueryKeys.Profile], (profile: ProfileExtended) => ({
+        ...profile,
+        money: data.updatedMoney
+      }));
       socket.emit(SocketEmitKeys.DeleteGame, { room: props.gameId });
       if (!props.isPrivate) {
         socket.emit(SocketEmitKeys.DeleteGamePublic, { room: props.gameId });
