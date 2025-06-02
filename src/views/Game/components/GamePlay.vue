@@ -24,6 +24,8 @@ import { useSettingsStore } from '@/stores/settingsStore';
 import timeSound from '@/assets/sounds/time.wav';
 import levelUpAudio from '@/assets/sounds/level-up.wav';
 import { getMoneyAmountForLevelUp } from '@/helpers/account';
+import GameDrawingWord from './GameDrawingWord.vue';
+import { Prices } from '@/typings/enums/prices';
 
 const props = defineProps<{ game: Game; user: ProfileExtended }>();
 
@@ -99,12 +101,17 @@ onMounted(() => {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.ParticipatingGames] });
     }
   );
+
+  socket.on(SocketEventKeys.DrawingWordChanged, () => {
+    queryClient.invalidateQueries({ queryKey: [QueryKeys.Drawing, props.game.id] });
+  });
 });
 
 onUnmounted(() => {
   socket.off(SocketEventKeys.TimePassed);
   socket.off(SocketEventKeys.UpdatedPlayers);
   socket.off(SocketEventKeys.GameEnded);
+  socket.off(SocketEventKeys.DrawingWordChanged);
 });
 
 const currentPlayerIndex = computed(() =>
@@ -146,10 +153,15 @@ const handleAddPart = (part: DrawingPart) => {
         </div>
       </Panel>
       <template v-if="user.id === game.players[currentPlayerIndex].user.id">
-        <Panel class="flex flex-col gap-3 max-xsm:w-full text-center">
-          <span class="text-gray-secondary">Your word</span>
-          <span class="font-bold text-xl">{{ queryData.data?.value?.word?.word || '-' }}</span>
-        </Panel>
+        <GameDrawingWord
+          :game-id="game.id"
+          :word="queryData.data.value?.word"
+          :is-can-change="
+            user.money > Prices.ChangeWord &&
+            remainingTime > game.roundDuration - noGuessesSecondsNumber
+          "
+          :seconds-remaining-to-change="remainingTime - game.roundDuration + noGuessesSecondsNumber"
+        />
         <GameDrawingOptions :path="path" />
       </template>
       <template v-else>

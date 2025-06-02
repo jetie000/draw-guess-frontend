@@ -13,6 +13,10 @@ import type {
 export const DrawingApi = {
   createDrawing: (addDrawingRequest: AddDrawingRequest) =>
     drawingApiInstance.post<Drawing>('/drawing', addDrawingRequest).then(({ data }) => data),
+  changeDrawingWord: (gameId: number) =>
+    drawingApiInstance
+      .post<{ word: Word; updatedMoney: number }>(`/drawing/change-word/${gameId}`)
+      .then(({ data }) => data),
   getCurrentGameDrawing: (gameId: number) =>
     drawingApiInstance
       .get<Drawing | undefined>(`/drawing/game-current/${gameId}`)

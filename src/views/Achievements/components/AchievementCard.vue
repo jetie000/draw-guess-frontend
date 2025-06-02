@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Achievement, AchievementType } from '@/api/user/user.api.interface';
+import type { Achievement } from '@/api/user/user.api.interface';
 import Panel from '@/components/Panel/Panel.vue';
 import { getAchievementLevelAmount } from '@/helpers/achievements';
 import { computed } from 'vue';

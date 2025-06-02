@@ -24,9 +24,9 @@ watch(isLoading, () => {
 const imgByLevel = (level: number) => {
   switch (level) {
     case 2:
-      return crownImg;
-    case 3:
       return trophyImg;
+    case 3:
+      return crownImg;
     default:
       return medalImg;
   }

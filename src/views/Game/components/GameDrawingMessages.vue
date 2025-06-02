@@ -53,15 +53,10 @@ const { mutate, isPending } = useMutation({
     playAudio(wordResponse.isGuessed ? successSound : failSound);
     queryClient.setQueryData([QueryKeys.Game, String(props.game.id)], {
       ...props.game,
-      players: props.game.players.map((p) => {
-        if (p.id === wordResponse.message.gamePlayerId) {
-          return {
-            ...p,
-            points: wordResponse.updatedPoints
-          };
-        }
-        return p;
-      })
+      players: props.game.players.map((p) => ({
+        ...p,
+        points: p.id === wordResponse.message.gamePlayerId ? wordResponse.updatedPoints : p.points
+      }))
     });
     queryClient.setQueryData([QueryKeys.DrawingMessages], {
       isGuessed: wordResponse.isGuessed,

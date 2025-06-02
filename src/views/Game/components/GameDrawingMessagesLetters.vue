@@ -2,7 +2,7 @@
 import { DrawingApi } from '@/api/drawing/drawing.api';
 import { handleNetworkError } from '@/helpers/errors';
 import { Prices } from '@/typings/enums/prices';
-import { useMutation, useQueryClient } from '@tanstack/vue-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 import coinImg from '@/assets/coin.svg';
 import { useAlertStore } from '@/stores/alert/alertStore';
 import { AlertTypes } from '@/typings/enums/alert';
@@ -13,6 +13,7 @@ import { useSettingsStore } from '@/stores/settingsStore';
 import type { DrawingMessagesResponse } from '@/api/drawing/drawing.api.interface';
 import type { Game } from '@/api/game/game.api.interface';
 import type { ProfileExtended } from '@/api/user/user.api.interface';
+import { UserApi } from '@/api/user/user.api';
 
 const props = defineProps<{
   guessedLetters: (string | null)[];
@@ -23,6 +24,12 @@ const props = defineProps<{
 
 const queryClient = useQueryClient();
 const { playAudio } = useSettingsStore();
+
+const { data: user } = useQuery({
+  queryKey: [QueryKeys.Profile],
+  queryFn: () => UserApi.profile(),
+  enabled: false
+});
 
 const { mutate, isPending } = useMutation({
   mutationFn: (letterIndex: number) => DrawingApi.openDrawingLetter(props.drawingId, letterIndex),
@@ -80,7 +87,7 @@ const handleOpenLetter = async (index: number) => {
     >
       {{ letter }}
       <div
-        v-if="!letter && !isDisabled"
+        v-if="!letter && !isDisabled && user && user.money >= Prices.OpenLetter"
         class="absolute -left-0.5 -translate-x-full border border-blue-dark rounded-md p-1 flex-col gap-1 bg-white hidden cursor-default transition-transform"
         @click.stop
       >
