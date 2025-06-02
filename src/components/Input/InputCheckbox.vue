@@ -3,7 +3,8 @@ defineModel<boolean>();
 
 defineProps<{
   name: string;
-  label: string;
+  label?: string;
+  disabled?: boolean;
 }>();
 </script>
 
@@ -13,6 +14,7 @@ defineProps<{
       <input
         type="checkbox"
         :checked="modelValue"
+        :disabled="disabled"
         class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-slate-300 checked:bg-blue-dark checked:border-gray-secondary"
         :id="`${name}-checkbox-id`"
         @input="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
@@ -37,6 +39,7 @@ defineProps<{
       </span>
     </label>
     <label
+      v-if="label"
       class="pl-2 text-blue-dark cursor-pointer"
       :for="`${name}-checkbox-id`"
     >

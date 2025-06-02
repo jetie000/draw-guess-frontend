@@ -5,8 +5,9 @@ import { storeToRefs } from 'pinia';
 import confettiJson from '@/assets/confetti.json';
 import { Vue3Lottie } from 'vue3-lottie';
 import duckIcon from '@/assets/duck-icon.svg';
+import coinImg from '@/assets/coin.svg';
 
-const { isLevelModalOpen, isErrorModalOpen, level } = storeToRefs(useModalStore());
+const { isLevelModalOpen, isErrorModalOpen, level, moneyEarned } = storeToRefs(useModalStore());
 </script>
 
 <template>
@@ -41,6 +42,17 @@ const { isLevelModalOpen, isErrorModalOpen, level } = storeToRefs(useModalStore(
         class="w-10 h-10 ml-auto"
         :src="duckIcon"
         alt="duck"
+      />
+    </div>
+    <div class="flex justify-center items-center mt-3 gap-2">
+      <div>
+        You've earned
+        <span class="font-bold text-lg text-yellow-950">{{ moneyEarned }}</span> coins!
+      </div>
+      <img
+        :src="coinImg"
+        class="w-10 h-10"
+        alt="coin"
       />
     </div>
   </Modal>

@@ -7,3 +7,9 @@ export enum AccountTypes {
   Email = 0,
   Google = 1
 }
+
+export enum LeaderboardTypes {
+  Points = 'points',
+  Wins = 'wins',
+  WordsGuessed = 'words-guessed'
+}

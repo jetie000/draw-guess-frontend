@@ -1,14 +1,8 @@
 <script setup lang="ts">
-withDefaults(
-  defineProps<{
-    name: string;
-    radioValues: { label: string; value: string | number; id: string }[];
-    isNumberValues?: boolean;
-  }>(),
-  {
-    isNumberValues: false
-  }
-);
+defineProps<{
+  name: string;
+  radioValues: { label: string; value: string | number; id: string }[];
+}>();
 
 defineModel<string | number>();
 </script>
@@ -34,7 +28,7 @@ defineModel<string | number>();
           @input="
             $emit(
               'update:modelValue',
-              isNumberValues
+              typeof radio.value === 'number'
                 ? Number(($event.target as HTMLInputElement).value)
                 : ($event.target as HTMLInputElement).value
             )

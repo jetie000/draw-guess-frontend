@@ -4,11 +4,13 @@ import { removeAuthHeaderFromInstances, setAuthHeaderToInstances } from '@/api';
 
 export interface UserStore {
   token: string | null;
+  isLoadingRefresh: boolean;
 }
 
 export const useUserStore = defineStore('user', {
   state: (): UserStore => ({
-    token: localStorage.getItem(storageKeys.token)
+    token: localStorage.getItem(storageKeys.token),
+    isLoadingRefresh: false
   }),
   actions: {
     setToken(accessToken: string) {

@@ -4,6 +4,7 @@ import { useModalStore } from '@/stores/modal/modalStore';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 import trophyImg from '@/assets/achievements/trophy.png';
+import coinImg from '@/assets/coin.svg';
 
 const { isErrorModalOpen, isLevelModalOpen, isAchievementModalOpen, achievements } =
   storeToRefs(useModalStore());
@@ -42,8 +43,16 @@ const label = computed(() =>
         <div>-</div>
         <div>Level {{ achievement.level }}</div>
       </div>
-      <div class="my-3 text-sm text-gray-secondary text-justify max-w-72">
-        {{ achievement.type.description }}
+      <div class="my-3 flex gap-1 items-center max-w-80">
+        <div class="text-sm text-gray-secondary text-center">
+          {{ achievement.type.description }}
+        </div>
+        <div class="font-bold text-yellow-950 ms-2">+{{ achievement.money }}</div>
+        <img
+          :src="coinImg"
+          class="w-10 h-10"
+          alt="coin"
+        />
       </div>
     </div>
   </Modal>

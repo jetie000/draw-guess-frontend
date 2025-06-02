@@ -18,6 +18,7 @@ export interface Profile {
 export interface ProfileExtended extends Profile {
   type: AccountTypes;
   access: boolean;
+  money: number;
 }
 
 export interface PatchUserRequest {
@@ -47,4 +48,8 @@ export interface Achievement {
   userId: number;
   level: number;
   type: AchievementType;
+}
+
+export interface AchievementWithMoneyEarned extends Achievement {
+  money: number;
 }

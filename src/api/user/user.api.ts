@@ -1,3 +1,4 @@
+import type { AchievementsTypeIds } from '@/typings/enums/achievements';
 import { userApiInstance } from '..';
 import type {
   Achievement,
@@ -6,6 +7,8 @@ import type {
   PatchUserRequestAdmin,
   ProfileExtended
 } from './user.api.interface';
+import type { LeaderboardTypes } from '@/typings/enums/user';
+import type { PublicLeaderboardUser } from '@/typings/interfaces/user.interface';
 
 export const UserApi = {
   refreshToken: () => userApiInstance.get('/user/refresh-token').then((res) => res.data),
@@ -33,5 +36,14 @@ export const UserApi = {
       })
       .then((res) => res.data),
   getAchievements: () =>
-    userApiInstance.get<Achievement[]>('/achievement/me').then((res) => res.data)
+    userApiInstance
+      .get<{
+        achievements: Achievement[];
+        progressByType: Record<AchievementsTypeIds, number>;
+      }>('/achievement/me')
+      .then((res) => res.data),
+  getLeaderboard: (type: LeaderboardTypes, days: number) =>
+    userApiInstance
+      .get<PublicLeaderboardUser[]>(`/user/leaderboard/${type}/${days}`)
+      .then((res) => res.data)
 };

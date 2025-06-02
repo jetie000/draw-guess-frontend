@@ -10,5 +10,6 @@ export enum SocketEventKeys {
   GameEnded = 'gameEnded',
   TimePassed = 'timePassed',
   UpdatedPlayers = 'updatedPlayers',
-  AchievementsEarned = 'achievementsEarned'
+  AchievementsEarned = 'achievementsEarned',
+  DrawingWordChanged = 'drawingWordChanged'
 }

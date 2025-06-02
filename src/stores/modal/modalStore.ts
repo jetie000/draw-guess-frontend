@@ -1,4 +1,4 @@
-import type { Achievement } from '@/api/user/user.api.interface';
+import type { Achievement, AchievementWithMoneyEarned } from '@/api/user/user.api.interface';
 import { getErrorMessage } from '@/helpers/errors';
 import { defineStore } from 'pinia';
 
@@ -6,8 +6,9 @@ export interface ModalStore {
   messageError: string;
   isErrorModalOpen: boolean;
   level: number;
+  moneyEarned: number;
   isLevelModalOpen: boolean;
-  achievements: Achievement[];
+  achievements: AchievementWithMoneyEarned[];
   isAchievementModalOpen: boolean;
 }
 
@@ -16,6 +17,7 @@ export const useModalStore = defineStore('modal', {
     messageError: '',
     isErrorModalOpen: false,
     level: 1,
+    moneyEarned: 0,
     isLevelModalOpen: false,
     achievements: [],
     isAchievementModalOpen: false
@@ -29,11 +31,12 @@ export const useModalStore = defineStore('modal', {
       }
       this.isErrorModalOpen = true;
     },
-    showLevelModal(level: number) {
+    showLevelModal(level: number, moneyEarned: number) {
       this.level = level;
       this.isLevelModalOpen = true;
+      this.moneyEarned = moneyEarned;
     },
-    showAchievementsModal(achievements: Achievement[]) {
+    showAchievementsModal(achievements: AchievementWithMoneyEarned[]) {
       this.achievements = achievements;
       this.isAchievementModalOpen = true;
     },

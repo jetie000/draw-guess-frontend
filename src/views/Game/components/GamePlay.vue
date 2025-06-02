@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Game, GameDrawing } from '@/api/game/game.api.interface';
-import type { Profile } from '@/api/user/user.api.interface';
+import type { ProfileExtended } from '@/api/user/user.api.interface';
 import Panel from '@/components/Panel/Panel.vue';
 import GameCanvas from './GameCanvas.vue';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
@@ -10,7 +10,7 @@ import GameDrawingOptions from './GameDrawingOptions.vue';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import { DrawingApi } from '@/api/drawing/drawing.api';
 import type { DrawingPart } from '@/api/drawing/drawing.api.interface';
-import { breakSecondsNumber } from '@/typings/enums/game';
+import { breakSecondsNumber, noGuessesSecondsNumber } from '@/typings/enums/game';
 import { formatSeconds } from '@/helpers/datetime';
 import { socket } from '@/helpers/socket';
 import { useModalStore } from '@/stores/modal/modalStore';
@@ -22,8 +22,12 @@ import { SocketEventKeys } from '@/helpers/socket/event-keys';
 import { getLevelAndProgressByExp } from '@/helpers/game';
 import { useSettingsStore } from '@/stores/settingsStore';
 import timeSound from '@/assets/sounds/time.wav';
+import levelUpAudio from '@/assets/sounds/level-up.wav';
+import { getMoneyAmountForLevelUp } from '@/helpers/account';
+import GameDrawingWord from './GameDrawingWord.vue';
+import { Prices } from '@/typings/enums/prices';
 
-const props = defineProps<{ game: Game; user: Profile }>();
+const props = defineProps<{ game: Game; user: ProfileExtended }>();
 
 const queryClient = useQueryClient();
 const { showErrorModal, showLevelModal } = useModalStore();
@@ -81,24 +85,33 @@ onMounted(() => {
       if (myPoints) {
         const currentLevel = getLevelAndProgressByExp(props.user.experience + myPoints).level;
         const prevLevel = getLevelAndProgressByExp(props.user.experience).level;
+        let moneyEarned = 0;
+        if (currentLevel !== prevLevel) {
+          moneyEarned = getMoneyAmountForLevelUp(currentLevel);
+          showLevelModal(currentLevel, moneyEarned);
+          useSettingsStore().playAudio(levelUpAudio);
+        }
         queryClient.setQueryData([QueryKeys.Profile], {
           ...props.user,
-          experience: props.user.experience + myPoints
+          experience: props.user.experience + myPoints,
+          money: props.user.money + moneyEarned
         });
-        if (currentLevel !== prevLevel) {
-          showLevelModal(currentLevel);
-        }
       }
       queryClient.invalidateQueries({ queryKey: [QueryKeys.PublicGames] });
       queryClient.invalidateQueries({ queryKey: [QueryKeys.ParticipatingGames] });
     }
   );
+
+  socket.on(SocketEventKeys.DrawingWordChanged, () => {
+    queryClient.invalidateQueries({ queryKey: [QueryKeys.Drawing, props.game.id] });
+  });
 });
 
 onUnmounted(() => {
   socket.off(SocketEventKeys.TimePassed);
   socket.off(SocketEventKeys.UpdatedPlayers);
   socket.off(SocketEventKeys.GameEnded);
+  socket.off(SocketEventKeys.DrawingWordChanged);
 });
 
 const currentPlayerIndex = computed(() =>
@@ -140,16 +153,22 @@ const handleAddPart = (part: DrawingPart) => {
         </div>
       </Panel>
       <template v-if="user.id === game.players[currentPlayerIndex].user.id">
-        <Panel class="flex flex-col gap-3 max-xsm:w-full text-center">
-          <span class="text-gray-secondary">Your word</span>
-          <span class="font-bold text-xl">{{ queryData.data?.value?.word?.word || '-' }}</span>
-        </Panel>
+        <GameDrawingWord
+          :game-id="game.id"
+          :word="queryData.data.value?.word"
+          :is-can-change="
+            user.money > Prices.ChangeWord &&
+            remainingTime > game.roundDuration - noGuessesSecondsNumber
+          "
+          :seconds-remaining-to-change="remainingTime - game.roundDuration + noGuessesSecondsNumber"
+        />
         <GameDrawingOptions :path="path" />
       </template>
       <template v-else>
         <GameDrawingMessages
           :query-data="queryData"
           :game="game"
+          :is-disabled-sending="remainingTime >= game.roundDuration - noGuessesSecondsNumber"
         />
       </template>
     </div>

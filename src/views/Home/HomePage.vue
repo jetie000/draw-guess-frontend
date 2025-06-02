@@ -14,6 +14,7 @@ import { AlertTypes } from '@/typings/enums/alert';
 import { QueryKeys } from '@/api/query-keys';
 import { SocketEventKeys } from '@/helpers/socket/event-keys';
 import { SocketEmitKeys } from '@/helpers/socket/emit-keys';
+import UsersLeaderboard from './components/UsersLeaderboard.vue';
 
 const queryClient = useQueryClient();
 
@@ -101,7 +102,7 @@ watch(isFetchingProfile, () => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center px-3">
+  <div class="flex justify-center px-3 gap-6 max-md:flex-col">
     <div class="flex flex-col items-center">
       <GameButtons
         class="mt-12 mb-6"
@@ -113,5 +114,6 @@ watch(isFetchingProfile, () => {
       />
       <PublicGames :participating-games="data" />
     </div>
+    <UsersLeaderboard class="mt-12 w-80 max-md:w-full" />
   </div>
 </template>

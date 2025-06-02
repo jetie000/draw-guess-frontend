@@ -60,34 +60,35 @@ const UserRoles = ['User', 'Admin'];
   >
     <Panel
       v-if="data?.length"
+      class="overflow-auto"
       no-padding
     >
-      <table class="w-full">
+      <table class="min-w-full">
         <thead>
-          <tr class="max-lg:flex max-lg:items-center max-lg:flex-wrap max-lg:[&>th]:w-1/3">
-            <th class="p-2 text-left max-lg:text-center">ID</th>
-            <th class="p-2 text-left max-lg:text-center">Email</th>
-            <th class="p-2 text-left max-lg:text-center">Username</th>
-            <th class="p-2">Join Date</th>
-            <th class="p-2">Login Date</th>
-            <th class="p-2">Role</th>
-            <th class="p-2">Account Type</th>
-            <th class="p-2">Access</th>
+          <tr class="max-lg:flex max-lg:items-center max-lg:flex-wrap">
+            <th class="p-2 text-left max-lg:text-center max-lg:w-1/3">ID</th>
+            <th class="p-2 text-left max-lg:text-center max-lg:w-2/3">Email</th>
+            <th class="p-2 text-left max-lg:text-center max-lg:w-2/3">Username</th>
+            <th class="p-2 max-lg:hidden">Join Date</th>
+            <th class="p-2 max-lg:hidden">Login Date</th>
+            <th class="p-2 max-lg:w-1/3">Role</th>
+            <th class="p-2 max-lg:w-1/3">Account Type</th>
+            <th class="p-2 max-lg:w-1/3">Access</th>
           </tr>
         </thead>
         <tbody>
           <tr
             v-for="user in data"
             :key="user.id"
-            class="border-t border-blue-dark max-lg:flex max-lg:items-center max-lg:flex-wrap max-lg:[&>td]:w-1/3"
+            class="border-t border-blue-dark max-lg:flex max-lg:items-center max-lg:flex-wrap"
           >
-            <td class="p-2 max-lg:text-center">
+            <td class="p-2 max-lg:text-center max-lg:w-1/3">
               {{ user.id }}
             </td>
-            <td class="p-2 max-lg:text-center">
+            <td class="p-2 max-lg:text-center max-lg:w-2/3">
               {{ user.email }}
             </td>
-            <td class="p-2 max-lg:text-center">
+            <td class="p-2 max-lg:text-center max-lg:w-2/3">
               {{ user.username }}
             </td>
             <td class="p-2 text-center max-lg:hidden">
@@ -96,13 +97,13 @@ const UserRoles = ['User', 'Admin'];
             <td class="p-2 text-center max-lg:hidden">
               {{ formatDate(user.loginDate) }}
             </td>
-            <td class="p-2 text-center">
+            <td class="p-2 text-center max-lg:w-1/3">
               {{ UserRoles[user.role] }}
             </td>
-            <td class="p-2 text-center">
+            <td class="p-2 text-center max-lg:w-1/3">
               {{ AccountTypes[user.type] }}
             </td>
-            <td class="p-2">
+            <td class="p-2 max-lg:w-1/3">
               <CheckIcon
                 v-if="user.access"
                 class="w-5 h-5 m-auto"
@@ -112,7 +113,7 @@ const UserRoles = ['User', 'Admin'];
                 class="w-5 h-5 m-auto"
               />
             </td>
-            <td>
+            <td class="max-lg:w-1/3">
               <ButtonMain
                 class="ml-auto my-auto max-lg:m-auto"
                 theme="primary"

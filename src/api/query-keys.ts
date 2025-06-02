@@ -8,5 +8,6 @@ export enum QueryKeys {
   Words = 'words',
   WordTypes = 'word-types',
   Users = 'users',
-  Drawings = 'drawings'
+  Drawings = 'drawings',
+  Leaderboard = 'leaderboard'
 }

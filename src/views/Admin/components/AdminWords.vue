@@ -130,7 +130,7 @@ const { mutate: changeWord, isPending: isPendingChange } = useMutation({
     <Panel no-padding>
       <form
         @submit.prevent="() => handleAddWord()"
-        class="flex"
+        class="flex shrink-0"
       >
         <input
           v-model.trim="addingWord.word"
@@ -174,6 +174,7 @@ const { mutate: changeWord, isPending: isPendingChange } = useMutation({
     </Panel>
     <Panel
       v-if="data?.length"
+      class="overflow-auto"
       no-padding
     >
       <table class="w-full">

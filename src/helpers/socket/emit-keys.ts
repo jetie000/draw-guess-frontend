@@ -7,5 +7,6 @@ export enum SocketEmitKeys {
   DeleteGamePublic = 'deleteGamePublic',
   DrewPart = 'drewPart',
   JoinPublic = 'joinPublic',
-  LeavePublic = 'leavePublic'
+  LeavePublic = 'leavePublic',
+  ChangeDrawingWord = 'changeDrawingWord'
 }

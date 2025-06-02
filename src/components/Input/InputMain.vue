@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineModel<string>();
+defineModel<string | number>();
 
 withDefaults(
   defineProps<{

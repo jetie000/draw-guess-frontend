@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import PlayerLobby from './PlayerLobby.vue';
 import Panel from '@/components/Panel/Panel.vue';
 import type { Game } from '@/api/game/game.api.interface';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/solid';
 import { computed, ref } from 'vue';
+import PlayerWithPoints from '@/components/User/PlayerWithPoints.vue';
 
 const props = defineProps<{ game: Game }>();
 
@@ -79,7 +79,7 @@ const handleIncreasePage = () => {
       />
     </div>
     <div class="flex flex-col gap-3">
-      <PlayerLobby
+      <PlayerWithPoints
         v-for="player in displayedPlayers"
         :player="player"
         display-points

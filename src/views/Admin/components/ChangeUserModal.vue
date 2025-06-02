@@ -72,7 +72,6 @@ defineEmits(['pressed', 'closed']);
             name="change-role"
             v-model="user.role"
             class="mt-1"
-            is-number-values
             :radio-values="[
               { id: 'user', label: 'User', value: UserRoles.User },
               { id: 'admin', label: 'Admin', value: UserRoles.Admin }
