@@ -4,14 +4,13 @@ export const getLevelAndProgressByExp = (experience: number) => {
   let level = 1;
   let remainingExp = experience;
   let pointsToSubstract = pointsForFirstLevel;
-  while (remainingExp > pointsToSubstract) {
+  while (remainingExp >= pointsToSubstract) {
     remainingExp -= pointsToSubstract;
     level++;
     pointsToSubstract += pointsIncreasingEveryLevel;
   }
 
   const colorIndex = Math.floor((level - 1) / 2);
-  console.log();
 
   return {
     level,
