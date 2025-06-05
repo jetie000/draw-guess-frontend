@@ -11,6 +11,7 @@ import type { ProfileExtended } from '@/api/user/user.api.interface';
 import { ref } from 'vue';
 import { socket } from '@/helpers/socket';
 import { SocketEmitKeys } from '@/helpers/socket/emit-keys';
+import { Prices } from '@/typings/enums/prices';
 
 const props = defineProps<{
   gameId: number;
@@ -49,20 +50,21 @@ const { mutate, isPending } = useMutation({
     <span class="text-gray-secondary">Your word</span>
     <span class="font-bold text-xl">{{ word?.word || '-' }}</span>
     <ButtonMain
-      class="gap-2 flex-wrap"
+      class="gap-1 flex-col"
       v-if="isCanChange && !isChanged && word"
       :disabled="isPending"
       @click="mutate"
     >
-      <div class="flex items-center gap-1 justify-center w-full">
-        Change word for 50
+      <div>Change word</div>
+      <div>
+        {{ Prices.ChangeWord }}
         <img
-          class="h-6 w-6"
+          class="h-6 w-6 inline-block"
           :src="coinImg"
           alt="coin"
         />
       </div>
-      <div class="w-full">{{ secondsRemainingToChange }} seconds...</div>
+      <div>{{ secondsRemainingToChange }} seconds...</div>
     </ButtonMain>
   </Panel>
 </template>

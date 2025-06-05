@@ -12,6 +12,7 @@ import type { PatchUserRequestAdmin } from '@/api/user/user.api.interface';
 import { formatDate } from '@/helpers/datetime';
 import ChangeUserModal from './ChangeUserModal.vue';
 import { handleNetworkError } from '@/helpers/errors';
+import { AccountTypes, UserRoles } from '@/typings/enums/user';
 
 const queryClient = useQueryClient();
 
@@ -42,8 +43,8 @@ const { mutate: changeUser, isPending: isPendingChange } = useMutation({
   }
 });
 
-const AccountTypes = ['Email', 'Google'];
-const UserRoles = ['User', 'Admin'];
+const AccountTypesNames = Object.values(AccountTypes);
+const UserRolesNames = Object.values(UserRoles);
 </script>
 
 <template>
@@ -98,10 +99,10 @@ const UserRoles = ['User', 'Admin'];
               {{ formatDate(user.loginDate) }}
             </td>
             <td class="p-2 text-center max-lg:w-1/3">
-              {{ UserRoles[user.role] }}
+              {{ UserRolesNames[user.role] }}
             </td>
             <td class="p-2 text-center max-lg:w-1/3">
-              {{ AccountTypes[user.type] }}
+              {{ AccountTypesNames[user.type] }}
             </td>
             <td class="p-2 max-lg:w-1/3">
               <CheckIcon

@@ -62,7 +62,7 @@ onMounted(() => {
         Guess
       </h1>
       <button
-        v-if="data && data.role === UserRoles.Admin"
+        v-if="data && [UserRoles.Admin, UserRoles.Moderator].includes(data.role)"
         class="hover:bg-blue-dark hover:text-white transition-all ml-4 px-3 py-1 rounded-full"
         @click="$router.push('/admin')"
       >

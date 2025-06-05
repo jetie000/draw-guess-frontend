@@ -1,6 +1,7 @@
 export enum UserRoles {
   User = 0,
-  Admin = 1
+  Admin = 1,
+  Moderator = 2
 }
 
 export enum AccountTypes {
